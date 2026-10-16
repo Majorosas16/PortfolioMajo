@@ -102,6 +102,31 @@
   }
 }
 
+/* Letras MAJO: flotación muy suave, con otro ritmo que el post-it y el perrito */
+.about__majo img {
+  animation:
+    majo-float 6s ease-in-out 0.3s infinite alternate,
+    majo-sway 7.6s ease-in-out infinite alternate;
+}
+
+@keyframes majo-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(var(--u) * -6);
+  }
+}
+
+@keyframes majo-sway {
+  from {
+    rotate: -0.8deg;
+  }
+  to {
+    rotate: 0.8deg;
+  }
+}
+
 /* Post-it: flota despacio, independiente de la pila de fotos */
 .about__note img {
   animation:
@@ -420,6 +445,7 @@
   }
 
   .about__dog .about__tap img,
+  .about__majo img,
   .about__note img,
   .about.reveal-ready .about__sticker.is-visible .about__tap img {
     animation: none;
