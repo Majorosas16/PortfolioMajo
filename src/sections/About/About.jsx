@@ -5,10 +5,25 @@ import Pill from '../../components/Pill.jsx';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import { localizedSrc } from '../../i18n/images.js';
 import Rich from '../../i18n/Rich.jsx';
+import PhotoStack from './PhotoStack.jsx';
 import './About.css';
 
 // Imágenes de esta sección (src/assets/sections/about/). Están debajo del inicio: se cargan al acercarse con el scroll (loading="lazy")
 const img = byName(import.meta.glob('../../assets/sections/about/*', { eager: true, import: 'default' }));
+
+// Fotos del carrusel, en el orden en que pasan al frente. Cada una existe en 2 anchos (<nombre>-<ancho>.webp, generadas
+// con `npm run images` desde design-originals/sections/about/Photos Majo/) y el navegador elige con srcset.
+const PHOTO_ORDER = ['photo-majo', 'img-2467', 'img-1704', 'img-1112', 'img-4897', 'img-8454', 'img-6987'];
+const photoFiles = Object.entries(byName(import.meta.glob('../../assets/sections/about/photos/*.webp', { eager: true, import: 'default' })));
+const PHOTOS = PHOTO_ORDER.map((id) => {
+  const versions = photoFiles
+    .filter(([name]) => name.replace(/-\d+$/, '') === id)
+    .map(([name, url]) => ({ w: Number(name.match(/-(\d+)$/)[1]), url }))
+    .sort((a, b) => a.w - b.w);
+  return { id, src: versions[0].url, srcSet: versions.map((v) => `${v.url} ${v.w}w`).join(', ') };
+});
+// Ancho con el que se ve la foto: 352.31 px del diseño en escritorio; en celular, el 78 % de la columna (máx. 330 px)
+const PHOTO_SIZES = '(max-width: 768px) min(calc((100vw - 40px) * 0.78), 330px), calc(min(100vw, 1512px) * 352.31 / 1512)';
 
 // Frame 2 de Figma — "WEB" 1512 × 2888.
 // La caja abierta y los objetos (parte superior del frame) ahora están en Intro.jsx;
@@ -67,7 +82,7 @@ export default function About() {
 
           <div className="grp grp--photo">
             <P x={756.16} y={1269} w={352.31} h={626} cx className="about__photo">
-              <img loading="lazy" decoding="async" src={img['photo-majo']} alt={a.photoAlt} />
+              <PhotoStack photos={PHOTOS} labels={a.photos} sizes={PHOTO_SIZES} />
             </P>
             <P x={569} y={1356} w={107.28} className="about__note">
               <img loading="lazy" decoding="async" src={img['note-orange']} alt="" />
