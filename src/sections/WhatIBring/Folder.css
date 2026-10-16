@@ -560,6 +560,11 @@
   .folder-detail__caption {
     max-width: 22.2em;
   }
+
+  /* «Escucha y empatía»: burbuja algo más ancha para que quede en 2 líneas («…pensando en las personas.») */
+  .folder-detail__box[data-id='listening'] .msg--blue .msg__bubble {
+    max-width: 17em;
+  }
 }
 
 /* Tablet estrecha: bloque un poco más angosto para que quepa al lado de las fotos, como en pantallas grandes */
