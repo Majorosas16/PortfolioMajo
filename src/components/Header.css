@@ -4,15 +4,15 @@
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 50;
-  color: var(--cafe);
+  color: var(--brown);
   transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .header__inner {
   /* Retícula de 12 columnas con margen lateral de 110px en escritorio (proporcional en pantallas menores) */
-  --margen: clamp(24px, calc(100vw * 110 / 1512), 110px);
+  --margin: clamp(24px, calc(100vw * 110 / 1512), 110px);
   width: 100%;
-  padding: max(16px, calc(var(--u) * 32)) var(--margen);
+  padding: max(16px, calc(var(--u) * 32)) var(--margin);
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: calc(var(--u) * 24);
@@ -26,11 +26,11 @@
   box-shadow: 0 1px 0 rgba(67, 47, 46, 0.08);
 }
 
-.header--oscuro {
-  color: var(--crema);
+.header--dark {
+  color: var(--cream);
 }
 
-.header--oscuro.header--scrolled {
+.header--dark.header--scrolled {
   background-color: rgba(67, 47, 46, 0.82);
   box-shadow: 0 1px 0 rgba(255, 252, 249, 0.08);
 }
@@ -43,7 +43,7 @@
   justify-self: start;
   line-height: 1.2;
   transition: opacity 0.4s ease;
-  animation: header-entrar 0.6s ease 0.3s backwards;
+  animation: header-enter 0.6s ease 0.3s backwards;
 }
 
 /* Tamaños ~0.78 de los de Figma: más discreto en escritorio */
@@ -57,9 +57,16 @@
   font-size: max(15px, calc(var(--u) * 22));
 }
 
-.header__nav {
+/* Menú + selector de idioma (el selector queda justo después de "Hablemos") */
+.header__actions {
   grid-column: 7 / 13;
   justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 9);
+}
+
+.header__nav {
   display: flex;
   gap: calc(var(--u) * 9);
   transition: opacity 0.4s ease, visibility 0s linear 0s;
@@ -71,7 +78,7 @@
   justify-content: center;
   height: max(30px, calc(var(--u) * 34));
   padding: 0 max(11px, calc(var(--u) * 14.5));
-  border: max(1.2px, calc(var(--u) * 1.5)) solid var(--cafe-borde);
+  border: max(1.2px, calc(var(--u) * 1.5)) solid var(--brown-border);
   border-radius: 50px;
   font-weight: 600;
   font-size: max(12px, calc(var(--u) * 15.5));
@@ -80,18 +87,24 @@
 }
 
 /* Pantalla de la caja cerrada: sin navegación y con el nombre al 40 % (como en Figma) */
-html[data-caja='cerrada'] .header--inicio .header__nav {
+html[data-box='closed'] .header--intro .header__nav {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.4s ease, visibility 0s linear 0.4s;
 }
 
-html[data-caja='cerrada'] .header--inicio .header__brand {
+html[data-box='closed'] .header--intro .header__brand,
+html[data-box='closed'] .header--intro .lang-switch {
   opacity: 0.4;
 }
 
-@keyframes header-entrar {
+/* Con teclado el selector recupera la opacidad completa para que el foco se vea bien */
+html[data-box='closed'] .header--intro .lang-switch:focus-within {
+  opacity: 1;
+}
+
+@keyframes header-enter {
   from {
     opacity: 0;
   }
@@ -99,18 +112,18 @@ html[data-caja='cerrada'] .header--inicio .header__brand {
 
 .header__link:hover,
 .header__link:focus-visible {
-  background-color: var(--cafe);
-  color: var(--crema);
+  background-color: var(--brown);
+  color: var(--cream);
 }
 
-.header--oscuro .header__link {
-  border-color: var(--crema);
+.header--dark .header__link {
+  border-color: var(--cream);
 }
 
-.header--oscuro .header__link:hover,
-.header--oscuro .header__link:focus-visible {
-  background-color: var(--crema);
-  color: var(--cafe);
+.header--dark .header__link:hover,
+.header--dark .header__link:focus-visible {
+  background-color: var(--cream);
+  color: var(--brown);
 }
 
 @media (max-width: 768px) {
@@ -127,6 +140,17 @@ html[data-caja='cerrada'] .header--inicio .header__brand {
 
   .header__brand {
     gap: 2px;
+  }
+
+  /* El selector de idioma sube a la fila del nombre, a la derecha */
+  .header__actions {
+    display: contents;
+  }
+
+  .header .lang-switch {
+    position: absolute;
+    top: 12px;
+    right: 20px;
   }
 
   .header__nav {
@@ -153,7 +177,7 @@ html[data-caja='cerrada'] .header--inicio .header__brand {
     -webkit-backdrop-filter: blur(10px);
   }
 
-  .header--oscuro {
+  .header--dark {
     background-color: rgba(67, 47, 46, 0.88);
   }
 }
@@ -161,6 +185,6 @@ html[data-caja='cerrada'] .header--inicio .header__brand {
 @media (prefers-reduced-motion: reduce) {
   /* El nombre solo aparece con un fundido corto */
   .header__brand {
-    animation: header-entrar 0.2s ease backwards;
+    animation: header-enter 0.2s ease backwards;
   }
 }

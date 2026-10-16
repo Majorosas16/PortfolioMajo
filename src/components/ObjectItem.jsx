@@ -9,7 +9,7 @@ import './ObjectItem.css';
 // index: orden del objeto (se usa para el desfase de la animación de salida)
 // m: posición en celular, en % del ancho de la escena ({ x, y, w }); solo la usa la caja del inicio
 // onClick: opcional, para darle una acción al objeto más adelante
-export default function ObjectItem({ src, alt, x, y, w, h, r = 0, crop, flip = false, label, tone = 'cafe', index = 0, m, onClick }) {
+export default function ObjectItem({ src, alt, x, y, w, h, r = 0, crop, flip = false, label, tone = 'brown', index = 0, m, onClick }) {
   const style = {
     '--x': x,
     '--y': y,

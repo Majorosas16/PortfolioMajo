@@ -17,12 +17,12 @@
 :root {
   --u: calc(min(100vw, 1512px) / 1512);
 
-  --cafe: #432f2e;
-  --cafe-2: #493531;
-  --cafe-borde: #664737;
-  --crema: #fffcf9;
-  --naranja: #cf541b;
-  --azul: #7ea5dc;
+  --brown: #432f2e;
+  --brown-2: #493531;
+  --brown-border: #664737;
+  --cream: #fffcf9;
+  --orange: #cf541b;
+  --blue: #7ea5dc;
 
   --font-head: 'Stack Sans Headline', 'Inter', 'Helvetica Neue', Arial, sans-serif;
   --font-text: 'Stack Sans Text', 'Inter', 'Helvetica Neue', Arial, sans-serif;
@@ -42,8 +42,8 @@ html {
 
 body {
   margin: 0;
-  background: var(--crema);
-  color: var(--cafe);
+  background: var(--cream);
+  color: var(--brown);
   font-family: var(--font-head);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -92,32 +92,32 @@ b {
   inset: 0;
   z-index: -1;
   /* Una sola hoja para toda la página: misma escala en todas las secciones y cada una
-     desplazada según su posición (--fondo-y, ver App.jsx). La imagen se repite sin costura. */
-  background-image: var(--papel);
+     desplazada según su posición (--bg-y, ver App.jsx). La imagen se repite sin costura. */
+  background-image: var(--paper);
   background-size: 100% auto;
   background-repeat: repeat-y;
-  background-position: center calc(var(--fondo-y, 0px) * -1);
+  background-position: center calc(var(--bg-y, 0px) * -1);
   mix-blend-mode: multiply;
   pointer-events: none;
 }
 
-.section--papel {
-  background-color: var(--crema);
+.section--paper {
+  background-color: var(--cream);
 }
 
-.section--papel::before {
+.section--paper::before {
   opacity: 0.5;
 }
 
-.section--oscura {
-  background-color: var(--cafe);
-  color: var(--crema);
+.section--dark {
+  background-color: var(--brown);
+  color: var(--cream);
 }
 
 .stage {
   position: relative;
   width: calc(var(--u) * 1512);
-  height: calc(var(--u) * var(--alto));
+  height: calc(var(--u) * var(--height));
   margin: 0 auto;
 }
 
@@ -137,7 +137,7 @@ b {
   text-align: center;
 }
 
-.ancla {
+.anchor {
   position: absolute;
   top: calc(var(--u) * var(--y));
   left: 0;
@@ -168,7 +168,7 @@ b {
     width: 100%;
   }
 
-  .ancla {
+  .anchor {
     position: relative;
     top: -110px;
     height: 0;

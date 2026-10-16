@@ -1,0 +1,73 @@
+/* Selector de idioma: misma píldora que los enlaces del header, con el idioma activo relleno */
+
+.lang-switch {
+  display: inline-flex;
+  flex: none;
+  height: max(30px, calc(var(--u) * 34));
+  padding: max(2px, calc(var(--u) * 2.5));
+  gap: max(2px, calc(var(--u) * 2));
+  border: max(1.2px, calc(var(--u) * 1.5)) solid var(--brown-border);
+  border-radius: 50px;
+  transition: opacity 0.4s ease;
+}
+
+.lang-switch__option {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: max(32px, calc(var(--u) * 38));
+  margin: 0;
+  padding: 0 max(8px, calc(var(--u) * 10));
+  border: 0;
+  border-radius: 50px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  font-size: max(12px, calc(var(--u) * 15.5));
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.lang-switch__option:hover {
+  background-color: rgba(67, 47, 46, 0.1);
+}
+
+.lang-switch__option[aria-pressed='true'] {
+  background-color: var(--brown);
+  color: var(--cream);
+  cursor: default;
+}
+
+.lang-switch__option:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+/* Sobre la sección oscura */
+.header--dark .lang-switch {
+  border-color: var(--cream);
+}
+
+.header--dark .lang-switch__option:hover {
+  background-color: rgba(255, 252, 249, 0.14);
+}
+
+.header--dark .lang-switch__option[aria-pressed='true'] {
+  background-color: var(--cream);
+  color: var(--brown);
+}
+
+@media (max-width: 768px) {
+  .lang-switch {
+    height: 32px;
+  }
+
+  .lang-switch__option {
+    min-width: 34px;
+    padding: 0 8px;
+    font-size: 13px;
+  }
+}

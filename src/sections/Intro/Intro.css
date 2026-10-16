@@ -1,8 +1,8 @@
 /* Sección 1 · Inicio (caja interactiva) */
 
 /* ---------- Sección 1 · Caja interactiva ----------
-   Estados (data-estado en la sección): cerrada → abriendo → abierta.
-   data-salida="true" lanza los objetos desde la boca de la caja
+   Estados (data-state en la sección): closed → opening → open.
+   data-launch="true" lanza los objetos desde la boca de la caja
    (--fx / --fy los calcula Intro.jsx). Los tiempos coinciden con T en Intro.jsx. */
 
 .intro {
@@ -11,7 +11,7 @@
   --u: min(calc(min(100vw, 1512px) / 1512), calc(100svh / 980));
 }
 
-.intro__boton {
+.intro__button {
   appearance: none;
   margin: 0;
   padding: 0;
@@ -24,29 +24,29 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.intro__boton:disabled {
+.intro__button:disabled {
   cursor: default;
 }
 
-.intro__boton:focus-visible {
-  outline: 2px solid var(--naranja);
+.intro__button:focus-visible {
+  outline: 2px solid var(--orange);
   outline-offset: 6px;
   border-radius: 16px;
 }
 
 /* Cerrada: la caja queda 50px más arriba; al abrir baja a su sitio (antes del FLIP de los objetos, 420ms) */
-.intro[data-estado='cerrada'] .caja {
+.intro[data-state='closed'] .box {
   transform: translateY(calc(var(--u) * -50));
 }
 
-.caja {
+.box {
   z-index: 1;
   transition: transform 0.38s ease;
   /* Entrada al cargar: lo primero que aparece. translate/scale no chocan con el transform de .abs */
-  animation: caja-entrar 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards;
+  animation: box-enter 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards;
 }
 
-@keyframes caja-entrar {
+@keyframes box-enter {
   from {
     opacity: 0;
     translate: 0 calc(var(--u) * 28);
@@ -54,7 +54,7 @@
   }
 }
 
-.caja__frames {
+.box__frames {
   position: absolute;
   inset: 0;
   display: block;
@@ -62,8 +62,8 @@
   transition: transform 0.25s ease;
 }
 
-.abs > img.caja__frame,
-.caja__frame {
+.abs > img.box__frame,
+.box__frame {
   position: absolute;
   max-width: none;
   height: auto;
@@ -71,41 +71,41 @@
   pointer-events: none;
 }
 
-.intro[data-estado='cerrada'] .caja__frame--0,
-.intro[data-estado='abierta'] .caja__frame--3 {
+.intro[data-state='closed'] .box__frame--0,
+.intro[data-state='open'] .box__frame--3 {
   opacity: 1;
 }
 
 /* La caja invita al clic */
-.intro[data-estado='cerrada'] .caja:hover .caja__frames,
-.intro[data-estado='cerrada'] .caja:focus-visible .caja__frames {
+.intro[data-state='closed'] .box:hover .box__frames,
+.intro[data-state='closed'] .box:focus-visible .box__frames {
   transform: translateY(calc(var(--u) * -6)) rotate(-1deg);
 }
 
 /* Apertura: una sola línea de tiempo de 1.15s.
    Los 4 renders se encadenan con fundidos solapados (el que entra queda encima, así la caja
    nunca se transparenta) mientras la caja se aplasta, se estira y se asienta. */
-.intro[data-estado='abriendo'] .caja__frames {
-  animation: caja-abrir 1.15s ease-in-out both;
+.intro[data-state='opening'] .box__frames {
+  animation: box-open 1.15s ease-in-out both;
 }
 
-.intro[data-estado='abriendo'] .caja__frame--0 {
-  animation: caja-f0 1.15s ease-in-out both;
+.intro[data-state='opening'] .box__frame--0 {
+  animation: box-f0 1.15s ease-in-out both;
 }
 
-.intro[data-estado='abriendo'] .caja__frame--1 {
-  animation: caja-f1 1.15s ease-in-out both;
+.intro[data-state='opening'] .box__frame--1 {
+  animation: box-f1 1.15s ease-in-out both;
 }
 
-.intro[data-estado='abriendo'] .caja__frame--2 {
-  animation: caja-f2 1.15s ease-in-out both;
+.intro[data-state='opening'] .box__frame--2 {
+  animation: box-f2 1.15s ease-in-out both;
 }
 
-.intro[data-estado='abriendo'] .caja__frame--3 {
-  animation: caja-f3 1.15s ease-in-out both;
+.intro[data-state='opening'] .box__frame--3 {
+  animation: box-f3 1.15s ease-in-out both;
 }
 
-@keyframes caja-abrir {
+@keyframes box-open {
   0% {
     transform: none;
   }
@@ -126,7 +126,7 @@
   }
 }
 
-@keyframes caja-f0 {
+@keyframes box-f0 {
   0%,
   20% {
     opacity: 1;
@@ -137,7 +137,7 @@
   }
 }
 
-@keyframes caja-f1 {
+@keyframes box-f1 {
   0%,
   12% {
     opacity: 0;
@@ -152,7 +152,7 @@
   }
 }
 
-@keyframes caja-f2 {
+@keyframes box-f2 {
   0%,
   38% {
     opacity: 0;
@@ -167,7 +167,7 @@
   }
 }
 
-@keyframes caja-f3 {
+@keyframes box-f3 {
   0%,
   64% {
     opacity: 0;
@@ -185,7 +185,7 @@
 }
 
 .intro__msg .msg__meta--bottom {
-  animation: msg-leido 0.3s ease 1.15s backwards;
+  animation: msg-read 0.3s ease 1.15s backwards;
 }
 
 @keyframes msg-pop {
@@ -207,7 +207,7 @@
   }
 }
 
-@keyframes msg-leido {
+@keyframes msg-read {
   from {
     opacity: 0;
   }
@@ -218,7 +218,7 @@
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0s;
 }
 
-.intro:not([data-estado='cerrada']) .intro__msg {
+.intro:not([data-state='closed']) .intro__msg {
   opacity: 0;
   visibility: hidden;
   transform: translate(-50%, calc(var(--u) * -16));
@@ -226,7 +226,7 @@
 }
 
 /* Objetos: escondidos dentro de la caja hasta que salen */
-.objetos--caja .obj {
+.objects--box .obj {
   z-index: 2;
   opacity: 0;
   transform: translate(var(--fx, 0px), var(--fy, 0px)) scale(0.2);
@@ -234,31 +234,31 @@
 
 /* Salen desde la boca de la caja (--fx/--fy) hasta su sitio, con un pequeño arco hacia arriba.
    transform solo tiene dos keyframes, así el recorrido es una sola curva sin pausas. */
-.intro[data-salida='true'] .objetos--caja .obj {
+.intro[data-launch='true'] .objects--box .obj {
   animation:
-    obj-salir 0.95s cubic-bezier(0.22, 0.8, 0.3, 1) calc(var(--i) * 110ms) both,
-    obj-arco 0.95s calc(var(--i) * 110ms) both;
+    obj-exit 0.95s cubic-bezier(0.22, 0.8, 0.3, 1) calc(var(--i) * 110ms) both,
+    obj-arc 0.95s calc(var(--i) * 110ms) both;
 }
 
 /* Al llegar flotan despacio; translate/rotate no chocan con el transform de la salida */
-.intro[data-estado='abierta'] .objetos--caja .obj {
+.intro[data-state='open'] .objects--box .obj {
   animation:
-    obj-salir 0.95s cubic-bezier(0.22, 0.8, 0.3, 1) calc(var(--i) * 110ms) both,
-    obj-arco 0.95s calc(var(--i) * 110ms) both,
-    obj-flotar calc(4.6s + var(--i) * 0.6s) ease-in-out calc(var(--i) * 0.3s) infinite alternate,
-    obj-mecer calc(6.2s + var(--i) * 0.8s) ease-in-out calc(var(--i) * 0.45s) infinite alternate;
+    obj-exit 0.95s cubic-bezier(0.22, 0.8, 0.3, 1) calc(var(--i) * 110ms) both,
+    obj-arc 0.95s calc(var(--i) * 110ms) both,
+    obj-float calc(4.6s + var(--i) * 0.6s) ease-in-out calc(var(--i) * 0.3s) infinite alternate,
+    obj-sway calc(6.2s + var(--i) * 0.8s) ease-in-out calc(var(--i) * 0.45s) infinite alternate;
 }
 
 /* Cada objeto se mece hacia un lado distinto; con ritmos que no coinciden, el vaivén no se repite igual */
-.objetos--caja .obj:nth-child(odd) {
-  --mecer: -1.4deg;
+.objects--box .obj:nth-child(odd) {
+  --sway: -1.4deg;
 }
 
-.objetos--caja .obj:nth-child(even) {
-  --mecer: 1.6deg;
+.objects--box .obj:nth-child(even) {
+  --sway: 1.6deg;
 }
 
-@keyframes obj-salir {
+@keyframes obj-exit {
   0% {
     opacity: 0;
     transform: translate(var(--fx, 0px), var(--fy, 0px)) scale(0.2);
@@ -272,7 +272,7 @@
   }
 }
 
-@keyframes obj-arco {
+@keyframes obj-arc {
   0% {
     translate: 0 0;
     animation-timing-function: cubic-bezier(0.3, 0.6, 0.5, 1);
@@ -286,7 +286,7 @@
   }
 }
 
-@keyframes obj-flotar {
+@keyframes obj-float {
   from {
     translate: 0 0;
   }
@@ -295,17 +295,17 @@
   }
 }
 
-@keyframes obj-mecer {
+@keyframes obj-sway {
   from {
     rotate: 0deg;
   }
   to {
-    rotate: var(--mecer, 1deg);
+    rotate: var(--sway, 1deg);
   }
 }
 
 /* Solo se pueden tocar cuando la caja terminó de abrirse */
-.intro:not([data-estado='abierta']) .objetos--caja .obj {
+.intro:not([data-state='open']) .objects--box .obj {
   pointer-events: none;
 }
 
@@ -315,26 +315,26 @@
 
 /* "Toca los objetos": aparece con un fundido cuando los cinco objetos ya llegaron.
    Medidas del mensaje de Figma (146:5517); k=0.86 en Intro.jsx ajusta la reacción. */
-.caja__toca {
+.box__tap {
   z-index: 3;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.5s ease, visibility 0s linear 0.5s;
 }
 
-.intro[data-estado='abierta'] .caja__toca {
+.intro[data-state='open'] .box__tap {
   opacity: 1;
   visibility: visible;
   transition: opacity 0.5s ease, visibility 0s linear 0s;
 }
 
-.caja__toca .msg__bubble {
+.box__tap .msg__bubble {
   padding: calc(var(--u) * 11.8) calc(var(--u) * 17.04);
   border-radius: calc(var(--u) * 26.22);
   font-size: calc(var(--u) * 19.66);
 }
 
-.caja__toca .msg__tail {
+.box__tap .msg__tail {
   width: calc(var(--u) * 23.6);
   height: calc(var(--u) * 18.4);
   margin-left: calc(var(--u) * 7.9);
@@ -370,7 +370,7 @@
   }
 
   /* Cerrada: la escena sube para que el mensaje y la caja queden centrados; al abrir baja a su sitio */
-  .intro[data-estado='cerrada'] .stage {
+  .intro[data-state='closed'] .stage {
     transform: translateY(calc(var(--s) * -0.4));
   }
 
@@ -384,16 +384,16 @@
   }
 
   .intro .intro__msg,
-  .intro .caja__toca {
+  .intro .box__tap {
     width: auto;
     transform: translateX(-50%);
   }
 
-  .intro .caja {
+  .intro .box {
     aspect-ratio: 713.3 / 581.3;
   }
 
-  .intro .objetos {
+  .intro .objects {
     display: contents;
   }
 
@@ -421,25 +421,25 @@
 
 @media (prefers-reduced-motion: reduce) {
   /* Entrada: la caja, el mensaje y el nombre solo aparecen con un fundido corto */
-  .caja,
+  .box,
   .intro__msg .msg {
-    animation: msg-leido 0.2s ease backwards;
+    animation: msg-read 0.2s ease backwards;
   }
 
   .intro__msg .msg__meta--bottom {
     animation: none;
   }
 
-  .caja {
+  .box {
     transition: none;
   }
 
   /* Caja: sin deformación ni fotogramas intermedios, solo un fundido corto al estado abierto */
-  .caja__frame {
+  .box__frame {
     transition: opacity 0.2s ease;
   }
 
-  .intro .caja__frame {
+  .intro .box__frame {
     animation: none !important;
   }
 
@@ -447,24 +447,24 @@
     transition: none;
   }
 
-  .intro .caja__frames {
+  .intro .box__frames {
     animation: none !important;
     transform: none !important;
   }
 
   /* Objetos: aparecen con un fundido, sin recorrido ni flotación */
-  .intro .objetos--caja .obj,
-  .intro[data-salida='true'] .objetos--caja .obj,
-  .intro[data-estado='abierta'] .objetos--caja .obj {
+  .intro .objects--box .obj,
+  .intro[data-launch='true'] .objects--box .obj,
+  .intro[data-state='open'] .objects--box .obj {
     transform: none;
   }
 
-  .intro[data-salida='true'] .objetos--caja .obj,
-  .intro[data-estado='abierta'] .objetos--caja .obj {
-    animation: obj-aparecer 0.2s ease both;
+  .intro[data-launch='true'] .objects--box .obj,
+  .intro[data-state='open'] .objects--box .obj {
+    animation: obj-appear 0.2s ease both;
   }
 
-  @keyframes obj-aparecer {
+  @keyframes obj-appear {
     from {
       opacity: 0;
     }
@@ -474,9 +474,9 @@
   }
 
   .intro .intro__msg,
-  .intro:not([data-estado='cerrada']) .intro__msg,
-  .intro .caja__toca,
-  .intro[data-estado='abierta'] .caja__toca {
+  .intro:not([data-state='closed']) .intro__msg,
+  .intro .box__tap,
+  .intro[data-state='open'] .box__tap {
     transform: translateX(-50%);
     transition: opacity 0.2s ease, visibility 0s linear;
   }

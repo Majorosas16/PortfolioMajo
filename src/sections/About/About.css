@@ -1,55 +1,55 @@
 /* Sección 2 · Sobre mí */
 
-/* Aparición al entrar en pantalla (SobreMi.jsx añade revelar-listo y marca cada elemento con is-visible) */
-.sobre.revelar-listo .abs {
+/* Aparición al entrar en pantalla (About.jsx añade reveal-ready y marca cada elemento con is-visible) */
+.about.reveal-ready .abs {
   opacity: 0;
   transition: opacity 0.8s ease;
 }
 
-.sobre.revelar-listo .abs.is-visible {
+.about.reveal-ready .abs.is-visible {
   opacity: 1;
 }
 
 /* Sube el contenido del frame 2 para quitar el espacio que ocupaba la caja (ver Intro.jsx) */
-.sobre__lienzo {
+.about__canvas {
   position: absolute;
   left: 0;
-  top: calc(var(--u) * var(--recorte) * -1);
+  top: calc(var(--u) * var(--trim) * -1);
   width: 100%;
   height: calc(var(--u) * 2888);
 }
 
-.sobre__rol {
+.about__role {
   font-weight: 500;
   line-height: 1.21;
   text-align: right;
 }
 
-.sobre__bio,
-.sobre__texto {
+.about__bio,
+.about__text {
   font-weight: 200;
   line-height: 1.317;
 }
 
-.sobre__texto {
+.about__text {
   text-align: center;
 }
 
-.sobre__foto img {
+.about__photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: calc(var(--u) * 53);
 }
 
-.sobre__perro img {
+.about__dog img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transform: scaleX(-1);
 }
 
-.seleccion {
+.selection {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,15 +60,15 @@
   padding: 0 calc(var(--u) * 20);
 }
 
-.seleccion--naranja {
-  --sel: var(--naranja);
+.selection--orange {
+  --sel: var(--orange);
 }
 
-.seleccion--azul {
-  --sel: var(--azul);
+.selection--blue {
+  --sel: var(--blue);
 }
 
-.seleccion .c {
+.selection .c {
   position: absolute;
   width: calc(var(--u) * 15.74);
   height: calc(var(--u) * 15.74);
@@ -121,59 +121,59 @@
   box-shadow: 0 calc(var(--u) * 4.34) calc(var(--u) * 8.69) rgba(0, 0, 0, 0.12);
 }
 
-.cursor-tag--naranja span {
-  background: var(--naranja);
+.cursor-tag--orange span {
+  background: var(--orange);
 }
 
-.cursor-tag--azul span {
-  background: var(--azul);
+.cursor-tag--blue span {
+  background: var(--blue);
 }
 
 @media (max-width: 768px) {
-  .sobre__lienzo {
+  .about__canvas {
     display: contents;
   }
 
-  .sobre__sticker {
+  .about__sticker {
     width: 190px;
   }
 
-  .sobre__hola {
+  .about__hello {
     font-size: 64px;
     margin-bottom: -18px;
   }
 
-  .sobre__majo {
+  .about__majo {
     width: 240px;
   }
 
-  .sobre__rol {
+  .about__role {
     font-size: 24px;
     text-align: center;
   }
 
-  .grp--foto {
+  .grp--photo {
     width: min(78%, 330px);
     margin-top: 12px;
   }
 
-  .sobre__foto {
+  .about__photo {
     width: 100%;
     aspect-ratio: 352 / 626;
   }
 
-  .sobre__foto img {
+  .about__photo img {
     border-radius: 36px;
   }
 
-  .grp--foto .sobre__nota {
+  .grp--photo .about__note {
     position: absolute;
     left: -28px;
     top: 36px;
     width: 76px;
   }
 
-  .grp--foto .sobre__perro {
+  .grp--photo .about__dog {
     position: absolute;
     right: -44px;
     bottom: -56px;
@@ -181,7 +181,7 @@
     aspect-ratio: 256 / 455;
   }
 
-  .sobre__bio {
+  .about__bio {
     font-size: 21px;
     text-align: center;
     max-width: 480px;
@@ -193,20 +193,20 @@
     margin-top: 24px;
   }
 
-  .sobre__reaccion {
+  .about__reaction {
     width: 60px;
   }
 
-  .sobre__subtitulo {
+  .about__subtitle {
     font-size: 60px;
   }
 
-  .sobre__texto {
+  .about__text {
     font-size: 19px;
     max-width: 440px;
   }
 
-  .seleccion {
+  .selection {
     width: min(100%, 330px);
     padding: 16px 22px;
     font-size: 19px;
@@ -222,7 +222,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sobre.revelar-listo .abs {
+  .about.reveal-ready .abs {
     transition-duration: 0.2s;
   }
 }
