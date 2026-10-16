@@ -1,0 +1,687 @@
+/* Carpeta de «Lo que aporto» (Folder.jsx). Medidas en px de Figma dentro de la carpeta (1082 × 787), × --u. */
+
+.folder {
+  filter: drop-shadow(0 calc(var(--u) * 4.74) calc(var(--u) * 4.74) rgba(0, 0, 0, 0.3))
+    drop-shadow(0 calc(var(--u) * 7.11) calc(var(--u) * 7.11) rgba(0, 0, 0, 0.21))
+    drop-shadow(0 calc(var(--u) * 9.48) calc(var(--u) * 9.48) rgba(0, 0, 0, 0.1));
+}
+
+.folder__inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--u) * 1082);
+  height: calc(var(--u) * 787);
+}
+
+.folder__back {
+  position: absolute;
+  left: calc(var(--u) * 263);
+  top: calc(var(--u) * 291);
+  width: calc(var(--u) * 556.86) !important;
+  height: calc(var(--u) * 468);
+}
+
+/* ---------- Invitación a abrir la carpeta ----------
+   Burbuja pequeña sobre la pestaña. Está detrás de la carpeta en el orden de capas: al abrirla se encoge y baja
+   hasta quedar tapada, y luego salen las fotos. Mientras espera flota despacio (translate, aparte del transform). */
+.folder__hint {
+  position: absolute;
+  left: calc(var(--u) * 541);
+  top: calc(var(--u) * 280);
+  transform: translate(-50%, -100%);
+  transform-origin: 50% 100%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  animation: folder-hint-float 2.6s ease-in-out infinite alternate;
+  transition:
+    transform 0.45s cubic-bezier(0.55, 0, 0.75, 0.2),
+    opacity 0.4s ease,
+    visibility 0s linear 0.45s;
+}
+
+.folder__inner[data-state='open'] .folder__hint {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, calc(-100% + var(--u) * 90)) scale(0.6);
+  pointer-events: none;
+  /* Ya escondida: deja de flotar */
+  animation-play-state: paused;
+}
+
+@keyframes folder-hint-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(var(--u) * -6);
+  }
+}
+
+/* ---------- Fotos ---------- */
+
+/* Solo se recorta lo que bajaría del fondo de la carpeta mientras las fotos suben (y > 745): ese corte queda siempre
+   detrás de la parte delantera, así que las fotos se ven enteras, sin bordes cortados. */
+.folder__photos {
+  position: absolute;
+  inset: 0;
+  /* Contexto propio: la foto elevada (z-index 10) queda delante de las otras fotos pero detrás de la parte
+     delantera, la nota y «Toca las imágenes», también sin el recorte */
+  isolation: isolate;
+  clip-path: inset(-100% -100% calc(var(--u) * 42) -100%);
+}
+
+.folder__inner[data-revealed] .folder__photos {
+  clip-path: none;
+}
+
+.folder__photo {
+  position: absolute;
+  left: calc(var(--u) * var(--fx));
+  top: calc(var(--u) * var(--fy));
+  width: calc(var(--u) * var(--bw));
+  height: calc(var(--u) * var(--bh));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Ninguna capa de la caja girada recibe toques: solo la foto (el botón) */
+  pointer-events: none;
+  /* Cerrada: dentro de la carpeta. Al abrirla (cuando la burbuja ya se escondió) salen una tras otra, enteras,
+     hasta su sitio del diseño */
+  transform: translateY(calc(var(--u) * 140)) scale(0.92);
+  opacity: 0;
+  transition:
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(0.35s + var(--i) * 0.08s),
+    opacity 0.3s ease-out calc(0.35s + var(--i) * 0.08s);
+}
+
+.folder__inner[data-state='open'] .folder__photo {
+  transform: none;
+  opacity: 1;
+}
+
+.folder__frame {
+  position: relative;
+  flex: none;
+  display: block;
+  width: calc(var(--u) * var(--iw));
+  height: calc(var(--u) * var(--ih));
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: calc(var(--u) * var(--bd, 3)) solid var(--cream);
+  background: none;
+  font: inherit;
+  transform: rotate(var(--r));
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s ease,
+    border-color 0.3s ease;
+}
+
+.folder__frame.is-soft {
+  border-color: rgba(255, 252, 249, 0.62);
+}
+
+.folder__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.folder__frame img.is-crop {
+  position: absolute;
+  max-width: none;
+  object-fit: fill;
+}
+
+/* Arrastre de la foto elevada (useDraggableObjects en Folder.jsx): translate se suma al giro y la elevación del
+   transform, sin transición, así sigue al puntero al instante. Solo la elevada bloquea el desplazamiento táctil. */
+.folder__frame {
+  translate: var(--dx, 0px) var(--dy, 0px);
+}
+
+.folder__photo.is-selected {
+  /* El hook de arrastre escribe su propio z-index en línea */
+  z-index: 10 !important;
+}
+
+.folder__photo.is-selected .folder__frame {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.folder__photo.is-selected .folder__frame.is-dragging {
+  cursor: grabbing;
+}
+
+/* Capa oscura de cada foto: aparece solo en las no seleccionadas mientras hay una seleccionada */
+.folder__veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 10, 10, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.folder__inner[data-selected] .folder__photo:not(.is-selected) .folder__veil {
+  opacity: 1;
+}
+
+/* El borde claro también se apaga (la capa queda por dentro del borde) */
+.folder__inner[data-selected] .folder__photo:not(.is-selected) .folder__frame {
+  border-color: #8a8381;
+}
+
+/* Seleccionada: pasa delante de las demás (z-index en Folder.jsx), sube fuera de la carpeta (LIFT = 40, ver los
+   tip de Folder.jsx) y conserva sus colores */
+.folder__photo.is-selected .folder__frame {
+  transform: translateY(calc(var(--u) * -40)) rotate(var(--r)) scale(1.06);
+  box-shadow: 0 calc(var(--u) * 18) calc(var(--u) * 40) rgba(0, 0, 0, 0.5);
+}
+
+@media (hover: hover) {
+  .folder__inner[data-state='open'] .folder__photo:not(.is-selected) .folder__frame:hover {
+    transform: translateY(calc(var(--u) * -6)) rotate(var(--r));
+  }
+}
+
+.folder__frame:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 4px;
+}
+
+/* ---------- Parte delantera ---------- */
+
+.folder__front {
+  position: absolute;
+  left: calc(var(--u) * 263);
+  top: calc(var(--u) * 370.38);
+  width: calc(var(--u) * 556.86);
+  height: calc(var(--u) * 388.62);
+  border-radius: calc(var(--u) * 42.65);
+  background: linear-gradient(180deg, #73d7ff 0%, #6bcbf3 100%);
+  box-shadow: 0 calc(var(--u) * -9.48) calc(var(--u) * 37.91) rgba(0, 132, 205, 0.5),
+    inset 0 calc(var(--u) * 3.55) calc(var(--u) * 3.55) rgba(255, 255, 255, 0.2),
+    inset 0 calc(var(--u) * -18.96) calc(var(--u) * 75.83) rgba(12, 112, 168, 0.3);
+}
+
+.folder__front::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--texture);
+  background-size: calc(var(--u) * 296.2) calc(var(--u) * 296.2);
+  mix-blend-mode: multiply;
+  opacity: 0.1;
+}
+
+.folder__strip {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: calc(var(--u) * 10.66);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 calc(var(--u) * 3.55) calc(var(--u) * 3.55) rgba(0, 132, 205, 0.1),
+    inset 0 calc(var(--u) * -3.55) calc(var(--u) * 3.55) rgba(0, 132, 205, 0.1);
+}
+
+.folder__strip--1 {
+  top: calc(var(--u) * 330.56);
+}
+
+.folder__strip--2 {
+  top: calc(var(--u) * 352.48);
+}
+
+/* Botón de la carpeta cerrada: cubre toda la carpeta */
+.folder__open {
+  position: absolute;
+  z-index: 20;
+  left: calc(var(--u) * 263);
+  top: calc(var(--u) * 291);
+  width: calc(var(--u) * 556.86);
+  height: calc(var(--u) * 468);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--u) * 42.65);
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.folder__open:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 6px;
+}
+
+/* ---------- «Toca las imágenes» ----------
+   Pequeña, sobre la esquina superior derecha de la parte delantera (borde derecho x 800, arriba y 392): no tapa las
+   fotos (quedan por encima de y 370) ni la nota (a la izquierda). Aparece cuando ya salieron las cuatro fotos. */
+.folder__tap {
+  position: absolute;
+  z-index: 5;
+  left: calc(var(--u) * 800);
+  top: calc(var(--u) * 392);
+  transform: translateX(-100%);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.5s ease 1.4s,
+    visibility 0s linear 1.4s;
+}
+
+.folder__inner[data-state='open'] .folder__tap {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Texto de ~15px en escritorio, nunca menos de 12 */
+.folder__tap .msg {
+  --m: max(calc(var(--u) * 0.4), 0.32px);
+}
+
+/* ---------- Nota con clip y sticker (Figma 183:1323, 183:2670) ----------
+   Cada pieza se ubica en el origen de su capa en Figma y gira alrededor de él (transform-origin 0 0).
+   Los SVG llevan 4 px de margen a la izquierda para la sombra: el giro se hace en ese punto.
+   Cerrada, la nota está más abajo y un poco girada, metida en la carpeta; al abrirla sube a su sitio. */
+
+.folder__note {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform-origin: calc(var(--u) * 390) calc(var(--u) * 550);
+  transform: translateY(calc(var(--u) * 30)) rotate(2deg);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+}
+
+.folder__inner[data-state='open'] .folder__note {
+  transform: none;
+}
+
+.folder__note > * {
+  position: absolute;
+  max-width: none;
+}
+
+.folder__note-paper {
+  left: calc(var(--u) * 300.82);
+  top: calc(var(--u) * 714.84);
+  width: calc(var(--u) * 291.742);
+  height: calc(var(--u) * 235.093);
+  transform-origin: calc(var(--u) * 4) 0;
+  transform: rotate(-102.08deg);
+}
+
+.folder__note-yellow {
+  left: calc(var(--u) * 250.54);
+  top: calc(var(--u) * 473.34);
+  width: calc(var(--u) * 316.79);
+  height: calc(var(--u) * 205.218);
+  transform-origin: calc(var(--u) * 4) 0;
+  transform: rotate(-3.71deg);
+}
+
+.folder__note-list {
+  left: calc(var(--u) * 298.15);
+  top: calc(var(--u) * 542.04);
+  width: calc(var(--u) * 229.21);
+  margin: 0;
+  padding: calc(var(--u) * 1.8) 0 0;
+  list-style: none;
+  transform-origin: 0 0;
+  transform: rotate(-3.96deg);
+}
+
+.folder__note-item {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brown);
+  font-family: var(--font-head);
+  font-weight: 200;
+  font-size: calc(var(--u) * 17.907);
+  line-height: calc(var(--u) * 23.876);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.folder__note-item b {
+  font-weight: 600;
+}
+
+.folder__note-item:hover,
+.folder__note-item.is-selected {
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, calc(var(--u) * 1.4));
+  text-underline-offset: calc(var(--u) * 3);
+}
+
+.folder__note-clip {
+  left: calc(var(--u) * 209.69);
+  top: calc(var(--u) * 529.39);
+  width: calc(var(--u) * 43.39);
+  height: calc(var(--u) * 135.36);
+  transform-origin: 0 0;
+  transform: rotate(-91.2deg);
+}
+
+.folder__sticker {
+  left: calc(var(--u) * 369.36);
+  top: calc(var(--u) * 429.7);
+  width: calc(var(--u) * 113);
+  height: calc(var(--u) * 102.8);
+  transform-origin: 0 0;
+  transform: rotate(-8.05deg);
+}
+
+/* Se pega una sola vez cuando la sección aparece (data-seen, Folder.jsx), como el sticker «Sobre mí» */
+.folder__sticker img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform-origin: 20% 85%;
+}
+
+.folder__inner[data-seen] .folder__sticker img {
+  opacity: 1;
+  animation: sticker-stick 1.1s cubic-bezier(0.25, 0.8, 0.3, 1) 0.3s both;
+}
+
+/* ---------- Detalle de la foto seleccionada (Figma 183:2691 + 183:2671) ----------
+   Un solo bloque, siempre en este orden: título, burbuja azul y explicación (con ícono de imagen). .folder-detail es
+   la esquina inferior del bloque; left/top y data-align los calcula place() en Folder.jsx. Todo el bloque comparte
+   una alineación: start (a la derecha de la foto o encima, en celular) o end (a la izquierda de la foto, alineado
+   hacia ella). Al cambiar de lado cambia todo junto. */
+
+.folder-detail {
+  position: absolute;
+  z-index: 30;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  /* Tamaño del texto del mensaje (16.6 en Figma); no baja de 14px para que se lea en pantallas pequeñas */
+  font-size: max(calc(var(--u) * 16.614), 14px);
+}
+
+.folder-detail:not([data-open]) {
+  visibility: hidden;
+}
+
+.folder-detail__box {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: max-content;
+  text-align: left;
+  transform-origin: 0.46em 100%;
+  animation: folder-detail-pop 0.45s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+
+/* Flotación sutil del bloque (translate, aparte de la animación de entrada) */
+.folder-detail__box > * {
+  animation: folder-detail-float 3.2s ease-in-out 0.45s infinite alternate;
+}
+
+@keyframes folder-detail-float {
+  to {
+    translate: 0 -0.3em;
+  }
+}
+
+/* Título y explicación con la misma sangría que el texto de la burbuja (0.578em = 9.6 del título en Figma ≈ 13 del
+   relleno de la burbuja), del lado de la alineación */
+.folder-detail__title {
+  margin: 0 0 0.286em;
+  padding-inline: 0.498em;
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.16em;
+  line-height: 1.39;
+  white-space: nowrap;
+}
+
+/* Explicación de la foto: debajo de la burbuja, más pequeña y en Extra Light, con un ícono de imagen del lado de
+   la alineación (a la izquierda, o a la derecha cuando el bloque va alineado a la derecha) */
+.folder-detail__caption {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45em;
+  max-width: 15.5em;
+  margin: 0.35em 0 0;
+  padding-inline: 0.741em;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: var(--font-text);
+  font-weight: 200;
+  font-size: 0.78em;
+  line-height: 1.3;
+  /* Líneas parejas: ninguna palabra queda sola al final (p. ej. «and AI tools») */
+  text-wrap: balance;
+}
+
+.folder-detail__icon {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  margin-top: 0.08em;
+  opacity: 0.9;
+}
+
+.folder-detail .msg {
+  font-size: inherit;
+  pointer-events: auto;
+}
+
+.folder-detail .msg__row {
+  margin-bottom: -0.5417em;
+}
+
+.folder-detail .msg--blue .msg__bubble {
+  /* Algo más ancho que en Figma (14.27em): en inglés «mind.» y «result.» no quedan solos en una línea */
+  max-width: 16em;
+  padding: 0.5417em 0.7825em;
+  border-radius: 1.204em;
+  font-family: var(--font-text);
+  font-weight: 200;
+  font-size: 1em;
+  line-height: 1.2;
+  /* Líneas parejas sin añadir líneas (pretty creaba una cuarta línea en «Attention to detail») */
+  text-wrap: balance;
+}
+
+/* Cola del diseño (Figma 183:2671 «Frame 2234») en lugar de la del componente */
+.folder-detail .msg__tail {
+  display: none;
+}
+
+.folder-detail .msg::after {
+  content: '';
+  display: block;
+  width: 1.6em;
+  height: 0.9333em;
+  background: url('../../assets/sections/what-i-bring/detail-tail.svg') no-repeat 0 0 / 100% 100%;
+}
+
+@keyframes folder-detail-pop {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em) scale(0.85);
+  }
+}
+
+/* Alineado a la derecha (el bloque está a la izquierda de la foto): todo el bloque hacia la foto, la cola volteada */
+.folder-detail[data-align='end'] .folder-detail__box {
+  align-items: flex-end;
+  text-align: right;
+  transform-origin: calc(100% - 0.46em) 100%;
+}
+
+.folder-detail[data-align='end'] .msg {
+  align-items: flex-end;
+}
+
+.folder-detail[data-align='end'] .msg::after {
+  transform: scaleX(-1);
+}
+
+.folder-detail[data-align='end'] .folder-detail__caption {
+  flex-direction: row-reverse;
+}
+
+/* Escritorio (≥1000px): explicación más ancha (~19em de texto, más el ícono y la sangría), así «Escucha y empatía»
+   queda en 2 líneas y «Curiosidad» en 4. En pantallas más estrechas no cabría al lado de las fotos. */
+@media (min-width: 1000px) {
+  .folder-detail__caption {
+    max-width: 22.2em;
+  }
+
+  /* «Escucha y empatía»: burbuja algo más ancha para que quede en 2 líneas («…pensando en las personas.») */
+  .folder-detail__box[data-id='listening'] .msg--blue .msg__bubble {
+    max-width: 17em;
+  }
+}
+
+/* Tablet estrecha: bloque un poco más angosto para que quepa al lado de las fotos, como en pantallas grandes */
+@media (min-width: 769px) and (max-width: 900px) {
+  .folder-detail .msg--blue .msg__bubble {
+    max-width: 11.5em;
+  }
+
+  .folder-detail__caption {
+    max-width: 14.5em;
+  }
+}
+
+/* ---------- Celular ----------
+   La escena se recorta a la parte con contenido, centrada en la carpeta (x 196–886; la carpeta va de 263 a 819),
+   para que las fotos se vean más grandes.
+   Cerrada: y 180–780 (la invitación y la carpeta). Abierta: y 90–780 más 170px fijos encima de las fotos para el
+   detalle de la seleccionada (en px: el texto no se encoge con la pantalla). La distancia entre el título y las
+   fotos es la misma con y sin foto seleccionada. */
+@media (max-width: 768px) {
+  .folder {
+    /* Ancho de la columna del celular (100vw menos el relleno de 20px a cada lado), así queda centrada */
+    --u: calc(min(100vw - 40px, 620px) / 690);
+    width: calc(var(--u) * 690);
+    height: calc(var(--u) * 600);
+    margin-inline: auto;
+  }
+
+  .folder__inner {
+    left: calc(var(--u) * -196);
+    top: calc(var(--u) * -180);
+    transition: top 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .folder:has([data-state='open']) {
+    height: calc(var(--u) * 690 + 170px);
+  }
+
+  .folder__inner[data-state='open'] {
+    top: calc(var(--u) * -90 + 170px);
+  }
+
+  /* La invitación no baja de ~15px de texto */
+  .folder__hint .msg {
+    --m: max(calc(var(--u) * 0.55), 0.4px);
+  }
+
+  .folder-detail {
+    font-size: 15px;
+  }
+
+  /* Bloque compacto en celular */
+  .folder-detail .msg--blue .msg__bubble {
+    max-width: min(15.5em, calc(100vw - 48px));
+  }
+
+  .folder-detail__caption {
+    max-width: min(19em, calc(100vw - 60px));
+  }
+
+  /* La nota sigue siendo legible (y tocable) aunque la escena sea pequeña */
+  .folder__note-item {
+    font-size: max(calc(var(--u) * 17.907), 10.5px);
+    line-height: max(calc(var(--u) * 23.876), 14px);
+  }
+}
+
+/* ---------- Reducir movimiento: sin subida, sin rebotes; solo fundidos cortos ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .folder,
+  .folder__inner {
+    transition: none;
+  }
+
+  .folder__hint {
+    animation: none;
+    transition:
+      opacity 0.2s ease,
+      visibility 0s linear 0.2s;
+  }
+
+  .folder__inner[data-state='open'] .folder__hint {
+    transform: translate(-50%, -100%);
+  }
+
+  .folder__photo {
+    transform: none;
+    transition: opacity 0.2s ease;
+  }
+
+  /* La foto seleccionada queda elevada igual, pero sin movimiento */
+  .folder__frame {
+    transition: border-color 0.2s ease;
+  }
+
+  .folder__inner[data-state='open'] .folder__photo:not(.is-selected) .folder__frame:hover {
+    transform: rotate(var(--r));
+  }
+
+  .folder__note {
+    transition: none;
+  }
+
+  .folder__sticker img,
+  .folder__inner[data-seen] .folder__sticker img {
+    opacity: 1;
+    animation: none;
+  }
+
+  .folder-detail__box,
+  .folder-detail__box > * {
+    animation: none;
+  }
+
+  .folder__tap {
+    transition:
+      opacity 0.2s ease,
+      visibility 0s;
+  }
+}
