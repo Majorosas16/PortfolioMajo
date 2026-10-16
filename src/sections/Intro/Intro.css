@@ -225,8 +225,12 @@
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
 }
 
-/* Objetos: escondidos dentro de la caja hasta que salen */
+/* Objetos: escondidos dentro de la caja hasta que salen.
+   --dx / --dy: desplazamiento al arrastrarlos (useDraggableObjects.js). Se suma a left/top
+   porque transform, translate y rotate ya los usan las animaciones de salida y flotación. */
 .objects--box .obj {
+  left: calc(var(--u) * var(--x) + var(--dx, 0px));
+  top: calc(var(--u) * var(--y) + var(--dy, 0px));
   z-index: 2;
   opacity: 0;
   transform: translate(var(--fx, 0px), var(--fy, 0px)) scale(0.2);
@@ -309,6 +313,22 @@
   pointer-events: none;
 }
 
+/* Con la caja abierta se pueden agarrar. touch-action solo en los objetos:
+   un gesto que empieza fuera de ellos sigue desplazando la página */
+.intro[data-state='open'] .objects--box .obj {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Mientras se arrastra deja de flotar para que siga el puntero sin vaivén */
+.intro .objects--box .obj.is-dragging {
+  cursor: grabbing;
+  animation-play-state: paused;
+}
+
 .obj.is-clickable {
   cursor: pointer;
 }
@@ -381,6 +401,11 @@
     top: calc(var(--s) * var(--my) / 100);
     width: calc(var(--s) * var(--mw) / 100);
     height: auto;
+  }
+
+  .intro .obj {
+    left: calc(var(--s) * var(--mx) / 100 + var(--dx, 0px));
+    top: calc(var(--s) * var(--my) / 100 + var(--dy, 0px));
   }
 
   .intro .intro__msg,
