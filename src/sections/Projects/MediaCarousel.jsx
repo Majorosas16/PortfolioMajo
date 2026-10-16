@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-// Fotos y videos de un proyecto (el recuadro del modal). Carrusel manual, con la apariencia del de «Sobre mí»
-// (PhotoStack): una barra por elemento muestra cuántos hay y cuál se ve. Solo avanza cuando la persona lo pide:
-// clic / Enter en la imagen, el botón «›» o una barra; nunca solo ni por tiempo. Los videos tienen sus controles
-// y solo se reproducen al darles play.
+// Fotos y videos de un proyecto, dentro de su marco tipo Polaroid (tarjeta de la lista y vista de detalle).
+// Carrusel manual: solo cambia con los botones ‹ › o tocando una barra; nunca solo ni por tiempo. Las barras de
+// arriba (como las de «Sobre mí») muestran cuántos elementos hay y cuál se ve. Los videos tienen sus controles y solo
+// se reproducen al darles play.
 // media: [{ type: 'image' | 'video', src, poster? }] (projects.js) · labels: projects.modal de translations.js
 export default function MediaCarousel({ media, name, labels }) {
   const [current, setCurrent] = useState(0);
@@ -32,9 +32,7 @@ export default function MediaCarousel({ media, name, labels }) {
       {item.type === 'video' ? (
         <video key={item.src} className="media__item" src={item.src} poster={item.poster} controls playsInline preload="metadata" />
       ) : (
-        <button type="button" className="media__item media__next-area" onClick={() => go(current + 1)} aria-label={`${labels.next} (${position})`}>
-          <img key={item.src} src={item.src} alt="" loading="lazy" decoding="async" draggable="false" />
-        </button>
+        <img key={item.src} className="media__item" src={item.src} alt="" loading="lazy" decoding="async" draggable="false" />
       )}
 
       {n > 1 && (
@@ -44,23 +42,31 @@ export default function MediaCarousel({ media, name, labels }) {
               <button
                 key={m.src}
                 type="button"
-                className={`media__bar${i === current ? ' is-current' : ''}${i < current ? ' is-done' : ''}`}
+                className={`media__bar${i === current ? ' is-current' : ''}`}
                 onClick={() => go(i)}
                 aria-label={fill(labels.goTo, { n: i + 1, total: n })}
                 aria-current={i === current ? 'true' : undefined}
               />
             ))}
           </div>
-          {item.type === 'video' && (
-            <button type="button" className="media__arrow" onClick={() => go(current + 1)} aria-label={labels.next}>
-              ›
-            </button>
-          )}
+          <button type="button" className="media__arrow media__arrow--prev" onClick={() => go(current - 1)} aria-label={labels.prev}>
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <button type="button" className="media__arrow media__arrow--next" onClick={() => go(current + 1)} aria-label={labels.next}>
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <span className="media__counter" aria-hidden="true">
+            {current + 1}/{n}
+          </span>
         </>
       )}
 
       <p className="visually-hidden" aria-live="polite">
-        {position}
+        {n > 1 ? position : ''}
       </p>
     </div>
   );

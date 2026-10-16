@@ -10,10 +10,12 @@ const img = byName(import.meta.glob('../../assets/sections/projects/*', { eager:
 
 const FOCUSABLE = 'a[href], button:not([disabled]), video[controls], [tabindex]:not([tabindex="-1"])';
 
-// Modal de una categoría (Figma 157:2338): cada objeto de la sección abre el suyo, solo con sus proyectos. Arriba,
-// un desplegable «Filtros» con las etiquetas que tienen esos proyectos (App móvil, UI Design, Cliente real…): al
-// elegir varias quedan los proyectos que tienen todas. Los filtros solo afectan a este modal y empiezan vacíos cada
-// vez que se abre. Debajo, la lista de proyectos, que se desplaza dentro de la ventana.
+// Modal de una categoría (Figma 157:2338): cada objeto de la sección abre el suyo, solo con sus proyectos.
+// Lista: arriba, un desplegable «Filtros» con las etiquetas que tienen esos proyectos (App móvil, UI Design, Cliente
+// real…; al elegir varias quedan los proyectos que tienen todas); debajo, una tarjeta tipo Polaroid por proyecto con
+// sus fotos/videos (carrusel manual), nombre y etiquetas. Al tocar una tarjeta se ve el detalle de ese proyecto
+// (descripción, aporte, herramientas, medios y Behance) dentro del mismo modal, con un botón para volver a la lista.
+// Los filtros solo afectan a este modal y empiezan vacíos cada vez que se abre; al volver del detalle se conservan.
 // category: id del objeto (projects.js) · onClose: cerrar (Escape, el botón rojo de la ventana o el fondo).
 // Mientras está abierto, la página no se desplaza ni recibe el foco.
 export default function ProjectsModal({ category, onClose }) {
@@ -40,8 +42,27 @@ export default function ProjectsModal({ category, onClose }) {
         ? m.countOne
         : m.count.replace('{n}', all.length)
       : m.countFiltered.replace('{n}', list.length).replace('{total}', all.length);
-  const panelOpenRef = useRef(panelOpen);
-  panelOpenRef.current = panelOpen;
+  // Proyecto abierto en detalle (id) o null = lista. Al volver, la lista recupera su posición y el foco su tarjeta.
+  const [detail, setDetail] = useState(null);
+  const listScroll = useRef(0);
+  const openDetail = (id) => {
+    listScroll.current = listRef.current?.scrollTop ?? 0;
+    setPanelOpen(false);
+    setDetail(id);
+  };
+  const backToList = () => {
+    const id = detail;
+    setDetail(null);
+    requestAnimationFrame(() => {
+      if (listRef.current) listRef.current.scrollTop = listScroll.current;
+      windowRef.current?.querySelector(`[data-open-project="${id}"]`)?.focus({ preventScroll: true });
+    });
+  };
+  const nameOf = (proj) => (lang === 'en' && proj.nameEn ? proj.nameEn : proj.name);
+  const tagText = (proj) => proj.tags.map((tag) => p.tags[tag]).join(' · ');
+
+  const stateRef = useRef({});
+  stateRef.current = { panelOpen, detail, backToList };
 
   // Página inactiva y sin scroll (conserva la posición, como el menú del celular en Header.jsx); foco dentro
   useLayoutEffect(() => {
@@ -65,8 +86,10 @@ export default function ProjectsModal({ category, onClose }) {
     const onKey = (e) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        // Primero cierra el panel de filtros; si ya está cerrado, el modal
-        if (panelOpenRef.current) setPanelOpen(false);
+        // Primero cierra el panel de filtros, luego vuelve del detalle a la lista y por último cierra el modal
+        const st = stateRef.current;
+        if (st.panelOpen) setPanelOpen(false);
+        else if (st.detail) st.backToList();
         else onClose();
         return;
       }
@@ -113,104 +136,167 @@ export default function ProjectsModal({ category, onClose }) {
           </h2>
         </header>
 
-        {/* Filtros por etiqueta, en un desplegable */}
-        <div className="pmodal__tools">
-          <div className="pmodal__toolbar">
-            <button
-              type="button"
-              className={`pmodal__filters-btn${panelOpen ? ' is-open' : ''}`}
-              aria-expanded={panelOpen}
-              aria-controls={`pmodal-filters-${category}`}
-              onClick={() => setPanelOpen((v) => !v)}
-            >
-              <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                <path d="M3 4.5h14l-5.5 6.4v4.6l-3 1.5v-6.1z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-              </svg>
-              <span>{m.filtersButton}</span>
-              {active.length > 0 && <span className="pmodal__filters-count">{active.length}</span>}
-            </button>
-            <p className="pmodal__count" aria-live="polite">
-              {count}
-            </p>
-            {active.length > 0 && (
-              <button type="button" className="pmodal__clear" onClick={() => setActive([])}>
-                {m.clear}
-              </button>
-            )}
-          </div>
-
-          <div
-            id={`pmodal-filters-${category}`}
-            className="pmodal__panel"
-            role="group"
-            aria-label={m.filtersLabel}
-            hidden={!panelOpen}
-          >
-            {tags.map((tag) => {
-              const on = active.includes(tag);
-              // Cuántos proyectos quedarían con esta etiqueta añadida a las elegidas
-              const n = all.filter((proj) => matches(proj, on ? active : [...active, tag])).length;
-              return (
+        {detail ? (
+          <ProjectDetail
+            proj={all.find((x) => x.id === detail)}
+            name={nameOf(all.find((x) => x.id === detail))}
+            tags={tagText(all.find((x) => x.id === detail))}
+            item={p.items[detail]}
+            m={m}
+            backLabel={m.back.replace('{category}', title)}
+            onBack={backToList}
+            behanceIcon={img['icon-behance']}
+          />
+        ) : (
+          <>
+            {/* Filtros por etiqueta, en un desplegable */}
+            <div className="pmodal__tools">
+              <div className="pmodal__toolbar">
                 <button
-                  key={tag}
                   type="button"
-                  className={`pmodal__tag${on ? ' is-active' : ''}`}
-                  style={{ '--c': tagColors[tag] }}
-                  aria-pressed={on}
-                  disabled={!on && n === 0}
-                  onClick={() => toggleTag(tag)}
+                  className={`pmodal__filters-btn${panelOpen ? ' is-open' : ''}`}
+                  aria-expanded={panelOpen}
+                  aria-controls={`pmodal-filters-${category}`}
+                  onClick={() => setPanelOpen((v) => !v)}
                 >
-                  {p.tags[tag]}
-                  <span className="pmodal__tag-n">{n}</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                    <path d="M3 4.5h14l-5.5 6.4v4.6l-3 1.5v-6.1z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                  </svg>
+                  <span>{m.filtersButton}</span>
+                  {active.length > 0 && <span className="pmodal__filters-count">{active.length}</span>}
                 </button>
-              );
-            })}
-          </div>
-        </div>
+                <p className="pmodal__count" aria-live="polite">
+                  {count}
+                </p>
+                {active.length > 0 && (
+                  <button type="button" className="pmodal__clear" onClick={() => setActive([])}>
+                    {m.clear}
+                  </button>
+                )}
+              </div>
 
-        <div ref={listRef} className="pmodal__list">
-          {list.length === 0 && (
-            <div className="pmodal__empty">
-              <p>{m.noResults}</p>
-              <button type="button" className="pmodal__clear" onClick={() => setActive([])}>
-                {m.clear}
-              </button>
+              <div
+                id={`pmodal-filters-${category}`}
+                className="pmodal__panel"
+                role="group"
+                aria-label={m.filtersLabel}
+                hidden={!panelOpen}
+              >
+                {tags.map((tag) => {
+                  const on = active.includes(tag);
+                  // Cuántos proyectos quedarían con esta etiqueta añadida a las elegidas
+                  const n = all.filter((proj) => matches(proj, on ? active : [...active, tag])).length;
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      className={`pmodal__tag${on ? ' is-active' : ''}`}
+                      style={{ '--c': tagColors[tag] }}
+                      aria-pressed={on}
+                      disabled={!on && n === 0}
+                      onClick={() => toggleTag(tag)}
+                    >
+                      {p.tags[tag]}
+                      <span className="pmodal__tag-n">{n}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          )}
-          {list.map((proj) => {
-            const item = p.items[proj.id];
-            const name = lang === 'en' && proj.nameEn ? proj.nameEn : proj.name;
-            return (
-              <article key={proj.id} className="project" aria-labelledby={`project-${proj.id}`}>
-                <MediaCarousel media={proj.media} name={name} labels={m} />
-                <div className="project__body">
-                  <h3 id={`project-${proj.id}`} className="project__name">
-                    {name}
-                  </h3>
-                  <p className="project__tags">
-                    <span className="visually-hidden">{m.tagsLabel}: </span>
-                    {proj.tags.map((tag) => p.tags[tag]).join(' · ')}
-                  </p>
-                  <p className="project__text">{item.description}</p>
-                  <p className="project__text">
-                    <strong>{m.contribution}</strong> {item.contribution}
-                  </p>
-                  <p className="project__text">
-                    <strong>{m.tools}</strong> {proj.tools.join(', ')}.
-                  </p>
-                  {proj.behance && (
-                    <a className="project__behance" href={proj.behance} target="_blank" rel="noreferrer">
-                      <img src={img['icon-behance']} alt="" />
-                      <span>{m.behance}</span>
-                    </a>
-                  )}
+
+            <div ref={listRef} className="pmodal__list">
+              {list.length === 0 && (
+                <div className="pmodal__empty">
+                  <p>{m.noResults}</p>
+                  <button type="button" className="pmodal__clear" onClick={() => setActive([])}>
+                    {m.clear}
+                  </button>
                 </div>
-              </article>
-            );
-          })}
-        </div>
+              )}
+              {/* Tarjetas tipo Polaroid: fotos (carrusel), nombre y etiquetas. Toda la tarjeta abre el detalle (el
+                  botón del nombre la cubre); el carrusel queda por encima y sus botones no la abren. */}
+              <ul className="pcards">
+                {list.map((proj, i) => {
+                  const name = nameOf(proj);
+                  return (
+                    <li key={proj.id} className="pcard" style={{ '--tilt': `${[-1.6, 1.2, -0.6, 1.8, -1.1, 0.7][i % 6]}deg` }}>
+                      <div className="polaroid">
+                        <MediaCarousel media={proj.media} name={name} labels={m} />
+                        <div className="polaroid__caption">
+                          <h3 className="pcard__name">
+                            <button
+                              type="button"
+                              className="pcard__open"
+                              data-open-project={proj.id}
+                              onClick={() => openDetail(proj.id)}
+                              aria-label={m.open.replace('{project}', name)}
+                            >
+                              {name}
+                            </button>
+                          </h3>
+                          <p className="pcard__tags">
+                            <span className="visually-hidden">{m.tagsLabel}: </span>
+                            {tagText(proj)}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </>
+        )}
       </div>
     </div>,
     document.body
+  );
+}
+
+// Detalle de un proyecto dentro del modal de su categoría: botón para volver a la lista, sus fotos/videos (Polaroid
+// grande con carrusel) y su información completa.
+function ProjectDetail({ proj, name, tags, item, m, backLabel, onBack, behanceIcon }) {
+  const backRef = useRef(null);
+  useEffect(() => {
+    backRef.current?.focus({ preventScroll: true });
+  }, []);
+  return (
+    <div className="pdetail">
+      <div className="pdetail__top">
+        <button ref={backRef} type="button" className="pdetail__back" onClick={onBack}>
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span>{backLabel}</span>
+        </button>
+      </div>
+      <article className="project" aria-labelledby={`project-${proj.id}`}>
+        <div className="polaroid polaroid--detail">
+          <MediaCarousel media={proj.media} name={name} labels={m} />
+        </div>
+        <div className="project__body">
+          <h3 id={`project-${proj.id}`} className="project__name">
+            {name}
+          </h3>
+          <p className="project__tags">
+            <span className="visually-hidden">{m.tagsLabel}: </span>
+            {tags}
+          </p>
+          <p className="project__text">{item.description}</p>
+          <p className="project__text">
+            <strong>{m.contribution}</strong> {item.contribution}
+          </p>
+          <p className="project__text">
+            <strong>{m.tools}</strong> {proj.tools.join(', ')}.
+          </p>
+          {proj.behance && (
+            <a className="project__behance" href={proj.behance} target="_blank" rel="noreferrer">
+              <img src={behanceIcon} alt="" />
+              <span>{m.behance}</span>
+            </a>
+          )}
+        </div>
+      </article>
+    </div>
   );
 }
