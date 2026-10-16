@@ -32,33 +32,47 @@ const PHOTO_SIZES = '(max-width: 768px) min(calc((100vw - 40px) * 0.78), 330px),
 const TRIM = 1040;
 
 // Ajustes sobre las coordenadas de Figma:
-// LEFT_DY / BIO_DY bajan el bloque de la izquierda (sticker → «de Cali») y la bio para que su centro
-// coincida con el de la foto (y = 1582). COLS_DY separa «Mi enfoque» / «Mi toolkit» del final de la sección.
-const LEFT_DY = 104;
-const BIO_DY = 67;
+// - Columnas: el texto de la izquierda termina y la bio empieza a la misma distancia de la foto (95).
+// - LEFT_DY / BIO_DY centran en la foto (y = 1582) el texto de la izquierda («Hola! soy» → «de Cali», el
+//   sticker se mueve con él pero no cuenta para el centrado) y la bio, así quedan alineados entre sí.
+// - COLS_DY separa «Mi enfoque» / «Mi toolkit» del final de la sección.
+const LEFT_DY = -5;
+const BIO_DY = 30;
 const COLS_DY = 48;
 
 // Tiempo que se ve el mensaje del sticker o del perrito al tocarlos
 const BUBBLE_MS = 2600;
+// Duración del desvanecimiento al ocultarse (About.css: .about__bubble .msg)
+const BUBBLE_FADE_MS = 350;
 
 export default function About() {
   const sectionRef = useRef(null);
   const { lang, t } = useLanguage();
   const a = t.about;
 
-  // Mensaje del sticker o del perrito (Figma 178:624 / 178:605): aparece al tocarlos y se oculta solo.
-  // n cambia en cada toque para repetir la animación aunque se toque el mismo.
-  const [bubble, setBubble] = useState({ id: null, n: 0 });
+  // Mensaje del sticker o del perrito (Figma 178:624 / 178:605): aparece al tocarlos y se desvanece solo.
+  // pop: entra con animación solo si estaba oculto; si se toca mientras se ve o se desvanece, solo se
+  // reinicia el temporizador y recupera la opacidad (sin parpadeo).
+  const [bubble, setBubble] = useState({ id: null, pop: false, hidden: null, hiddenAt: 0 });
   const bubbleTimer = useRef(null);
   const showBubble = (id) => {
-    setBubble((b) => ({ id, n: b.n + 1 }));
+    setBubble((b) => {
+      const visible = b.id === id || (b.hidden === id && performance.now() - b.hiddenAt < BUBBLE_FADE_MS);
+      return { id, pop: visible ? b.pop && b.id === id : true, hidden: null, hiddenAt: 0 };
+    });
     clearTimeout(bubbleTimer.current);
-    bubbleTimer.current = setTimeout(() => setBubble((b) => ({ ...b, id: null })), BUBBLE_MS);
+    bubbleTimer.current = setTimeout(
+      () => setBubble((b) => ({ id: null, pop: false, hidden: b.id, hiddenAt: performance.now() })),
+      BUBBLE_MS
+    );
   };
   useEffect(() => () => clearTimeout(bubbleTimer.current), []);
   const bubbleFor = (id, variant, emoji, text) => (
-    <div className={`about__bubble about__bubble--${id}${bubble.id === id ? ' is-on' : ''}`} aria-hidden="true">
-      <Message key={bubble.id === id ? bubble.n : 'off'} variant={variant} emoji={emoji} text={text} className="msg--small" />
+    <div
+      className={`about__bubble about__bubble--${id}${bubble.id === id ? ' is-on' : ''}${bubble.id === id && bubble.pop ? ' is-pop' : ''}`}
+      aria-hidden="true"
+    >
+      <Message variant={variant} emoji={emoji} text={text} className="msg--small" />
     </div>
   );
 
@@ -88,24 +102,24 @@ export default function About() {
         <div className="about__canvas" style={{ '--trim': TRIM, '--extra': COLS_DY }}>
           {/* Presentación */}
           <div className="grp grp--presentation">
-            <P x={173} y={1212 + LEFT_DY} w={257} r={-6.44} className="about__sticker">
+            <P x={140} y={1212 + LEFT_DY} w={257} r={-6.44} className="about__sticker">
               <button type="button" className="about__tap" onClick={() => showBubble('sticker')}>
                 <img loading="lazy" decoding="async" src={localizedSrc(img, 'sticker-about-me', lang)} alt={a.stickerAlt} />
               </button>
               {bubbleFor('sticker', 'green', '🥭', a.stickerMsg)}
             </P>
-            <P x={370.4} y={1461.19 + LEFT_DY} fs={85.35} r={-2.6} cx cy className="hand about__hello">
+            <P x={337.4} y={1461.19 + LEFT_DY} fs={85.35} r={-2.6} cx cy className="hand about__hello">
               <h2>{a.hello}</h2>
             </P>
-            <P x={210.61} y={1484.35 + LEFT_DY} w={328.68} className="about__majo">
+            <P x={177.61} y={1484.35 + LEFT_DY} w={328.68} className="about__majo">
               <img loading="lazy" decoding="async" src={img['majo-letters']} alt="MAJO" />
             </P>
-            <P x={131.9} y={1596.16 + LEFT_DY} w={384} fs={34.81} className="about__role">
+            <P x={98.9} y={1596.16 + LEFT_DY} w={384} fs={34.81} className="about__role">
               <p>
                 <Rich text={a.role} />
               </p>
             </P>
-            <P x={314.8} y={1710.7 + LEFT_DY} r={-0.53} className="about__city">
+            <P x={281.8} y={1710.7 + LEFT_DY} r={-0.53} className="about__city">
               <Pill size="lg">{a.from}</Pill>
             </P>
           </div>
@@ -125,7 +139,7 @@ export default function About() {
             </P>
           </div>
 
-          <P x={1005} y={1420 + BIO_DY} w={420} fs={32} className="about__bio">
+          <P x={1027} y={1420 + BIO_DY} w={400} fs={32} className="about__bio">
             <p>
               <Rich text={a.bio} />
             </p>
