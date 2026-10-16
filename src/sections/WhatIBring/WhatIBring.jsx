@@ -22,7 +22,7 @@ const tags = [
 // Cerrada la carpeta queda cerca del título (con la invitación encima); al abrirla todo baja un poco para dar sitio
 // a las fotos. El cambio se anima en WhatIBring.css.
 // Abierta deja sitio para la foto elevada y su detalle sin tapar el título.
-const DY = { closed: -180, open: 20 };
+const DY = { closed: -330, open: -130 };
 
 // Frame 3 de Figma — "WEB" 1512 × 1792 (fondo oscuro)
 export default function WhatIBring() {
@@ -39,10 +39,11 @@ export default function WhatIBring() {
     >
       <div className="stage">
         <div className="grp grp--title">
-          <P x={755.71} y={308.2} fs={109.02} r={2.73} cx cy className="hand what-i-bring__lead">
+          {/* Título más pequeño que en Figma (×0.73) y más cerca del header */}
+          <P x={755.71} y={215} fs={80} r={2.73} cx cy className="hand what-i-bring__lead">
             <span>{t.whatIBring.lead}</span>
           </P>
-          <P x={415} y={357} w={683} className="what-i-bring__title">
+          <P x={506.5} y={247} w={500} className="what-i-bring__title">
             <h2>
               <img loading="lazy" decoding="async" src={localizedSrc(img, 'title-what-i-bring', lang)} alt={t.whatIBring.titleAlt} />
             </h2>

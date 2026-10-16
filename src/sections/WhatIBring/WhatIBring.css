@@ -86,13 +86,17 @@
 }
 
 @media (max-width: 768px) {
+  .section.what-i-bring .stage {
+    padding-top: 40px;
+  }
+
   .what-i-bring__lead {
-    font-size: 72px;
-    margin-bottom: -30px;
+    font-size: 54px;
+    margin-bottom: -22px;
   }
 
   .what-i-bring__title {
-    width: min(94%, 460px);
+    width: min(70%, 340px);
   }
 
   .tags {
