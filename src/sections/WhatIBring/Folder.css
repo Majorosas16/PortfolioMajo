@@ -481,7 +481,8 @@
   font-weight: 200;
   font-size: 0.78em;
   line-height: 1.3;
-  text-wrap: pretty;
+  /* Líneas parejas: ninguna palabra queda sola al final (p. ej. «and AI tools») */
+  text-wrap: balance;
 }
 
 .folder-detail__icon {
@@ -502,14 +503,16 @@
 }
 
 .folder-detail .msg--blue .msg__bubble {
-  max-width: 14.27em;
+  /* Algo más ancho que en Figma (14.27em): en inglés «mind.» y «result.» no quedan solos en una línea */
+  max-width: 16em;
   padding: 0.5417em 0.7825em;
   border-radius: 1.204em;
   font-family: var(--font-text);
   font-weight: 200;
   font-size: 1em;
   line-height: 1.2;
-  text-wrap: pretty;
+  /* Líneas parejas sin añadir líneas (pretty creaba una cuarta línea en «Attention to detail») */
+  text-wrap: balance;
 }
 
 /* Cola del diseño (Figma 183:2671 «Frame 2234») en lugar de la del componente */
@@ -571,29 +574,32 @@
 }
 
 /* ---------- Celular ----------
-   La escena se recorta a la parte con contenido (x 176–866) para que las fotos se vean más grandes.
-   Cerrada: y 180–780 (la invitación y la carpeta, sin hueco arriba). Abierta: y −220–780, la carpeta baja
-   para dejar sitio a las fotos y al detalle de la seleccionada. */
+   La escena se recorta a la parte con contenido, centrada en la carpeta (x 196–886; la carpeta va de 263 a 819),
+   para que las fotos se vean más grandes.
+   Cerrada: y 180–780 (la invitación y la carpeta). Abierta: y 90–780 más 170px fijos encima de las fotos para el
+   detalle de la seleccionada (en px: el texto no se encoge con la pantalla). La distancia entre el título y las
+   fotos es la misma con y sin foto seleccionada. */
 @media (max-width: 768px) {
   .folder {
-    --u: calc(min(100vw - 32px, 620px) / 690);
+    /* Ancho de la columna del celular (100vw menos el relleno de 20px a cada lado), así queda centrada */
+    --u: calc(min(100vw - 40px, 620px) / 690);
     width: calc(var(--u) * 690);
     height: calc(var(--u) * 600);
     margin-inline: auto;
   }
 
   .folder__inner {
-    left: calc(var(--u) * -176);
+    left: calc(var(--u) * -196);
     top: calc(var(--u) * -180);
     transition: top 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .folder:has([data-state='open']) {
-    height: calc(var(--u) * 1000);
+    height: calc(var(--u) * 690 + 170px);
   }
 
   .folder__inner[data-state='open'] {
-    top: calc(var(--u) * 220);
+    top: calc(var(--u) * -90 + 170px);
   }
 
   /* La invitación no baja de ~15px de texto */
@@ -605,13 +611,13 @@
     font-size: 15px;
   }
 
-  /* Más ancho en celular (menos líneas, menos alto): cabe entre el título y las fotos */
+  /* Bloque compacto en celular */
   .folder-detail .msg--blue .msg__bubble {
-    max-width: min(19em, calc(100vw - 48px));
+    max-width: min(15.5em, calc(100vw - 48px));
   }
 
   .folder-detail__caption {
-    max-width: min(21em, calc(100vw - 60px));
+    max-width: min(19em, calc(100vw - 60px));
   }
 
   /* La nota sigue siendo legible (y tocable) aunque la escena sea pequeña */

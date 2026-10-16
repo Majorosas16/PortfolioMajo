@@ -230,13 +230,15 @@ export const translations = {
         listening: {
           title: 'Listening & empathy',
           text: 'I understand needs and design with people in mind.',
-          caption: 'I moderated validation sessions with a mid-sized company.',
+          // Espacios duros: «with a mid-sized» no se separa (así «with a» no queda al final de la primera línea)
+          caption: 'I moderated validation sessions with\u00a0a\u00a0mid\u2011sized company.',
           alt: 'Team video call on a laptop',
         },
         curiosity: {
           title: 'Curiosity',
           text: 'I research and explore different possibilities before choosing a solution.',
-          caption: 'I worked on a project with a cross-functional team and learned to use programming, project management and AI tools.',
+          // cross\u2011functional: guion que no corta la palabra
+          caption: 'I worked on a project with a cross\u2011functional team and learned to use programming, project management and AI tools.',
           alt: 'ShotPlay interface projected in a classroom',
         },
         teamwork: {

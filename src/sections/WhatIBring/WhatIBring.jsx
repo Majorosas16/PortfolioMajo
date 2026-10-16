@@ -21,7 +21,7 @@ const tags = [
 // Cerrada la carpeta queda cerca del título (con la invitación encima); al abrirla todo baja un poco para dar sitio
 // a las fotos. El cambio se anima en WhatIBring.css.
 // Abierta deja sitio para la foto elevada y su detalle sin tapar el título.
-const DY = { closed: -330, open: -130 };
+const DY = { closed: -330, open: -185 };
 
 // Frame 3 de Figma — "WEB" 1512 × 1792 (fondo oscuro)
 export default function WhatIBring() {
