@@ -12,29 +12,29 @@ import { useLanguage } from '../../i18n/LanguageContext.jsx';
 
 // En el orden de la nota (01–04), que es también el orden del teclado. z = orden de capas en Figma (mayor = delante).
 // x, y, bw, bh: caja de la foto ya girada · w, h: la foto sin girar · r: giro (CSS) · bd: grosor del borde
-// tip: punta de la cola del detalle, sobre el borde de arriba de la foto ya elevada (LIFT en Folder.css: 48)
+// tip: punta de la cola del detalle, sobre el borde de arriba de la foto ya elevada (LIFT en Folder.css: 40)
 const photos = [
   {
     id: 'listening', src: 'project-4', z: 4,
     x: 204.83, y: 168.7, bw: 270.07, bh: 328.1, w: 208.74, h: 287.29, r: -13.51,
     crop: { w: 116.49, h: 150.75, left: 0, top: -50.76 },
-    tip: { x: 228, y: 160 },
+    tip: { x: 228, y: 168 },
   },
   {
     id: 'curiosity', src: 'project-3', z: 3,
     x: 280, y: 138, bw: 253.04, bh: 283.15, w: 226.93, h: 261.01, r: -5.96, soft: true,
     crop: { w: 145, h: 224.15, left: -16.29, top: -91.68 },
-    tip: { x: 300, y: 102 },
+    tip: { x: 300, y: 110 },
   },
   {
     id: 'teamwork', src: 'project-2', z: 2,
     x: 475, y: 153, bw: 207.44, bh: 351.92, w: 193.72, h: 344.39, r: 2.31,
-    tip: { x: 506, y: 97 },
+    tip: { x: 506, y: 105 },
   },
   {
     id: 'detail', src: 'project-1', z: 1,
     x: 545, y: 138, bw: 321.13, bh: 597.58, w: 194, h: 568, r: 13.49,
-    tip: { x: 692, y: 83 },
+    tip: { x: 692, y: 91 },
   },
 ];
 
