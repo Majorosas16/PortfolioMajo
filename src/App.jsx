@@ -1,39 +1,40 @@
 import { useEffect, useRef } from 'react';
 import Header from './components/Header.jsx';
-import Intro from './sections/Intro.jsx';
-import SobreMi from './sections/SobreMi.jsx';
-import Aporto from './sections/Aporto.jsx';
-import Proyectos from './sections/Proyectos.jsx';
-import papel from './assets/shared/fondo-papel-continuo.jpg';
+import { LanguageProvider } from './i18n/LanguageContext.jsx';
+import Intro from './sections/Intro/Intro.jsx';
+import About from './sections/About/About.jsx';
+import WhatIBring from './sections/WhatIBring/WhatIBring.jsx';
+import Projects from './sections/Projects/Projects.jsx';
+import paper from './assets/shared/paper-background-seamless.jpg';
 
 export default function App() {
   const mainRef = useRef(null);
 
   // El papel del fondo es una sola hoja para toda la página: cada sección muestra el trozo
-  // que le corresponde según su posición (--fondo-y), así no se ve un corte entre secciones.
+  // que le corresponde según su posición (--bg-y), así no se ve un corte entre secciones.
   useEffect(() => {
     const main = mainRef.current;
-    const alinear = () => {
-      main.querySelectorAll('.section').forEach((sec) => {
-        sec.style.setProperty('--fondo-y', `${sec.offsetTop}px`);
+    const alignBackground = () => {
+      main.querySelectorAll('.section').forEach((section) => {
+        section.style.setProperty('--bg-y', `${section.offsetTop}px`);
       });
     };
-    alinear();
-    const ro = new ResizeObserver(alinear);
+    alignBackground();
+    const ro = new ResizeObserver(alignBackground);
     ro.observe(main);
-    document.fonts?.ready.then(alinear);
+    document.fonts?.ready.then(alignBackground);
     return () => ro.disconnect();
   }, []);
 
   return (
-    <>
+    <LanguageProvider>
       <Header />
-      <main ref={mainRef} style={{ '--papel': `url(${papel})` }}>
+      <main ref={mainRef} style={{ '--paper': `url(${paper})` }}>
         <Intro />
-        <SobreMi />
-        <Aporto />
-        <Proyectos />
+        <About />
+        <WhatIBring />
+        <Projects />
       </main>
-    </>
+    </LanguageProvider>
   );
 }
