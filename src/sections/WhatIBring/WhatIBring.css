@@ -20,19 +20,20 @@
     height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* «Toca las imágenes»: pequeña y discreta, solo cuando las cuatro fotos ya salieron */
-.what-i-bring__tap {
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    top 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.5s ease 1.4s,
-    visibility 0s linear 1.4s;
+/* Título «Aporto» / «Bring»: flotación suave (translate/rotate, aparte del transform del contenedor .abs) */
+.what-i-bring__title img {
+  animation: wib-title-float 5.5s ease-in-out infinite alternate;
 }
 
-.what-i-bring[data-folder='open'] .what-i-bring__tap {
-  opacity: 1;
-  visibility: visible;
+@keyframes wib-title-float {
+  from {
+    translate: 0 0;
+    rotate: -0.6deg;
+  }
+  to {
+    translate: 0 calc(var(--u) * -6);
+    rotate: 0.6deg;
+  }
 }
 
 .tags {
@@ -107,15 +108,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .what-i-bring__title img {
+    animation: none;
+  }
+
   .what-i-bring .stage,
   .what-i-bring .folder,
   .what-i-bring .tags {
     transition: none;
-  }
-
-  .what-i-bring__tap {
-    transition:
-      opacity 0.2s ease,
-      visibility 0s;
   }
 }
