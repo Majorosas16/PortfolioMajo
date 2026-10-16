@@ -24,25 +24,36 @@ npm run dev      # abre la web en http://localhost:5173
 
 ### Sobre las imágenes (importante)
 
-Las imágenes viven en `src/assets/`, una carpeta por sección, y se importan desde el código (Vite las incluye en el build con un nombre versionado):
+Hay dos carpetas de imágenes, con la misma estructura (una carpeta por sección y `shared/` para lo que usan varias):
 
 ```
-src/assets/
-  images.js               helper byName() para usar import.meta.glob
-  shared/                 lo que usan varias secciones: burbujas de chat y el papel del fondo
-  sections/intro/         caja (4 estados) y los 5 objetos
-  sections/about/         sticker, MAJO, foto, nota, perro, reacciones, cursores
-  sections/what-i-bring/  título, carpeta, fotos de proyectos, etiquetas
-  sections/projects/      foto, sticker, corona, objetos, foto de contacto, íconos de redes
+design-originals/          ORIGINALES en alta resolución (PNG exportados de Figma). No se publican.
+src/assets/                lo que usa la web: versiones optimizadas (WebP) + los SVG
+  images.js                helper byName(): img['box-closed'] (nombre sin extensión)
+  shared/                  burbujas de chat y el papel del fondo
+  sections/intro/          caja (4 estados) y los 5 objetos
+  sections/about/          sticker, MAJO, foto, nota, perro, reacciones, cursores
+  sections/what-i-bring/   título, carpeta, fotos de proyectos, etiquetas
+  sections/projects/       foto, sticker, corona, objetos, foto de contacto, íconos de redes
 ```
 
-Los nombres de archivos y carpetas están en inglés. Para usar una imagen en una sección: `img['box-closed.png']` (cada sección define `img` con su carpeta). Si añades una imagen nueva, ponla en la carpeta de su sección (o en `shared/` si la usan varias); no la dupliques.
+**Para añadir o cambiar una imagen:**
 
-`npm run assets` descarga las imágenes con enlaces temporales de Figma (**vencen alrededor del 22 de octubre de 2026**) a la ruta indicada en `scripts/assets.json`; si el archivo ya existe, no lo toca.
+1. Guarda el PNG en alta resolución en `design-originals/`, en la carpeta de su sección, por ejemplo `design-originals/sections/intro/keys.png`.
+2. Si es nueva, añade su ancho en `scripts/image-sizes.json`: 6 × el ancho máximo al que se ve en la web, sin superar el original.
+3. Ejecuta `npm run images`. Se genera la versión para la web en `src/assets/`. En el código se usa sin extensión: `img['keys']`.
 
-Las imágenes de la caja (`box-closed`, `box-opening-1`, `box-opening-2`, `box-open`) y `majo-letters`, `note-orange`, `note-green`, `reaction-approach`, `reaction-toolkit`, `photo-projects`, `photo-contact` y `title-what-i-bring` ya están a 3x y con fondo transparente. **No las vuelvas a descargar con `npm run assets -- --forzar`**: sus enlaces apuntan a la exportación antigua (1x y con fondo blanco). `shared/paper-background-original.png` es el original del que se generó `paper-background-seamless.jpg` (el que usa la web).
+**Por qué:** los PNG originales pesaban casi 70 MB y la web tardaba casi un minuto en cargar con una conexión 4G.
+- `npm run images` reduce cada imagen a 6 veces el tamaño máximo al que se muestra. Eso es el doble de los píxeles de una pantalla 3x, así que se ve igual de nítida que el original.
+- La guarda en WebP casi sin pérdida: ningún píxel cambia más de 3 niveles de 255.
+- Si el original ya pesa menos que el WebP, se usa el original tal cual.
+- Las imágenes de las secciones de abajo se cargan al acercarse con el scroll (`loading="lazy"`), y la caja cerrada se pide primero (`fetchpriority="high"`).
 
-Si algún enlace venció, exporta ese elemento desde Figma (panel derecho → *Export* → PNG o SVG) con **exactamente el mismo nombre** y guárdalo en la ruta que indica `scripts/assets.json` dentro de `src/assets/`.
+`npm run assets` descarga las imágenes con enlaces temporales de Figma (**vencen alrededor del 22 de octubre de 2026**): los PNG van a `design-originals/` y los SVG a `src/assets/`. Si el archivo ya existe, no lo toca.
+
+Las imágenes de la caja (`box-closed`, `box-opening-1`, `box-opening-2`, `box-open`) y `majo-letters`, `note-orange`, `note-green`, `reaction-approach`, `reaction-toolkit`, `photo-projects`, `photo-contact` y `title-what-i-bring` de `design-originals/` ya están a 3x y con fondo transparente. **No las vuelvas a descargar con `npm run assets -- --forzar`**: sus enlaces apuntan a la exportación antigua (1x y con fondo blanco). `design-originals/shared/paper-background-original.png` es el original del que se generó `src/assets/shared/paper-background-seamless.jpg` (el que usa la web).
+
+Si algún enlace venció, exporta ese elemento desde Figma (panel derecho → *Export* → PNG o SVG) con **exactamente el mismo nombre** y guárdalo en la ruta que indica `scripts/assets.json` (PNG en `design-originals/`, SVG en `src/assets/`).
 
 ### Estilos
 
@@ -53,13 +64,13 @@ Si algún enlace venció, exporta ese elemento desde Figma (panel derecho → *E
 El selector **ES | EN** del header cambia todos los textos. Empieza en español y recuerda la elección del visitante.
 
 - **Textos:** todos están en `src/i18n/translations.js`, en dos ramas (`es` y `en`) con las mismas claves. Para cambiar un texto, edítalo ahí; no hace falta tocar los componentes. Marcas de formato: `**negrita**`, `[[palabra]]` (palabra rodeada por el círculo dibujado a mano; `[[blue:palabra]]` para el azul) y `\n` (salto de línea).
-- **Imágenes con texto:** están registradas en `src/i18n/images.js`. Para añadir la versión inglesa, guarda el archivo con el nombre indicado en la misma carpeta que la original; mientras no exista se muestra la versión en español:
+- **Imágenes con texto:** están registradas en `src/i18n/images.js`. Para añadir la versión inglesa, guarda el PNG en alta resolución con el nombre indicado y ejecuta `npm run images`. Mientras no exista, se muestra la versión en español:
 
   | Imagen original | Versión inglesa (pendiente) |
   |---|---|
-  | `src/assets/sections/about/sticker-about-me.png` | `src/assets/sections/about/sticker-about-me.en.png` |
-  | `src/assets/sections/what-i-bring/title-what-i-bring.png` | `src/assets/sections/what-i-bring/title-what-i-bring.en.png` |
-  | `src/assets/sections/projects/sticker-projects.png` | `src/assets/sections/projects/sticker-projects.en.png` |
+  | `design-originals/sections/about/sticker-about-me.png` | `design-originals/sections/about/sticker-about-me.en.png` |
+  | `design-originals/sections/what-i-bring/title-what-i-bring.png` | `design-originals/sections/what-i-bring/title-what-i-bring.en.png` |
+  | `design-originals/sections/projects/sticker-projects.png` | `design-originals/sections/projects/sticker-projects.en.png` |
 
 - El selector y el contexto de idioma están en `src/components/LanguageSwitch.jsx` y `src/i18n/LanguageContext.jsx` (`useLanguage()` devuelve `{ lang, setLang, t }`).
 

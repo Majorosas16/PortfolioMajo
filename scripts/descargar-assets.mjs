@@ -1,4 +1,6 @@
-// Descarga las imágenes exportadas desde Figma a src/assets/ (cada una en la carpeta de su sección)
+// Descarga las imágenes exportadas desde Figma, cada una en la carpeta de su sección:
+// los PNG (originales en alta resolución) van a design-originals/ y los SVG directamente a src/assets/.
+// Después de descargar PNG nuevos, ejecuta `npm run images` para generar la versión de la web.
 // Uso: npm run assets
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
@@ -6,7 +8,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
-const destino = join(raiz, 'src', 'assets');
+const destinoDe = (nombre) => join(raiz, nombre.endsWith('.svg') ? join('src', 'assets') : 'design-originals', nombre);
 const lista = JSON.parse(await readFile(join(raiz, 'scripts', 'assets.json'), 'utf8'));
 
 
@@ -16,7 +18,7 @@ let fallos = [];
 
 for (const [nombre, url] of Object.entries(lista)) {
   if (nombre.startsWith('_')) continue;
-  const archivo = join(destino, nombre);
+  const archivo = destinoDe(nombre);
   if (existsSync(archivo) && !forzar) {
     console.log(`•  ya existe  ${nombre}`);
     ok++;
@@ -37,7 +39,7 @@ for (const [nombre, url] of Object.entries(lista)) {
   }
 }
 
-console.log(`\n${ok} de ${Object.keys(lista).filter((k) => !k.startsWith('_')).length} imágenes listas en src/assets/`);
+console.log(`\n${ok} de ${Object.keys(lista).filter((k) => !k.startsWith('_')).length} imágenes listas (PNG en design-originals/, SVG en src/assets/)`);
 if (fallos.length) {
   console.log('\nNo se pudieron descargar (probablemente vencieron los enlaces de Figma):');
   fallos.forEach((f) => console.log('  - ' + f));
