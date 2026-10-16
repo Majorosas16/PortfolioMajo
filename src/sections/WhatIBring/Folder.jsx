@@ -46,6 +46,19 @@ export default function Folder({ img, open, onOpen }) {
   const photoRefs = useRef({});
   const openRef = useRef(null);
   const detailRef = useRef(null);
+  const rootRef = useRef(null);
+  // La sección ya se vio: el sticker de papaya se pega (una sola vez)
+  const [seen, setSeen] = useState(false);
+
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      setSeen(true);
+      io.disconnect();
+    }, { threshold: 0.35 });
+    io.observe(rootRef.current);
+    return () => io.disconnect();
+  }, []);
 
   const openFolder = () => {
     // Con el teclado el foco pasa a la primera foto (el botón de la carpeta desaparece)
@@ -98,7 +111,13 @@ export default function Folder({ img, open, onOpen }) {
   const closedProps = open ? {} : { inert: '', 'aria-hidden': true };
 
   return (
-    <div className="folder__inner" data-state={open ? 'open' : 'closed'} data-selected={selected ? 'true' : undefined}>
+    <div
+      ref={rootRef}
+      className="folder__inner"
+      data-state={open ? 'open' : 'closed'}
+      data-selected={selected ? 'true' : undefined}
+      data-seen={seen ? 'true' : undefined}
+    >
       {/* Invitación a abrir la carpeta. Va antes de la carpeta en el orden de capas: al abrirla baja y queda detrás */}
       <div className="folder__hint" onClick={open ? undefined : openFolder} aria-hidden="true">
         <Message text={a.tapFolder} emoji="👆🏽" k={0.55} />
@@ -154,8 +173,9 @@ export default function Folder({ img, open, onOpen }) {
         <span className="folder__strip folder__strip--2" />
       </div>
 
-      {/* Nota con clip y sticker (Figma 183:1323 y 183:2670). Sus líneas también seleccionan la foto: la 02 queda
-          casi tapada por la 01 y así se puede elegir con el ratón o el dedo. El teclado usa las fotos. */}
+      {/* Nota con clip y sticker (Figma 183:1323 y 183:2670). Se ve desde el principio, más abajo, dentro de la
+          carpeta; al abrirla la misma nota sube a su sitio. Sus líneas también seleccionan la foto (solo abierta):
+          la 02 queda casi tapada por la 01 y así se puede elegir con el ratón o el dedo. El teclado usa las fotos. */}
       <div className="folder__note" {...closedProps}>
         <img className="folder__note-paper" src={img['note-paper']} alt="" />
         <img className="folder__note-yellow" src={img['note-yellow']} alt="" />
@@ -174,7 +194,10 @@ export default function Folder({ img, open, onOpen }) {
           ))}
         </ol>
         <img className="folder__note-clip" src={img['note-clip']} alt="" />
-        <img loading="lazy" decoding="async" className="folder__sticker" src={img['sticker-papaya']} alt="" />
+        {/* El contenedor lleva la posición y el giro de Figma; el img hace la animación de pegarse */}
+        <span className="folder__sticker">
+          <img loading="lazy" decoding="async" src={img['sticker-papaya']} alt="" />
+        </span>
       </div>
 
       {!open && (
