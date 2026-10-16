@@ -69,7 +69,20 @@
 .header__nav {
   display: flex;
   gap: calc(var(--u) * 9);
+  margin-right: calc(var(--u) * 8);
   transition: opacity 0.4s ease, visibility 0s linear 0s;
+}
+
+/* Línea que separa la navegación del selector de idioma (solo escritorio: en celular el nav no se
+   muestra). currentColor: se aclara sobre la sección oscura; se oculta junto con el nav en el inicio. */
+.header__nav::after {
+  content: '';
+  align-self: center;
+  width: max(1px, calc(var(--u) * 1.2));
+  height: max(18px, calc(var(--u) * 22));
+  margin-left: calc(var(--u) * 8);
+  background: currentColor;
+  opacity: 0.35;
 }
 
 .header__link {

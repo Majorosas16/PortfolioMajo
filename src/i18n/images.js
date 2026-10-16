@@ -8,6 +8,11 @@ export const localizedImages = {
   'sticker-about-me': { es: 'sticker-about-me', en: 'sticker-about-me.en' }, // src/assets/sections/about/
   'title-what-i-bring': { es: 'title-what-i-bring', en: 'title-what-i-bring.en' }, // src/assets/sections/what-i-bring/
   'sticker-projects': { es: 'sticker-projects', en: 'sticker-projects.en' }, // src/assets/sections/projects/
+  // Fotogramas de la caja del inicio (etiqueta «Portafolio de Majo» / «Majo's Portfolio») — src/assets/sections/intro/
+  'box-closed': { es: 'box-closed', en: 'box-closed.en' },
+  'box-opening-1': { es: 'box-opening-1', en: 'box-opening-1.en' },
+  'box-opening-2': { es: 'box-opening-2', en: 'box-opening-2.en' },
+  'box-open': { es: 'box-open', en: 'box-open.en' },
 };
 
 // img: objeto de la sección (byName); name: nombre de la imagen original.

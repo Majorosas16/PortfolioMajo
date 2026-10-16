@@ -36,7 +36,7 @@ const TRIM = 1040;
 // - LEFT_DY / BIO_DY centran en la foto (y = 1582) el texto de la izquierda («Hola! soy» → «de Cali», el
 //   sticker se mueve con él pero no cuenta para el centrado) y la bio, así quedan alineados entre sí.
 // - COLS_DY separa «Mi enfoque» / «Mi toolkit» del final de la sección.
-const LEFT_DY = -5;
+const LEFT_DY = 5;
 const BIO_DY = 30;
 const COLS_DY = 100;
 
@@ -119,7 +119,7 @@ export default function About() {
                 <Rich text={a.role} />
               </p>
             </P>
-            <P x={281.8} y={1710.7 + LEFT_DY} r={-0.53} className="about__city">
+            <P x={281.8} y={1690.7 + LEFT_DY} r={-0.53} className="about__city">
               <Pill size="lg">{a.from}</Pill>
             </P>
           </div>

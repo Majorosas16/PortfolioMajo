@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import Footer from './components/Footer.jsx';
 import Header from './components/Header.jsx';
 import { LanguageProvider } from './i18n/LanguageContext.jsx';
 import Intro from './sections/Intro/Intro.jsx';
@@ -34,6 +35,7 @@ export default function App() {
         <About />
         <WhatIBring />
         <Projects />
+        <Footer />
       </main>
     </LanguageProvider>
   );

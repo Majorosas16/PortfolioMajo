@@ -1,0 +1,72 @@
+/* Pie de página */
+
+.footer {
+  color: var(--brown);
+}
+
+.footer__inner {
+  /* Mismos márgenes laterales que el header */
+  --margin: clamp(24px, calc(100vw * 110 / 1512), 110px);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  max-width: 1512px;
+  margin: 0 auto;
+  padding: 28px var(--margin);
+  border-top: 1px solid rgba(67, 47, 46, 0.15);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.footer__credit {
+  text-align: center;
+  opacity: 0.75;
+}
+
+.footer__link {
+  opacity: 0.75;
+  text-underline-offset: 3px;
+  transition: opacity 0.2s ease;
+}
+
+.footer__link:hover,
+.footer__link:focus-visible {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.footer__link:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.footer__top {
+  justify-self: start;
+}
+
+.footer__email {
+  justify-self: end;
+}
+
+@media (max-width: 768px) {
+  .footer__inner {
+    --margin: clamp(20px, 5vw, 28px);
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 10px;
+    padding: 24px var(--margin) calc(24px + env(safe-area-inset-bottom));
+    text-align: center;
+  }
+
+  /* En columna: crédito primero, luego correo y volver al inicio */
+  .footer__credit {
+    order: -1;
+  }
+
+  .footer__top,
+  .footer__email {
+    justify-self: center;
+  }
+}

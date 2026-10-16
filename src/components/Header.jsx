@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
 import LanguageSwitch from './LanguageSwitch.jsx';
+import { goToSection } from './goToSection.js';
 import { socials } from './socials.js';
 import './Header.css';
 import './MobileMenu.css';
@@ -13,15 +14,6 @@ const links = [
   { href: '#projects', key: 'projects' },
   { href: '#contact', key: 'contact' },
 ];
-
-// Lleva a una sección sin escribir el #ancla en la URL (así, al recargar, la página abre en el inicio)
-const goToSection = (e) => {
-  const target = document.querySelector(e.currentTarget.getAttribute('href'));
-  if (!target) return;
-  e.preventDefault();
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
-};
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
