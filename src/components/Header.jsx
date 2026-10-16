@@ -16,10 +16,12 @@ const irA = (e) => {
   destino.scrollIntoView({ behavior: reducido ? 'auto' : 'smooth' });
 };
 
-// Encabezado fijo. Cambia a texto claro cuando pasa sobre la sección oscura ("Lo que aporto").
+// Encabezado fijo. Cambia a texto claro cuando pasa sobre la sección oscura ("Lo que aporto")
+// y se vuelve discreto sobre la caja cerrada del inicio.
 export default function Header() {
   const [oscuro, setOscuro] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [inicio, setInicio] = useState(true);
 
   useEffect(() => {
     const onScroll = () => {
@@ -33,6 +35,10 @@ export default function Header() {
         if (r.top <= alto && r.bottom >= alto) sobreOscuro = true;
       });
       setOscuro(sobreOscuro);
+      // Sobre la sección de la caja (con la caja cerrada se oculta la navegación, ver styles.css)
+      const intro = document.querySelector('#inicio');
+      const ri = intro && intro.getBoundingClientRect();
+      setInicio(Boolean(ri && ri.top <= alto && ri.bottom >= alto));
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -44,7 +50,9 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={`header ${oscuro ? 'header--oscuro' : ''} ${scrolled ? 'header--scrolled' : ''}`}>
+    <header
+      className={`header ${oscuro ? 'header--oscuro' : ''} ${scrolled ? 'header--scrolled' : ''} ${inicio ? 'header--inicio' : ''}`}
+    >
       <div className="header__inner">
         <a href="#inicio" className="header__brand" onClick={irA}>
           <span className="header__role">Product Designer</span>
