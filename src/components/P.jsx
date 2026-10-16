@@ -1,3 +1,5 @@
+import { forwardRef } from 'react';
+
 // P = "Posicionado". Ubica un elemento con las coordenadas del frame de Figma (en px de un lienzo de 1512 de ancho).
 // En escritorio/tablet las coordenadas se escalan con la variable CSS --u.
 // En celular (≤ 768px) se ignoran y el elemento fluye en columna (ver styles.css).
@@ -6,7 +8,7 @@
 // w, h   → ancho / alto
 // r      → rotación en grados
 // fs     → tamaño de fuente
-export default function P({
+const P = forwardRef(function P({
   x,
   y,
   w,
@@ -20,7 +22,7 @@ export default function P({
   style,
   children,
   ...rest
-}) {
+}, ref) {
   const vars = {
     ...(x != null && { '--x': x }),
     ...(y != null && { '--y': y }),
@@ -32,11 +34,13 @@ export default function P({
   };
   const classes = ['abs', cx && 'cx', cy && 'cy', fs != null && 'fs', className].filter(Boolean).join(' ');
   return (
-    <Tag className={classes} style={vars} {...rest}>
+    <Tag ref={ref} className={classes} style={vars} {...rest}>
       {children}
     </Tag>
   );
-}
+});
+
+export default P;
 
 // Ruta a un archivo de public/img (funciona también en GitHub Pages)
 export const asset = (nombre) => `${import.meta.env.BASE_URL}img/${nombre}`;

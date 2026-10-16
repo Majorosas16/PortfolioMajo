@@ -7,6 +7,15 @@ const links = [
   { href: '#hablemos', text: 'Hablemos' },
 ];
 
+// Lleva a una sección sin escribir el #ancla en la URL (así, al recargar, la página abre en el inicio)
+const irA = (e) => {
+  const destino = document.querySelector(e.currentTarget.getAttribute('href'));
+  if (!destino) return;
+  e.preventDefault();
+  const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  destino.scrollIntoView({ behavior: reducido ? 'auto' : 'smooth' });
+};
+
 // Encabezado fijo. Cambia a texto claro cuando pasa sobre la sección oscura ("Lo que aporto").
 export default function Header() {
   const [oscuro, setOscuro] = useState(false);
@@ -37,13 +46,13 @@ export default function Header() {
   return (
     <header className={`header ${oscuro ? 'header--oscuro' : ''} ${scrolled ? 'header--scrolled' : ''}`}>
       <div className="header__inner">
-        <a href="#inicio" className="header__brand">
+        <a href="#inicio" className="header__brand" onClick={irA}>
           <span className="header__role">Product Designer</span>
           <span className="header__name">María José Rosas Cuellar</span>
         </a>
         <nav className="header__nav" aria-label="Secciones">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="header__link">
+            <a key={l.href} href={l.href} className="header__link" onClick={irA}>
               {l.text}
             </a>
           ))}
