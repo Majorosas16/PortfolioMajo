@@ -87,9 +87,12 @@ b {
   position: absolute;
   inset: 0;
   z-index: -1;
+  /* Una sola hoja para toda la página: misma escala en todas las secciones y cada una
+     desplazada según su posición (--fondo-y, ver App.jsx). La imagen se repite sin costura. */
   background-image: var(--papel);
-  background-size: cover;
-  background-position: center;
+  background-size: 100% auto;
+  background-repeat: repeat-y;
+  background-position: center calc(var(--fondo-y, 0px) * -1);
   mix-blend-mode: multiply;
   pointer-events: none;
 }
@@ -171,11 +174,9 @@ b {
 }
 
 .header__inner {
-  width: calc(var(--u) * 1512);
-  max-width: 100%;
-  margin: 0 auto;
-  height: max(60px, calc(var(--u) * 96));
-  padding: 0 calc(var(--u) * 83);
+  /* Mismo margen arriba, abajo y a los lados */
+  width: 100%;
+  padding: max(16px, calc(var(--u) * 32));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -809,22 +810,44 @@ html[data-caja='cerrada'] .header--inicio .header__brand {
   cursor: pointer;
 }
 
+/* "Toca los objetos": aparece con un fundido cuando los cinco objetos ya llegaron.
+   Medidas del mensaje de Figma (146:5517); k=0.86 en Intro.jsx ajusta la reacción. */
 .caja__toca {
   z-index: 3;
   opacity: 0;
   visibility: hidden;
-  transform: translate(-50%, calc(var(--u) * 14));
-  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0.4s;
+  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
 }
 
 .intro[data-estado='abierta'] .caja__toca {
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, 0);
-  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0s;
+  transition: opacity 0.5s ease, visibility 0s linear 0s;
+}
+
+.caja__toca .msg__bubble {
+  padding: calc(var(--u) * 11.8) calc(var(--u) * 17.04);
+  border-radius: calc(var(--u) * 26.22);
+  font-size: calc(var(--u) * 19.66);
+}
+
+.caja__toca .msg__tail {
+  width: calc(var(--u) * 23.6);
+  height: calc(var(--u) * 18.4);
+  margin-left: calc(var(--u) * 7.9);
 }
 
 /* ---------- Sección 2 · Sobre mí ---------- */
+
+/* Aparición al entrar en pantalla (SobreMi.jsx añade revelar-listo y marca cada elemento con is-visible) */
+.sobre.revelar-listo .abs {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.sobre.revelar-listo .abs.is-visible {
+  opacity: 1;
+}
 
 /* Sube el contenido del frame 2 para quitar el espacio que ocupaba la caja (ver Intro.jsx) */
 .sobre__lienzo {
@@ -1204,7 +1227,7 @@ html[data-caja='cerrada'] .header--inicio .header__brand {
   .header__inner {
     width: 100%;
     height: auto;
-    padding: 10px 16px;
+    padding: 12px 16px;
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
@@ -1685,6 +1708,10 @@ html[data-caja='cerrada'] .header--inicio .header__brand {
 
   .intro .intro__msg,
   .intro:not([data-estado='cerrada']) .intro__msg,
+  .sobre.revelar-listo .abs {
+    transition-duration: 0.2s;
+  }
+
   .intro .caja__toca,
   .intro[data-estado='abierta'] .caja__toca {
     transform: translateX(-50%);
