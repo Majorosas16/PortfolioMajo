@@ -16,7 +16,7 @@ import { useLanguage } from '../../i18n/LanguageContext.jsx';
 // x, y, bw, bh: caja de la foto ya girada · w, h: la foto sin girar · r: giro (CSS) · bd: grosor del borde
 // side: en escritorio y tablet el detalle va a ese lado de las fotos (01 y 02 a la izquierda, 03 y 04 a la derecha),
 //   a la misma distancia de la foto más cercana en los cuatro casos (place)
-// tip: en celular el detalle va encima de la foto; tip.y es el punto más alto de la foto ya elevada
+// tip: en celular (y en tablet si no cabe a ningún lado) el detalle va encima de la foto; tip.y es el punto más alto de la foto ya elevada
 //   (y de su caja − LIFT 40 − 6 del zoom; Folder.css), y tip.x donde empieza el bloque
 const photos = [
   {
