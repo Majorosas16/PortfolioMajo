@@ -18,6 +18,10 @@ export const translations = {
       links: { about: 'Sobre mí', whatIBring: 'Lo que aporto', projects: 'Proyectos', contact: 'Hablemos' },
       language: 'Idioma',
     },
+    footer: {
+      credit: 'Portafolio de María José Rosas Cuellar',
+      backToTop: 'Volver al inicio',
+    },
     intro: {
       greeting: 'Hola!',
       message: '¿Abrimos la caja?',
@@ -122,6 +126,10 @@ export const translations = {
       socials: 'Social media',
       links: { about: 'About me', whatIBring: 'What I bring', projects: 'Projects', contact: "Let's talk" },
       language: 'Language',
+    },
+    footer: {
+      credit: 'María José Rosas Cuellar’s portfolio',
+      backToTop: 'Back to top',
     },
     intro: {
       greeting: 'Hey!',

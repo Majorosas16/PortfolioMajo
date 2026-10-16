@@ -4,6 +4,7 @@ import { byName } from '../../assets/images.js';
 import Message from '../../components/Message.jsx';
 import ObjectItem from '../../components/ObjectItem.jsx';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
+import { localizedSrc } from '../../i18n/images.js';
 import useDraggableObjects from './useDraggableObjects.js';
 import ObjectMessage from './ObjectMessage.jsx';
 import './Intro.css';
@@ -242,7 +243,7 @@ export default function Intro() {
               <img
                 key={f.src}
                 className={`box__frame box__frame--${i}`}
-                src={img[f.src]}
+                src={localizedSrc(img, f.src, lang)}
                 alt=""
                 // La caja cerrada es lo primero que se ve: se pide antes que el resto de imágenes
                 fetchpriority={i === 0 ? 'high' : undefined}
