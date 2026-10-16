@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Message from '../../components/Message.jsx';
 import P from '../../components/P.jsx';
+import useDraggableObjects from '../../components/useDraggableObjects.js';
 import { byName } from '../../assets/images.js';
 import Pill from '../../components/Pill.jsx';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
@@ -39,13 +40,12 @@ const TRIM = 1040;
 // - COLS_DY baja «Mi enfoque» / «Mi toolkit» para dejar aire tras las fotos y el texto de la graduación.
 const LEFT_DY = 5;
 const BIO_DY = 30;
-const GRAD_Y = 2010;
-const COLS_DY = 200;
+const GRAD_Y = 2075;
+const COLS_DY = 312;
 // «Mi enfoque» / «Mi toolkit»: los textos empiezan a la misma altura bajo su subtítulo (TEXT_Y, borde superior);
-// cada recuadro y su cursor quedan a 26 del final de su texto (APPROACH_DY / TOOLKIT_DY; el de toolkit es más largo).
+// los dos textos miden lo mismo, así que los recuadros y sus cursores suben BOX_DY para quedar a 26 de ellos.
 const TEXT_Y = 2214;
-const APPROACH_DY = -18;
-const TOOLKIT_DY = 49;
+const BOX_DY = -18;
 
 // Tiempo que se ve el mensaje del sticker o del perrito al tocarlos
 const BUBBLE_MS = 2600;
@@ -70,6 +70,8 @@ function SelectionFrame() {
 
 export default function About() {
   const sectionRef = useRef(null);
+  // Las etiquetas de cursor («al final…» / «y así…») se pueden arrastrar, como los objetos del inicio
+  useDraggableObjects(sectionRef, true, undefined, '.cursor-tag');
   const { lang, t } = useLanguage();
   const a = t.about;
 
@@ -137,9 +139,9 @@ export default function About() {
             <P x={177.61} y={1484.35 + LEFT_DY} w={328.68} className="about__majo">
               <img loading="lazy" decoding="async" src={img['majo-letters']} alt="MAJO" />
             </P>
-            <P x={98.9} y={1596.16 + LEFT_DY} w={384} fs={34.81} className="about__role">
+            <P x={12.9} y={1596.16 + LEFT_DY} w={470} fs={34.81} className="about__role">
               <p>
-                <Rich text={a.role} />
+                <Rich text={a.role} /> <small className="about__role-note">{a.roleNote}</small>
               </p>
             </P>
             <P x={281.8} y={1690.7 + LEFT_DY} r={-0.53} className="about__city">
@@ -169,7 +171,9 @@ export default function About() {
           </P>
 
           <P x={756} y={GRAD_Y} w={900} fs={30} cx className="about__grad">
-            <p>{a.graduation}</p>
+            <p>
+              <Rich text={a.graduation} />
+            </p>
           </P>
 
           {/* Mi enfoque */}
@@ -185,11 +189,11 @@ export default function About() {
                 <Rich text={a.approach.text} />
               </p>
             </P>
-            <P x={453} y={2438.4 + COLS_DY + APPROACH_DY} w={446} h={127} r={-2.22} fs={32} cx className="selection selection--orange">
+            <P x={453} y={2438.4 + COLS_DY + BOX_DY} w={446} h={127} r={-2.22} fs={32} cx className="selection selection--orange">
               <p>{a.approach.highlight}</p>
               <SelectionFrame />
             </P>
-            <P x={579} y={2589 + COLS_DY + APPROACH_DY} className="cursor-tag cursor-tag--orange">
+            <P x={579} y={2589 + COLS_DY + BOX_DY} className="cursor-tag cursor-tag--orange">
               <img loading="lazy" decoding="async" src={img['cursor-orange']} alt="" />
               <span>{a.approach.cursor}</span>
             </P>
@@ -213,11 +217,11 @@ export default function About() {
                 <Rich text={a.toolkit.text} />
               </p>
             </P>
-            <P x={1103.76} y={2438.4 + COLS_DY + TOOLKIT_DY} w={350.87} h={127} r={2.25} fs={32} cx className="selection selection--blue">
+            <P x={1103.76} y={2438.4 + COLS_DY + BOX_DY} w={470} h={150} r={2.25} fs={32} cx className="selection selection--blue">
               <p>{a.toolkit.highlight}</p>
               <SelectionFrame />
             </P>
-            <P x={1207} y={2589 + COLS_DY + TOOLKIT_DY} className="cursor-tag cursor-tag--blue">
+            <P x={1207 + (470 - 350.87) / 2} y={2589 + 23 + COLS_DY + BOX_DY} className="cursor-tag cursor-tag--blue">
               <img loading="lazy" decoding="async" src={img['cursor-blue']} alt="" />
               <span>{a.toolkit.cursor}</span>
             </P>
