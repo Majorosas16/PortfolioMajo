@@ -5,6 +5,7 @@ import Message from '../../components/Message.jsx';
 import ObjectItem from '../../components/ObjectItem.jsx';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import useDraggableObjects from './useDraggableObjects.js';
+import ObjectMessage from './ObjectMessage.jsx';
 import './Intro.css';
 
 // Imágenes de esta sección (src/assets/sections/intro/)
@@ -28,7 +29,9 @@ const frames = [
 const MOUTH = { x: 0.464, y: 0.4 };
 
 // Objetos que salen de la caja (posición final = la del frame 2).
-// m: posición en celular, en % del ancho de la escena. El texto y el alt están en translations.js (intro.objects[id]).
+// m: posición en celular, en % del ancho de la escena. El texto, el alt y el mensaje están en translations.js (intro.objects[id]).
+// msg: dónde va su mensaje al tocarlo (ObjectMessage.jsx), medido en Figma 130:4479: la esquina de la cola cae
+// en (ax, ay) del objeto; side 'left' = a la izquierda y volteado, como "Colaboración".
 const objects = [
   {
     id: 'keys',
@@ -37,6 +40,7 @@ const objects = [
     crop: { w: 100.08, h: 251.4, left: -0.04, top: -90.83 },
     label: { dx: 47.35, dy: 132.4 },
     m: { x: 4, y: 80, w: 40 },
+    msg: { ax: 0.7, ay: 0.16 },
   },
   {
     id: 'plant',
@@ -45,6 +49,7 @@ const objects = [
     crop: { w: 162.5, h: 155.56, left: -28.57, top: -33.76 },
     label: { dx: -24.2, dy: 205 },
     m: { x: 8, y: 30, w: 24 },
+    msg: { ax: 0.6, ay: 0 },
   },
   {
     id: 'butterfly',
@@ -52,6 +57,7 @@ const objects = [
     x: 612.2, y: 259, w: 267.27, h: 178.2,
     label: { center: true, dy: 185 },
     m: { x: 30, y: 0, w: 40 },
+    msg: { ax: 0.84, ay: 0.53 },
   },
   {
     id: 'mirror',
@@ -59,6 +65,7 @@ const objects = [
     x: 942, y: 307.6, w: 117.6, h: 242.3, r: -1.85,
     label: { dx: 21.7, dy: 190.4 },
     m: { x: 72.5, y: 32, w: 15 },
+    msg: { ax: 1.29, ay: 0.64 },
   },
   {
     id: 'headphones',
@@ -66,6 +73,7 @@ const objects = [
     x: 1155, y: 459, w: 184, h: 229,
     label: { dx: 17, dy: 213.4 },
     m: { x: 64, y: 74, w: 24 },
+    msg: { ax: 0.94, ay: 0.89, side: 'left' },
   },
 ];
 
@@ -110,8 +118,46 @@ export default function Intro() {
   const boxRef = useRef(null);
   const sectionRef = useRef(null);
 
-  // Con la caja abierta los objetos se pueden agarrar y mover por la sección
-  useDraggableObjects(sectionRef, boxState === 'open');
+  // Objeto seleccionado: muestra su mensaje y oscurece el resto (un solo mensaje a la vez)
+  const [selected, setSelected] = useState(null);
+  const messageRef = useRef(null);
+  const selectedIndex = objects.findIndex((o) => o.id === selected);
+
+  // Con la caja abierta los objetos se pueden agarrar y mover por la sección; el mensaje sigue al objeto
+  useDraggableObjects(sectionRef, boxState === 'open', (el) => {
+    if (el.classList.contains('is-selected')) messageRef.current?.place();
+  });
+
+  // Tocar el mismo objeto lo cierra; otro objeto cambia el mensaje. El clic que sigue a un arrastre
+  // nunca llega aquí (useDraggableObjects lo descarta).
+  const toggleObject = (id) => setSelected((cur) => (cur === id ? null : id));
+
+  // Con un mensaje abierto: tocar fuera de los objetos y del mensaje lo cierra; Escape también,
+  // y devuelve el foco al objeto
+  useEffect(() => {
+    if (!selected) return undefined;
+    const onClick = (e) => {
+      if (!e.target.closest?.('.objects--box .obj, .obj-msg .msg')) setSelected(null);
+    };
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      const el = stageRef.current?.querySelectorAll('.objects--box .obj')[selectedIndex];
+      setSelected(null);
+      el?.focus();
+    };
+    // El velo cubre la pantalla: si el inicio deja de verse (scroll), se cierra para no quedar sobre otra sección
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.intersectionRatio < 0.5) setSelected(null);
+    }, { threshold: 0.5 });
+    if (sectionRef.current) io.observe(sectionRef.current);
+    document.addEventListener('click', onClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      io.disconnect();
+      document.removeEventListener('click', onClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [selected, selectedIndex]);
 
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
@@ -172,6 +218,7 @@ export default function Intro() {
       className="section section--paper intro"
       data-state={boxState}
       data-launch={launched}
+      data-selected={selected ? 'true' : undefined}
       style={{ '--height': 980 }}
     >
       <div className="stage" ref={stageRef} onAnimationEnd={handleAnimationEnd}>
@@ -235,6 +282,9 @@ export default function Intro() {
               label={{ ...o.label, text: t.intro.objects[o.id].label }}
               y={o.y - Y0}
               index={i}
+              onClick={boxState === 'open' ? () => toggleObject(o.id) : undefined}
+              selected={selected === o.id}
+              controls="obj-msg"
             />
           ))}
         </div>
@@ -242,7 +292,20 @@ export default function Intro() {
         <P x={1041.4} y={883 - Y0} cx className="box__tap" style={{ '--mx': 50, '--my': 179 }} aria-hidden={boxState !== 'open'}>
           <Message text={t.intro.tap} emoji="👆🏽" k={0.86} />
         </P>
+
+        <ObjectMessage
+          ref={messageRef}
+          id={selected}
+          index={selectedIndex}
+          anchor={objects[selectedIndex]?.msg}
+          text={selected ? t.intro.objects[selected].message : ''}
+          stageRef={stageRef}
+          sectionRef={sectionRef}
+        />
       </div>
+
+      {/* Capa oscura detrás del objeto seleccionado y su mensaje */}
+      <div className="intro__scrim" aria-hidden="true" />
     </section>
   );
 }
