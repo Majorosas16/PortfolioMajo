@@ -9,7 +9,8 @@ import './ObjectItem.css';
 // index: orden del objeto (se usa para el desfase de la animación de salida)
 // m: posición en celular, en % del ancho de la escena ({ x, y, w }); solo la usa la caja del inicio
 // onClick: opcional, para darle una acción al objeto más adelante
-export default function ObjectItem({ src, alt, x, y, w, h, r = 0, crop, flip = false, label, tone = 'brown', index = 0, m, onClick }) {
+// loading: "lazy" en las secciones de abajo (la imagen se descarga al acercarse con el scroll)
+export default function ObjectItem({ src, alt, x, y, w, h, r = 0, crop, flip = false, label, tone = 'brown', index = 0, m, loading, onClick }) {
   const style = {
     '--x': x,
     '--y': y,
@@ -31,11 +32,13 @@ export default function ObjectItem({ src, alt, x, y, w, h, r = 0, crop, flip = f
             <img
               src={src}
               alt={alt}
+              loading={loading}
+              decoding="async"
               style={{ width: `${crop.w}%`, height: `${crop.h}%`, left: `${crop.left}%`, top: `${crop.top}%` }}
             />
           </div>
         ) : (
-          <img src={src} alt={alt} />
+          <img src={src} alt={alt} loading={loading} decoding="async" />
         )}
       </div>
       <figcaption className="obj__label" style={labelStyle}>

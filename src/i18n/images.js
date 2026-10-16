@@ -1,11 +1,13 @@
 // Imágenes que contienen texto y pueden tener una versión por idioma.
-// Para añadir la versión inglesa: guarda el archivo con el nombre de `en` en la MISMA carpeta
-// que la original (indicada en cada línea). No hay que tocar el código: mientras el archivo
-// no exista se muestra la versión en español.
+// Para añadir la versión inglesa:
+//   1. Exporta la imagen en alta resolución como PNG con el nombre de `en` + .png, en design-originals/ y en la
+//      misma carpeta que la original, p. ej. design-originals/sections/about/sticker-about-me.en.png
+//   2. Ejecuta `npm run images`: genera la versión para la web en src/assets/ al mismo tamaño que la española.
+// No hay que tocar el código: mientras el archivo no exista se muestra la versión en español.
 export const localizedImages = {
-  'sticker-about-me.png': { es: 'sticker-about-me.png', en: 'sticker-about-me.en.png' }, // src/assets/sections/about/ — pendiente
-  'title-what-i-bring.png': { es: 'title-what-i-bring.png', en: 'title-what-i-bring.en.png' }, // src/assets/sections/what-i-bring/ — pendiente
-  'sticker-projects.png': { es: 'sticker-projects.png', en: 'sticker-projects.en.png' }, // src/assets/sections/projects/ — pendiente
+  'sticker-about-me': { es: 'sticker-about-me', en: 'sticker-about-me.en' }, // src/assets/sections/about/ — pendiente
+  'title-what-i-bring': { es: 'title-what-i-bring', en: 'title-what-i-bring.en' }, // src/assets/sections/what-i-bring/ — pendiente
+  'sticker-projects': { es: 'sticker-projects', en: 'sticker-projects.en' }, // src/assets/sections/projects/ — pendiente
 };
 
 // img: objeto de la sección (byName); name: nombre de la imagen original.

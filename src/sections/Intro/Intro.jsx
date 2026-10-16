@@ -18,10 +18,10 @@ const Y0 = 90;
 // La caja cerrada queda centrada como en el frame 1 y la abierta en su posición del frame 2.
 const BOX = { x: 408, y: 476.7, w: 713.3, h: 581.3 };
 const frames = [
-  { src: 'box-closed.png', x: 408, y: 587.7, w: 696 },
-  { src: 'box-opening-1.png', x: 436.3, y: 476.7, w: 685 },
-  { src: 'box-opening-2.png', x: 420.8, y: 494.7, w: 690 },
-  { src: 'box-open.png', x: 409, y: 579, w: 695 },
+  { src: 'box-closed', x: 408, y: 587.7, w: 696 },
+  { src: 'box-opening-1', x: 436.3, y: 476.7, w: 685 },
+  { src: 'box-opening-2', x: 420.8, y: 494.7, w: 690 },
+  { src: 'box-open', x: 409, y: 579, w: 695 },
 ];
 // Punto de la boca de la caja abierta desde donde salen los objetos (fracción de BOX)
 const MOUTH = { x: 0.464, y: 0.4 };
@@ -31,7 +31,7 @@ const MOUTH = { x: 0.464, y: 0.4 };
 const objects = [
   {
     id: 'keys',
-    src: 'keys.png',
+    src: 'keys',
     x: 115.06, y: 540, w: 284.88, h: 129,
     crop: { w: 100.08, h: 251.4, left: -0.04, top: -90.83 },
     label: { dx: 47.35, dy: 132.4 },
@@ -39,7 +39,7 @@ const objects = [
   },
   {
     id: 'plant',
-    src: 'plant.png',
+    src: 'plant',
     x: 395.18, y: 294, w: 145.74, h: 203,
     crop: { w: 162.5, h: 155.56, left: -28.57, top: -33.76 },
     label: { dx: -24.2, dy: 205 },
@@ -47,21 +47,21 @@ const objects = [
   },
   {
     id: 'butterfly',
-    src: 'butterfly.png',
+    src: 'butterfly',
     x: 612.2, y: 259, w: 267.27, h: 178.2,
     label: { center: true, dy: 185 },
     m: { x: 30, y: 0, w: 40 },
   },
   {
     id: 'mirror',
-    src: 'mirror.png',
+    src: 'mirror',
     x: 942, y: 307.6, w: 117.6, h: 242.3, r: -1.85,
     label: { dx: 21.7, dy: 190.4 },
     m: { x: 72.5, y: 32, w: 15 },
   },
   {
     id: 'headphones',
-    src: 'headphones.png',
+    src: 'headphones',
     x: 1155, y: 459, w: 184, h: 229,
     label: { dx: 17, dy: 213.4 },
     m: { x: 64, y: 74, w: 24 },
@@ -191,6 +191,8 @@ export default function Intro() {
                 className={`box__frame box__frame--${i}`}
                 src={img[f.src]}
                 alt=""
+                // La caja cerrada es lo primero que se ve: se pide antes que el resto de imágenes
+                fetchpriority={i === 0 ? 'high' : undefined}
                 style={{
                   left: pct(((f.x - BOX.x) / BOX.w) * 100),
                   top: pct(((f.y - BOX.y) / BOX.h) * 100),

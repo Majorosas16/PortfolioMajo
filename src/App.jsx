@@ -29,7 +29,7 @@ export default function App() {
   return (
     <LanguageProvider>
       <Header />
-      <main ref={mainRef} style={{ '--paper': `url(${paper})` }}>
+      <main ref={mainRef} style={{ '--paper': `url("${paper}")` }}>
         <Intro />
         <About />
         <WhatIBring />
