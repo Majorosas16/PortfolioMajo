@@ -145,26 +145,124 @@
   white-space: nowrap;
 }
 
-/* ---------- Filtros (espacio blanco sobre los proyectos) ---------- */
+/* ---------- Filtros por etiqueta (espacio blanco sobre los proyectos) ----------
+   Botón «Filtros» con el número de proyectos al lado; al abrirlo aparecen las etiquetas de esta categoría, cada una
+   con su color (contorno; rellena cuando está elegida) y cuántos proyectos quedarían. */
 
-.pmodal__filters {
+.pmodal__tools {
   flex: none;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  padding: 40px 48px 28px;
+  padding: 32px 72px 12px 109px;
 }
 
-.pmodal__filter {
+.pmodal__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.pmodal__filters-btn {
   display: inline-flex;
   align-items: center;
-  height: 32px;
+  gap: 8px;
+  height: 38px;
   margin: 0;
-  padding: 0 16px;
-  border: 1.5px solid var(--c);
+  padding: 0 16px 0 13px;
+  border: 1.5px solid var(--brown);
   border-radius: 38px;
   background: transparent;
+  color: var(--brown);
+  font-family: var(--font-head);
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.pmodal__filters-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.pmodal__filters-btn:hover,
+.pmodal__filters-btn.is-open {
+  background: var(--brown);
+  color: #fffcf9;
+}
+
+.pmodal__filters-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--orange);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pmodal__count {
+  margin: 0;
+  font-family: var(--font-head);
+  font-weight: 300;
+  font-size: 16px;
+  opacity: 0.75;
+}
+
+.pmodal__clear {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brown);
+  font-family: var(--font-head);
+  font-weight: 500;
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.pmodal__filters-btn:focus-visible,
+.pmodal__clear:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+
+.pmodal__panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(67, 47, 46, 0.05);
+  animation: pmodal-panel 0.2s ease both;
+}
+
+.pmodal__panel[hidden] {
+  display: none;
+}
+
+@keyframes pmodal-panel {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.pmodal__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  margin: 0;
+  padding: 0 12px 0 15px;
+  border: 1.5px solid var(--c);
+  border-radius: 38px;
+  background: #fffcf9;
   color: var(--c);
   font-family: var(--font-head);
   font-weight: 400;
@@ -172,19 +270,29 @@
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
 
-.pmodal__filter:hover {
-  background: color-mix(in srgb, var(--c) 10%, transparent);
+.pmodal__tag-n {
+  font-size: 12px;
+  opacity: 0.7;
 }
 
-.pmodal__filter.is-active {
+.pmodal__tag:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--c) 10%, #fffcf9);
+}
+
+.pmodal__tag.is-active {
   background: var(--c);
   color: #fff;
 }
 
-.pmodal__filter:focus-visible {
+.pmodal__tag:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pmodal__tag:focus-visible {
   outline: 2px solid var(--c);
   outline-offset: 3px;
 }
@@ -200,10 +308,19 @@
 }
 
 .pmodal__empty {
-  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 40px;
   text-align: center;
+  font-family: var(--font-head);
   font-weight: 200;
   font-size: 20px;
+}
+
+.pmodal__empty p {
+  margin: 0;
 }
 
 /* Cada proyecto: medios a la izquierda (256 × 444, Figma) y el texto a la derecha */
@@ -395,6 +512,10 @@
 
 /* ---------- Pantallas medianas: columnas más estrechas ---------- */
 @media (max-width: 1000px) {
+  .pmodal__tools {
+    padding: 28px 40px 8px;
+  }
+
   .project {
     grid-template-columns: 220px minmax(0, 1fr);
     gap: 32px;
@@ -435,23 +556,34 @@
     height: 25px;
   }
 
-  /* Los filtros se desplazan en horizontal */
-  .pmodal__filters {
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    overflow-x: auto;
-    padding: 18px 16px 14px;
-    scrollbar-width: none;
+  .pmodal__tools {
+    padding: 16px 18px 6px;
   }
 
-  .pmodal__filters::-webkit-scrollbar {
-    display: none;
+  .pmodal__toolbar {
+    gap: 8px 12px;
   }
 
-  .pmodal__filter {
-    flex: none;
+  .pmodal__filters-btn {
+    height: 34px;
+    font-size: 15px;
+  }
+
+  .pmodal__count {
+    font-size: 14px;
+  }
+
+  .pmodal__panel {
+    gap: 8px;
+    margin-top: 12px;
+    padding: 12px;
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+
+  .pmodal__tag {
     height: 30px;
-    padding: 0 13px;
+    padding: 0 10px 0 12px;
     font-size: 14px;
   }
 
@@ -495,7 +627,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .pmodal,
-  .pmodal__window {
+  .pmodal__window,
+  .pmodal__panel {
     animation: none;
   }
 }

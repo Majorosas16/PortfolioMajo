@@ -22,16 +22,38 @@ const mediaOf = (id) =>
       return { type: video ? 'video' : 'image', src: files[path], poster };
     });
 
-// Categorías = los seis objetos de la sección. Un proyecto pertenece a una categoría si tiene alguna de sus
-// etiquetas (puede estar en varias). color: el del filtro en el modal.
+// Categorías = los seis objetos de la sección; cada una abre su propio modal. Un proyecto pertenece a una categoría
+// si tiene alguna de sus etiquetas (puede estar en varias).
 export const categories = [
-  { id: 'prism', tags: ['ui', 'prototyping'], color: '#065c8a' },
-  { id: 'compass', tags: ['research'], color: '#611283' },
-  { id: 'shell', tags: ['accessibility'], color: '#358f11' },
-  { id: 'chess', tags: ['designSystem', 'branding'], color: '#c25a1c' },
-  { id: 'clip', tags: ['editorial', 'social', 'internalComms'], color: '#a3302b' },
-  { id: 'coffee', tags: ['client'], color: '#9a6f0c' },
+  { id: 'prism', tags: ['ui', 'prototyping'] },
+  { id: 'compass', tags: ['research'] },
+  { id: 'shell', tags: ['accessibility'] },
+  { id: 'chess', tags: ['designSystem', 'branding'] },
+  { id: 'clip', tags: ['editorial', 'social', 'internalComms'] },
+  { id: 'coffee', tags: ['client'] },
 ];
+
+// Etiquetas de los proyectos, en el orden de los filtros del modal, con su color (App móvil, Prototipado y Fintech
+// son los del diseño de Figma 157:2338; el resto, de la misma familia). El texto de cada una está en translations.js.
+export const tagColors = {
+  mobile: '#065c8a',
+  web: '#2f6fb3',
+  ui: '#0f7f86',
+  prototyping: '#611283',
+  research: '#8a3ea8',
+  accessibility: '#358f11',
+  designSystem: '#c25a1c',
+  branding: '#b8402d',
+  development: '#4b5b6e',
+  game: '#7a5c00',
+  fintech: '#358f11',
+  ai: '#a3306b',
+  client: '#9a6f0c',
+  individual: '#5c4a46',
+  editorial: '#8b4a1f',
+  social: '#c2368a',
+  internalComms: '#3f6f4a',
+};
 
 // tags: en el orden en que se muestran · tools: herramientas (nombres propios, iguales en los dos idiomas)
 export const projects = [
@@ -83,4 +105,10 @@ export const projects = [
 export const projectsIn = (categoryId) => {
   const tags = categories.find((c) => c.id === categoryId)?.tags ?? [];
   return projects.filter((p) => p.tags.some((tag) => tags.includes(tag)));
+};
+
+// Etiquetas que tienen los proyectos de una categoría (los filtros de su modal), en el orden de tagColors
+export const tagsIn = (categoryId) => {
+  const present = new Set(projectsIn(categoryId).flatMap((p) => p.tags));
+  return Object.keys(tagColors).filter((tag) => present.has(tag));
 };
