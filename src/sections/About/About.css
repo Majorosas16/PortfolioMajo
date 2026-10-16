@@ -143,6 +143,10 @@
   width: 100%;
 }
 
+.about__dog .about__tap {
+  clip-path: inset(17% 0 33% 0);
+}
+
 .about__tap:focus-visible {
   outline: 3px solid var(--orange);
   outline-offset: 6px;
@@ -159,21 +163,41 @@
   pointer-events: none;
 }
 
-.about__bubble .msg {
+/* La opacidad la lleva solo el contenedor (transición) y el rebote solo la burbuja (escala): así ningún
+   navegador mezcla animación y transición sobre la opacidad, que podía hacer aparecer el mensaje dos veces.
+   is-on: visible (si vuelve a activarse mientras se desvanece, recupera la opacidad sin parpadeo).
+   is-pop: rebote de entrada, solo cuando aparece desde oculto. */
+.about__bubble {
   opacity: 0;
-  transform-origin: 0 100%;
   transition: opacity 0.35s ease;
 }
 
-/* is-on: visible (si vuelve a activarse mientras se desvanece, recupera la opacidad sin parpadeo);
-   is-pop: entra con la animación msg-pop, solo cuando aparece desde oculto */
-.about__bubble.is-on .msg {
+.about__bubble.is-on {
   opacity: 1;
-  transition-duration: 0.15s;
+  transition-duration: 0.2s;
+}
+
+.about__bubble .msg {
+  transform-origin: 0 100%;
 }
 
 .about__bubble.is-pop .msg {
-  animation: msg-pop 0.45s cubic-bezier(0.3, 0.7, 0.4, 1) backwards;
+  animation: bubble-pop 0.45s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+
+@keyframes bubble-pop {
+  0% {
+    scale: 0.4;
+    translate: 0 calc(var(--u) * 12);
+  }
+  70% {
+    scale: 1.06;
+    translate: 0 0;
+  }
+  100% {
+    scale: 1;
+    translate: 0 0;
+  }
 }
 
 /* Figma: centro en x 453, top 1210 (el sticker está en 197, 1212). Se compensa el giro del sticker. */
@@ -339,10 +363,13 @@
     translate: 0 0;
   }
 
+  /* Lola en la esquina inferior derecha de la pila, como en escritorio: la cabeza sobresale por abajo
+     un 7.5 % del alto de la foto y por la derecha un 12 % de su ancho (cabe en pantallas de 320 px).
+     Medidas en % de la pila (ancho W, alto 1.778 W); la cabeza ocupa el 23–64 % del alto de la imagen. */
   .grp--photo .about__dog {
     position: absolute;
-    right: -44px;
-    bottom: -56px;
+    left: 65.4%;
+    top: 76.8%;
     width: 48%;
     aspect-ratio: 256 / 455;
   }
@@ -351,12 +378,12 @@
     font-size: 21px;
     text-align: center;
     max-width: 480px;
-    margin-top: 40px;
+    margin-top: 64px;
   }
 
   .grp--col {
     gap: 14px;
-    margin-top: 44px;
+    margin-top: 72px;
   }
 
   .about__reaction {
