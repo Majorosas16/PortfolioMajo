@@ -4,7 +4,7 @@ Landing page construida en **React + Vite** a partir de los 4 frames "WEB" del a
 
 | Sección | Archivo | Frame de Figma |
 |---|---|---|
-| Inicio — "¿Abrimos la caja?" | `src/sections/Intro.jsx` | 121:2271 |
+| Inicio — "¿Abrimos la caja?": la caja se abre y salen los objetos | `src/sections/Intro.jsx` | 121:2271 + parte superior de 130:4479 + "Boxes" 162:2418 |
 | Sobre mí, Mi enfoque, Mi toolkit | `src/sections/SobreMi.jsx` | 130:4479 |
 | Lo que aporto | `src/sections/Aporto.jsx` | 146:5632 |
 | Proyectos y Hablemos | `src/sections/Proyectos.jsx` | 149:424 |
@@ -25,6 +25,8 @@ npm run dev      # abre la web en http://localhost:5173
 ### Sobre las imágenes (importante)
 
 `npm run assets` descarga las imágenes con enlaces temporales de Figma que **vencen alrededor del 22 de octubre de 2026**. Hazlo cuanto antes; una vez descargadas quedan guardadas en `public/img/` y ya no dependen de Figma.
+
+Las imágenes de la caja (`caja-cerrada`, `caja-abriendo-1`, `caja-abriendo-2`, `caja-abierta`) y `majo-letras`, `nota-naranja`, `nota-verde`, `reaccion-enfoque`, `reaccion-toolkit`, `foto-proyectos`, `foto-contacto` y `titulo-aporto` ya están en `public/img/` a 3x y con fondo transparente. **No las vuelvas a descargar con `npm run assets -- --forzar`**: sus enlaces en `scripts/assets.json` apuntan a la exportación antigua (1x y con fondo blanco).
 
 Si algún enlace venció, el script te dice qué archivos faltan. En ese caso, exporta ese elemento desde Figma (panel derecho → *Export* → PNG o SVG), ponle **exactamente el mismo nombre** que aparece en `scripts/assets.json` y guárdalo en `public/img/`.
 
@@ -53,7 +55,8 @@ El proyecto ya incluye `.github/workflows/deploy.yml`, que publica la web autom�
 ## Pendientes por completar
 
 - **Enlaces de redes** en `src/sections/Proyectos.jsx` (arreglo `redes`): WhatsApp, LinkedIn y GitHub tienen enlaces de ejemplo. Behance ya apunta a `behance.net/marajrosasc` y el correo a `multimedia.mr16@gmail.com`.
-- **Animaciones**: aún no tiene. La estructura está lista para agregarlas (caja que se abre, objetos que flotan, fotos que salen de la carpeta, etc.).
+- **Animaciones**: la caja del inicio ya se abre al hacer clic (estados `cerrada → abriendo → abierta` en `Intro.jsx`, con CSS). Faltan otras (objetos que flotan, fotos que salen de la carpeta, etc.).
+- **Acción de los objetos**: "Toca los objetos" aún no hace nada al tocarlos; `ObjectItem` acepta un `onClick` para conectarlo más adelante.
 
 ## Cómo está construido
 
