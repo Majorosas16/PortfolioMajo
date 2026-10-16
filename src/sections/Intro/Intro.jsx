@@ -5,7 +5,7 @@ import Message from '../../components/Message.jsx';
 import ObjectItem from '../../components/ObjectItem.jsx';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import { localizedSrc } from '../../i18n/images.js';
-import useDraggableObjects from './useDraggableObjects.js';
+import useDraggableObjects from '../../components/useDraggableObjects.js';
 import ObjectMessage from './ObjectMessage.jsx';
 import './Intro.css';
 
