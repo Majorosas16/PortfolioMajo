@@ -38,7 +38,7 @@ const TRIM = 1040;
 // - COLS_DY separa «Mi enfoque» / «Mi toolkit» del final de la sección.
 const LEFT_DY = -5;
 const BIO_DY = 30;
-const COLS_DY = 48;
+const COLS_DY = 100;
 
 // Tiempo que se ve el mensaje del sticker o del perrito al tocarlos
 const BUBBLE_MS = 2600;
@@ -103,7 +103,7 @@ export default function About() {
           {/* Presentación */}
           <div className="grp grp--presentation">
             <P x={140} y={1212 + LEFT_DY} w={257} r={-6.44} className="about__sticker">
-              <button type="button" className="about__tap" onClick={() => showBubble('sticker')}>
+              <button type="button" className="about__tap" onClick={(e) => { e.stopPropagation(); showBubble('sticker'); }}>
                 <img loading="lazy" decoding="async" src={localizedSrc(img, 'sticker-about-me', lang)} alt={a.stickerAlt} />
               </button>
               {bubbleFor('sticker', 'green', '🥭', a.stickerMsg)}
@@ -132,7 +132,7 @@ export default function About() {
               <img loading="lazy" decoding="async" src={img['note-orange']} alt="" />
             </P>
             <P x={804} y={1651} w={256} h={455.11} className="about__dog">
-              <button type="button" className="about__tap" onClick={() => showBubble('dog')}>
+              <button type="button" className="about__tap" onClick={(e) => { e.stopPropagation(); showBubble('dog'); }}>
                 <img loading="lazy" decoding="async" src={img['dog']} alt={a.dogAlt} />
               </button>
               {bubbleFor('dog', 'light', '🐕', a.dogMsg)}
