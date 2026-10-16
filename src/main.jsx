@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
+// Primero los estilos compartidos; cada componente importa después su propio CSS
 import './styles.css';
+import App from './App.jsx';
 
 // La página siempre abre en el inicio (la caja cerrada):
 // el navegador no restaura el scroll anterior y se ignora un #ancla que haya quedado en la URL.

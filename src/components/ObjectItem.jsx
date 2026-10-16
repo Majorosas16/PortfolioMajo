@@ -1,7 +1,8 @@
 import Pill from './Pill.jsx';
-import { asset } from './P.jsx';
+import './ObjectItem.css';
 
 // Objeto flotante + su etiqueta.
+// src: URL de la imagen (ya importada por la sección)
 // x, y, w, h: caja del objeto en el lienzo de 1512px
 // crop: recorte de la imagen tal como en Figma ({ w, h, left, top } en %)
 // label: { text, dx, dy } posición de la etiqueta relativa al objeto (o center: true)
@@ -28,13 +29,13 @@ export default function ObjectItem({ src, alt, x, y, w, h, r = 0, crop, flip = f
         {crop ? (
           <div className="obj__crop">
             <img
-              src={asset(src)}
+              src={src}
               alt={alt}
               style={{ width: `${crop.w}%`, height: `${crop.h}%`, left: `${crop.left}%`, top: `${crop.top}%` }}
             />
           </div>
         ) : (
-          <img src={asset(src)} alt={alt} />
+          <img src={src} alt={alt} />
         )}
       </div>
       <figcaption className="obj__label" style={labelStyle}>

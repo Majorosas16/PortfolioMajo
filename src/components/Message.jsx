@@ -1,4 +1,8 @@
-import { asset } from './P.jsx';
+import { porNombre } from '../assets/imagenes.js';
+import './Message.css';
+
+// Burbujas compartidas por las secciones (src/assets/shared/)
+const img = porNombre(import.meta.glob('../assets/shared/burbuja-*.svg', { eager: true, import: 'default' }));
 
 // Burbuja de chat (estilo iMessage) con reacción en emoji.
 // variant "oscura": la del inicio ("¿Abrimos la caja?")
@@ -15,12 +19,12 @@ export default function Message({ text, emoji, variant = 'clara', k = 1, top, bo
           <p>{text}</p>
         </div>
         <div className="msg__reaction" aria-hidden="true">
-          <img className="msg__reaction-bg" src={asset(`${pref}-reaccion.svg`)} alt="" />
-          <img className="msg__reaction-dot" src={asset(`${pref}-punto.svg`)} alt="" />
+          <img className="msg__reaction-bg" src={img[`${pref}-reaccion.svg`]} alt="" />
+          <img className="msg__reaction-dot" src={img[`${pref}-punto.svg`]} alt="" />
           <span className="msg__emoji">{emoji}</span>
         </div>
       </div>
-      <img className="msg__tail" src={asset(`${pref}-cola.svg`)} alt="" aria-hidden="true" />
+      <img className="msg__tail" src={img[`${pref}-cola.svg`]} alt="" aria-hidden="true" />
       {bottom && (
         <p className="msg__meta msg__meta--bottom">
           <strong>{bottom[0]}</strong> {bottom[1]}

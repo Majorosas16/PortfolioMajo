@@ -1,0 +1,204 @@
+/* Sección 4 · Proyectos y contacto */
+
+.proyectos__fin {
+  font-weight: 200;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.proyectos__cta {
+  line-height: 1.2;
+}
+
+.circulo img {
+  position: absolute;
+  max-width: none;
+}
+
+.circulo--azul img {
+  left: -0.55%;
+  top: -2.14%;
+  width: 101.1% !important;
+  height: 104.28%;
+}
+
+.circulo--naranja img {
+  left: -0.86%;
+  top: -2.62%;
+  width: 101.72% !important;
+  height: 105.24%;
+}
+
+.proyectos__invita {
+  font-weight: 300;
+  line-height: 1.423;
+}
+
+/* El texto y los íconos quedan por encima de la foto de cierre */
+.proyectos__invita,
+.contacto,
+.circulo {
+  z-index: 2;
+}
+
+.proyectos__cara img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom;
+}
+
+.contacto {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 22);
+}
+
+.contacto__email {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 5.3);
+  font-size: calc(var(--u) * 27.21);
+}
+
+.contacto__email img {
+  width: calc(var(--u) * 48.14);
+  height: calc(var(--u) * 40.44);
+}
+
+.contacto__email:hover span,
+.contacto__email:focus-visible span {
+  text-decoration: underline;
+}
+
+.contacto__redes {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 26.23);
+}
+
+.contacto__redes a {
+  display: block;
+  width: calc(var(--u) * var(--s));
+  height: calc(var(--u) * var(--s));
+  transition: transform 0.2s ease;
+}
+
+.contacto__redes a:hover,
+.contacto__redes a:focus-visible {
+  transform: translateY(-3px);
+}
+
+.contacto__redes img {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .proyectos__foto {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .grp--caja {
+    gap: 24px;
+  }
+
+  .grp--caja .proyectos__sticker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40%;
+    max-width: 220px;
+  }
+
+  .grp--caja .proyectos__corona {
+    position: absolute;
+    left: 44%;
+    top: -18px;
+    width: 18%;
+    max-width: 110px;
+  }
+
+  .proyectos__fin {
+    font-size: 21px;
+    margin-top: 16px;
+  }
+
+  .proyectos__cta {
+    font-size: 54px;
+    white-space: normal;
+  }
+
+  .circulo {
+    display: none;
+  }
+
+  .encerrado {
+    display: inline-block;
+    padding: 0 0.12em;
+    border: 2px solid var(--naranja);
+    border-radius: 50%;
+    transform: rotate(3deg);
+  }
+
+  .encerrado--azul {
+    border-color: var(--azul);
+    transform: rotate(-5deg);
+  }
+
+  .grp--contacto {
+    gap: 28px;
+  }
+
+  .proyectos__invita {
+    font-size: 23px;
+    text-align: center;
+    max-width: 360px;
+  }
+
+  .contacto {
+    align-items: center;
+    gap: 18px;
+  }
+
+  .contacto__email {
+    align-items: center;
+    font-size: 18px;
+  }
+
+  .contacto__email img {
+    width: 40px;
+    height: 34px;
+  }
+
+  .contacto__redes {
+    gap: 22px;
+  }
+
+  .contacto__redes a {
+    width: 46px;
+    height: 46px;
+  }
+
+  .proyectos .stage {
+    padding-bottom: 0;
+  }
+
+  .grp--cara {
+    width: min(100%, 520px);
+    margin-top: 8px;
+  }
+
+  .proyectos__cara {
+    width: 100%;
+    aspect-ratio: 618 / 433;
+  }
+
+  .grp--cara .proyectos__nota {
+    position: absolute;
+    left: 48%;
+    top: 52%;
+    width: 16%;
+  }
+}

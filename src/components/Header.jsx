@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import './Header.css';
 
 const links = [
   { href: '#sobre-mi', text: 'Sobre mí' },

@@ -1,6 +1,11 @@
 import { useEffect, useRef } from 'react';
-import P, { asset } from '../components/P.jsx';
+import P from '../components/P.jsx';
+import { porNombre } from '../assets/imagenes.js';
 import Pill from '../components/Pill.jsx';
+import './SobreMi.css';
+
+// Imágenes de esta sección (src/assets/sections/sobre-mi/)
+const img = porNombre(import.meta.glob('../assets/sections/sobre-mi/*', { eager: true, import: 'default' }));
 
 // Frame 2 de Figma — "WEB" 1512 × 2888.
 // La caja abierta y los objetos (parte superior del frame) ahora están en Intro.jsx;
@@ -37,13 +42,13 @@ export default function SobreMi() {
           {/* Presentación */}
           <div className="grp grp--presentacion">
             <P x={197} y={1212} w={257} r={-6.44} className="sobre__sticker">
-              <img src={asset('sticker-sobre-mi.png')} alt="Sticker: Sobre mí" />
+              <img src={img['sticker-sobre-mi.png']} alt="Sticker: Sobre mí" />
             </P>
             <P x={394.4} y={1461.19} fs={85.35} r={-2.6} cx cy className="hand sobre__hola">
               <h2>Hola! soy</h2>
             </P>
             <P x={234.61} y={1484.35} w={328.68} className="sobre__majo">
-              <img src={asset('majo-letras.png')} alt="MAJO" />
+              <img src={img['majo-letras.png']} alt="MAJO" />
             </P>
             <P x={155.9} y={1596.16} w={384} fs={34.81} className="sobre__rol">
               <p>
@@ -58,13 +63,13 @@ export default function SobreMi() {
 
           <div className="grp grp--foto">
             <P x={756.16} y={1269} w={352.31} h={626} cx className="sobre__foto">
-              <img src={asset('foto-majo.png')} alt="María José Rosas Cuellar" />
+              <img src={img['foto-majo.png']} alt="María José Rosas Cuellar" />
             </P>
             <P x={569} y={1356} w={107.28} className="sobre__nota">
-              <img src={asset('nota-naranja.png')} alt="" />
+              <img src={img['nota-naranja.png']} alt="" />
             </P>
             <P x={804} y={1651} w={256} h={455.11} className="sobre__perro">
-              <img src={asset('perro.png')} alt="Perro asomándose" />
+              <img src={img['perro.png']} alt="Perro asomándose" />
             </P>
           </div>
 
@@ -78,7 +83,7 @@ export default function SobreMi() {
           {/* Mi enfoque */}
           <div className="grp grp--col">
             <P x={392} y={2006} w={67.82} className="sobre__reaccion">
-              <img src={asset('reaccion-enfoque.png')} alt="" />
+              <img src={img['reaccion-enfoque.png']} alt="" />
             </P>
             <P x={442.7} y={2138.68} fs={81.68} r={-0.97} cx cy className="hand sobre__subtitulo">
               <h3>Mi enfoque</h3>
@@ -97,7 +102,7 @@ export default function SobreMi() {
               <i className="c c--br" />
             </P>
             <P x={579} y={2589} className="cursor-tag cursor-tag--naranja">
-              <img src={asset('cursor-naranja.svg')} alt="" />
+              <img src={img['cursor-naranja.svg']} alt="" />
               <span>al final...</span>
             </P>
           </div>
@@ -105,7 +110,7 @@ export default function SobreMi() {
           {/* Mi toolkit */}
           <div className="grp grp--col">
             <P x={1061} y={1996} w={69.01} className="sobre__reaccion">
-              <img src={asset('reaccion-toolkit.png')} alt="" />
+              <img src={img['reaccion-toolkit.png']} alt="" />
             </P>
             <P x={1094.57} y={2138.89} fs={81.68} r={-0.97} cx cy className="hand sobre__subtitulo">
               <h3>Mi toolkit</h3>
@@ -124,7 +129,7 @@ export default function SobreMi() {
               <i className="c c--br" />
             </P>
             <P x={1207} y={2589} className="cursor-tag cursor-tag--azul">
-              <img src={asset('cursor-azul.svg')} alt="" />
+              <img src={img['cursor-azul.svg']} alt="" />
               <span>y así...</span>
             </P>
           </div>
