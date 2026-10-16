@@ -124,7 +124,21 @@ export default function Folder({ img, open, onOpen }) {
     const dx = parseFloat(el.style.getPropertyValue('--dx')) || 0;
     const dy = parseFloat(el.style.getPropertyValue('--dy')) || 0;
     const R = root.getBoundingClientRect();
-    const r = el.getBoundingClientRect();
+    // Rectángulo de cada foto tal como queda (no el del momento, que cambia mientras la foto se eleva o baja: eso
+    // hacía saltar el bloque al recolocarlo): la caja de la foto en reposo, más su arrastre y, en la seleccionada,
+    // la elevación (LIFT 40) y el zoom (1.06) de Folder.css
+    const rectOf = (frame, lifted) => {
+      const b = frame.parentElement.getBoundingClientRect();
+      const fdx = parseFloat(frame.style.getPropertyValue('--dx')) || 0;
+      const fdy = parseFloat(frame.style.getPropertyValue('--dy')) || 0;
+      const k = lifted ? 1.06 : 1;
+      const cx = (b.left + b.right) / 2 + fdx;
+      const cy = (b.top + b.bottom) / 2 + fdy - (lifted ? 40 * u : 0);
+      const hw = (b.width * k) / 2;
+      const hh = (b.height * k) / 2;
+      return { left: cx - hw, right: cx + hw, top: cy - hh, bottom: cy + hh };
+    };
+    const r = rectOf(el, true);
     const bw = box.offsetWidth;
     const bh = box.offsetHeight;
     const margin = 16;
@@ -133,7 +147,7 @@ export default function Folder({ img, open, onOpen }) {
     const sec = root.closest('section').getBoundingClientRect();
     const headerBottom = document.querySelector('.header')?.getBoundingClientRect().bottom ?? 0;
     const fitBottom = (b) => clamp(b, Math.max(sec.top, headerBottom) + 8 + bh, sec.bottom - 8);
-    const frames = [...root.querySelectorAll('.folder__frame')].map((f) => f.getBoundingClientRect());
+    const frames = [...root.querySelectorAll('.folder__frame')].map((f) => rectOf(f, f === el));
 
     let side = 'top';
     let x = clamp(R.left + p.tip.x * u + dx, margin, vw - margin - bw);
@@ -335,7 +349,7 @@ export default function Folder({ img, open, onOpen }) {
         data-open={current ? 'true' : undefined}
       >
         {current && (
-          <div key={current.id} ref={detailRef} className="folder-detail__box">
+          <div key={current.id} ref={detailRef} className="folder-detail__box" data-id={current.id}>
             <p className="folder-detail__title">{a.aportes[current.id].title}</p>
             <Message variant="blue" text={a.aportes[current.id].text} />
             <p className="folder-detail__caption">
