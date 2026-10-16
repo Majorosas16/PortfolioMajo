@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import P, { asset } from '../components/P.jsx';
 import Pill from '../components/Pill.jsx';
 
@@ -7,8 +8,30 @@ import Pill from '../components/Pill.jsx';
 const RECORTE = 1080;
 
 export default function SobreMi() {
+  const secRef = useRef(null);
+
+  // Cada elemento aparece (opacidad 0 → 1) al entrar en pantalla. Lo que ya está visible al cargar
+  // se marca en el primer aviso del observador, así nunca queda transparente.
+  useEffect(() => {
+    const sec = secRef.current;
+    const elementos = sec.querySelectorAll('.abs');
+    const io = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((e) => {
+          if (!e.isIntersecting) return;
+          e.target.classList.add('is-visible');
+          io.unobserve(e.target);
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -8% 0px' }
+    );
+    elementos.forEach((el) => io.observe(el));
+    sec.classList.add('revelar-listo');
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <section id="sobre-mi" className="section section--papel sobre" style={{ '--alto': 2888 - RECORTE }}>
+    <section ref={secRef} id="sobre-mi" className="section section--papel sobre" style={{ '--alto': 2888 - RECORTE }}>
       <div className="stage">
         <div className="sobre__lienzo" style={{ '--recorte': RECORTE }}>
           {/* Presentación */}
