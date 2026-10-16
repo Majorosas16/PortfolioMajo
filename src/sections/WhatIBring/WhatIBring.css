@@ -144,6 +144,8 @@
   .tags {
     /* También más pequeñas en celular */
     --tk: 0.8;
+    /* Mismo aire arriba (desde la carpeta) y abajo (hasta el final de la sección): ~80px */
+    margin-block: 33px 16px;
     flex-wrap: wrap;
     justify-content: center;
     gap: 14px 20px;
