@@ -6,9 +6,11 @@
 // Uso: npm run images            (solo las que faltan o cuyo original cambió)
 //      npm run images -- --forzar (todas)
 import sharp from 'sharp';
-import { readFile, readdir, mkdir, stat, copyFile, rm } from 'node:fs/promises';
+import { readFile, readdir, mkdir, stat, copyFile, rm, mkdtemp } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { dirname, join, relative } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { basename, dirname, extname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -17,6 +19,20 @@ const destino = join(raiz, 'src', 'assets');
 const anchos = JSON.parse(await readFile(join(raiz, 'scripts', 'image-sizes.json'), 'utf8'));
 const omitir = new Set(anchos._omitir ?? []);
 const forzar = process.argv.includes('--forzar');
+
+// Fotos del carrusel de «Sobre mí» (fotos de iPhone: HEIC, JPG, PNG). Se tratan aparte (ver el final del archivo).
+const galeria = {
+  origen: 'sections/about/Photos Majo',
+  // Otras fotos que también entran en el carrusel (la foto original del diseño)
+  extra: ['sections/about/photo-majo.png'],
+  destino: 'sections/about/photos',
+  // Se muestran a 352 px de ancho como máximo (escritorio; 330 px en celular). Se generan a 2× y 3× de ese tamaño
+  // y el navegador elige con srcset la que corresponde a su pantalla. Nunca se amplía: si el original es más
+  // pequeño, el ancho mayor es el del original.
+  anchos: [720, 1080],
+  // Recorte vertical 9:16, el de la foto del diseño (352 × 626)
+  proporcion: 16 / 9,
+};
 
 // Al reducir, el alto se redondea y la proporción puede cambiar en la 4.ª cifra decimal; en móvil (alto automático)
 // eso movería unas centésimas de píxel todo lo que va debajo. Se busca, desde el ancho pedido hacia arriba,
@@ -36,6 +52,8 @@ const anchoExacto = (pedido, w, h) => {
 const recorrer = async (dir) =>
   (await Promise.all((await readdir(dir, { withFileTypes: true })).map((e) => {
     const p = join(dir, e.name);
+    const rel = relative(origen, p).split('\\').join('/');
+    if (rel === galeria.origen || galeria.extra.includes(rel)) return [];
     return e.isDirectory() ? recorrer(p) : /\.(png|jpe?g)$/i.test(e.name) ? [p] : [];
   }))).flat();
 
@@ -77,6 +95,56 @@ for (const archivo of await recorrer(origen)) {
   console.log(`✓  ${rel}  ${width}px → ${info.width}px   ${(pesoAntes / 1024).toFixed(0)} KB → ${(info.size / 1024).toFixed(0)} KB`);
 }
 
-console.log(hechas
-  ? `\n${hechas} imágenes generadas en src/assets/: ${(antes / 1048576).toFixed(1)} MB → ${(despues / 1048576).toFixed(1)} MB`
-  : 'Todas las imágenes ya estaban al día (usa --forzar para regenerarlas).');
+// Fotos del carrusel: cada original se recorta a 9:16 y se guarda en WebP de alta calidad en los anchos de galeria.anchos,
+// como <nombre>-<ancho>.webp (p. ej. img-1112-1056.webp). Se conserva su perfil de color (Display P3 en las del iPhone)
+// para que los colores no se apaguen. sharp no lee HEIC: en macOS se pasa antes a TIFF (sin pérdida) con `sips`.
+const dirGaleria = join(origen, galeria.origen);
+let fotos = 0;
+const tmp = await mkdtemp(join(tmpdir(), 'fotos-'));
+const archivosGaleria = [
+  ...(existsSync(dirGaleria) ? await readdir(dirGaleria) : []).map((n) => join(dirGaleria, n)),
+  ...galeria.extra.map((f) => join(origen, f)),
+];
+for (const archivo of archivosGaleria) {
+  const nombre = basename(archivo);
+  if (!/\.(heic|heif|png|jpe?g)$/i.test(nombre)) continue;
+  const base = basename(nombre, extname(nombre)).replace(/\.\w+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const fecha = (await stat(archivo)).mtimeMs;
+  const hecha = join(destino, galeria.destino, `${base}-${galeria.anchos[0]}.webp`);
+  if (!forzar && existsSync(hecha) && (await stat(hecha)).mtimeMs >= fecha) continue;
+
+  let entrada = archivo;
+  if (/\.hei[cf]$/i.test(nombre)) {
+    entrada = join(tmp, `${base}.tiff`);
+    try {
+      execFileSync('sips', ['-s', 'format', 'tiff', archivo, '--out', entrada], { stdio: 'ignore' });
+    } catch {
+      console.log(`!  ${relative(origen, archivo)}: para convertir HEIC hace falta macOS (sips). Se omite.`);
+      continue;
+    }
+  }
+  await mkdir(join(destino, galeria.destino), { recursive: true });
+  for (const viejo of (await readdir(join(destino, galeria.destino))).filter((f) => f.startsWith(`${base}-`))) {
+    await rm(join(destino, galeria.destino, viejo));
+  }
+  const { width: anchoOriginal, height: altoOriginal } = await sharp(entrada).rotate().metadata();
+  const anchos = [...new Set(galeria.anchos.map((w) => Math.min(w, anchoOriginal)))];
+  const pesoAntes = (await stat(archivo)).size;
+  const pesos = [];
+  for (const w of anchos) {
+    const info = await sharp(entrada)
+      .rotate()
+      .resize({ width: w, height: Math.min(Math.round(w * galeria.proporcion), Math.round((w * altoOriginal) / anchoOriginal)), fit: 'cover', position: 'centre', kernel: 'lanczos3' })
+      .keepIccProfile()
+      .webp({ quality: 90, smartSubsample: true, effort: 6 })
+      .toFile(join(destino, galeria.destino, `${base}-${w}.webp`));
+    pesos.push(`${w}px ${(info.size / 1024).toFixed(0)} KB`);
+  }
+  fotos++;
+  console.log(`✓  ${relative(origen, archivo)}  (${(pesoAntes / 1024).toFixed(0)} KB) → ${pesos.join(' · ')}`);
+}
+await rm(tmp, { recursive: true, force: true });
+
+if (hechas) console.log(`\n${hechas} imágenes generadas en src/assets/: ${(antes / 1048576).toFixed(1)} MB → ${(despues / 1048576).toFixed(1)} MB`);
+if (fotos) console.log(`${fotos} fotos del carrusel generadas en src/assets/${galeria.destino}/`);
+if (!hechas && !fotos) console.log('Todas las imágenes ya estaban al día (usa --forzar para regenerarlas).');

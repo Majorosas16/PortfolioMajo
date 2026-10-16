@@ -45,7 +45,20 @@ export const translations = {
       hello: 'Hola! soy',
       role: 'Diseñadora de \nMedios Interactivos',
       from: 'de Cali, Colombia',
-      photoAlt: 'María José Rosas Cuellar',
+      photos: {
+        label: 'Fotos de María José',
+        next: 'Ver la siguiente foto',
+        position: 'Foto {n} de {total}',
+        alts: {
+          'photo-majo': 'María José Rosas Cuellar con gorro de lana en un mirador de montaña',
+          'img-2467': 'María José con un portátil, sobre un fondo blanco con estrellas de colores',
+          'img-1112': 'María José tomando una bebida en un restaurante rodeado de plantas, de noche',
+          'img-1704': 'María José volando en parapente sobre montañas verdes',
+          'img-4897': 'María José caminando por un sendero de madera entre pastizales',
+          'img-6987': 'María José mostrando una casita de jengibre en una mesa navideña',
+          'img-8454': 'María José con la camiseta de la selección Colombia',
+        },
+      },
       dogAlt: 'Perro asomándose',
       bio: 'Creativa por naturaleza, **curiosa por diseño** y tecnología. Siempre explorando **nuevas tendencias**, creando interfaces y **coleccionando inspiración.**',
       approach: {
@@ -131,7 +144,20 @@ export const translations = {
       hello: "Hi! I'm",
       role: 'Interactive Media \nDesigner',
       from: 'from Cali, Colombia',
-      photoAlt: 'María José Rosas Cuellar',
+      photos: {
+        label: 'Photos of María José',
+        next: 'Show the next photo',
+        position: 'Photo {n} of {total}',
+        alts: {
+          'photo-majo': 'María José Rosas Cuellar in a knit hat at a mountain viewpoint',
+          'img-2467': 'María José holding a laptop against a white backdrop with colorful stars',
+          'img-1112': 'María José having a drink at a restaurant surrounded by plants, at night',
+          'img-1704': 'María José paragliding over green mountains',
+          'img-4897': 'María José walking along a wooden boardwalk through grassland',
+          'img-6987': 'María José showing a gingerbread house at a Christmas table',
+          'img-8454': 'María José wearing the Colombia national team jersey',
+        },
+      },
       dogAlt: 'Dog peeking out',
       bio: 'Creative by nature, **curious about design** and technology. Always exploring **new trends**, building interfaces and **collecting inspiration.**',
       approach: {
