@@ -96,7 +96,65 @@
   height: 100%;
 }
 
+/* Objetos (categorías): se arrastran y se tocan. El desplazamiento del arrastre va en --dx/--dy
+   (useDraggableObjects), como en la caja del inicio. touch-action solo en los objetos: fuera de ellos la página
+   sigue desplazándose. */
+.objects--projects .obj {
+  left: calc(var(--u) * var(--x) + var(--dx, 0px));
+  top: calc(var(--u) * var(--y) + var(--dy, 0px));
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.objects--projects .obj .obj__media {
+  transition: translate 0.25s ease;
+}
+
+.objects--projects .obj:hover .obj__media {
+  translate: 0 calc(var(--u) * -6);
+}
+
+.objects--projects .obj.is-dragging {
+  z-index: 5;
+  cursor: grabbing;
+}
+
+.objects--projects .obj:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 6px;
+  border-radius: 12px;
+}
+
 @media (max-width: 768px) {
+  /* Objetos más pequeños, en tres columnas */
+  .objects--projects {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px 8px;
+    max-width: 420px;
+  }
+
+  .objects--projects .obj {
+    left: var(--dx, 0px);
+    top: var(--dy, 0px);
+    gap: 8px;
+  }
+
+  .objects--projects .obj__media {
+    height: 76px;
+  }
+
+  /* Etiquetas de ~12px para que quepan en tres columnas (también «DS & Branding», «Graphic design») */
+  .objects--projects .pill {
+    --p: 0.68px;
+  }
+
+  .projects__tap .msg {
+    --m: 0.4px;
+  }
+
   .projects__photo {
     width: 100%;
     max-width: 560px;

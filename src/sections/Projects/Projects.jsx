@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import P from '../../components/P.jsx';
 import { byName } from '../../assets/images.js';
 import Message from '../../components/Message.jsx';
@@ -6,12 +7,16 @@ import { socials } from '../../components/socials.js';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import { localizedSrc } from '../../i18n/images.js';
 import Rich from '../../i18n/Rich.jsx';
+import useDraggableObjects from '../../components/useDraggableObjects.js';
+import ProjectsModal from './ProjectsModal.jsx';
 import './Projects.css';
 
 // Imágenes de esta sección (src/assets/sections/projects/). Están debajo del inicio: se cargan al acercarse con el scroll (loading="lazy")
 const img = byName(import.meta.glob('../../assets/sections/projects/*', { eager: true, import: 'default' }));
 
 // Objetos alrededor de la foto (coordenadas del frame 4 de Figma). Texto y alt en translations.js (projects.objects[id]).
+// Cada objeto es una categoría de proyectos: se puede arrastrar por la sección y, al tocarlo, abre el modal con sus
+// proyectos (ProjectsModal.jsx; qué proyectos van en cada una, en projects.js).
 const objects = [
   {
     id: 'prism', src: 'prism',
@@ -49,8 +54,27 @@ const objects = [
 export default function Projects() {
   const { lang, t } = useLanguage();
   const p = t.projects;
+  const sectionRef = useRef(null);
+  // Categoría abierta en el modal (id del objeto) y objeto que la abrió (recibe el foco al cerrar)
+  const [open, setOpen] = useState(null);
+  const opener = useRef(null);
+
+  // Los objetos se agarran y se mueven por la sección (como los de la caja del inicio). El clic que sigue a un
+  // arrastre no abre el modal (useDraggableObjects lo descarta).
+  useDraggableObjects(sectionRef, true, undefined, '.objects--projects .obj');
+
+  const openCategory = (id, e) => {
+    opener.current = e.currentTarget;
+    setOpen(id);
+  };
+  const closeModal = () => {
+    setOpen(null);
+    requestAnimationFrame(() => opener.current?.focus({ preventScroll: true }));
+  };
+
   return (
     <section
+      ref={sectionRef}
       id="projects"
       className="section section--paper projects"
       style={{
@@ -73,8 +97,9 @@ export default function Projects() {
           <P x={676.4} y={214.4} w={195.73} r={37.55} className="projects__crown">
             <img loading="lazy" decoding="async" src={img['crown']} alt="" />
           </P>
+          {/* Del tamaño de Figma (156:894, 254 de ancho) */}
           <P x={978.97} y={385} cx className="projects__tap">
-            <Message text={p.tap} emoji="👆🏽" />
+            <Message text={p.tap} emoji="👆🏽" k={0.5} />
           </P>
           <div className="objects objects--projects">
             {objects.map((o) => (
@@ -86,6 +111,9 @@ export default function Projects() {
                 label={{ ...o.label, text: p.objects[o.id].label }}
                 tone="brown2"
                 loading="lazy"
+                onClick={(e) => openCategory(o.id, e)}
+                selected={open === o.id}
+                controls="projects-modal"
               />
             ))}
           </div>
@@ -137,6 +165,8 @@ export default function Projects() {
           </div>
         </div>
       </div>
+
+      {open && <ProjectsModal category={open} onCategoryChange={setOpen} onClose={closeModal} />}
     </section>
   );
 }

@@ -1,0 +1,501 @@
+/* Modal de proyectos (ProjectsModal.jsx) · Figma 157:2338 («UX/UI Projects»): ventana de 957 de ancho con barra de
+   ventana oscura, filtros de categorías en el espacio blanco de arriba y la lista de proyectos debajo. */
+
+.pmodal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  background: rgba(20, 13, 12, 0.55);
+  animation: pmodal-fade 0.25s ease both;
+}
+
+.pmodal__window {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(957px, 100%);
+  height: min(1116px, 100%);
+  overflow: hidden;
+  border-radius: 11.6px;
+  background: #fffcf9;
+  color: var(--brown);
+  box-shadow: 0 5.8px 5.8px rgba(0, 0, 0, 0.25), 0 24px 60px rgba(0, 0, 0, 0.3);
+  animation: pmodal-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pmodal-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pmodal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+}
+
+/* ---------- Barra de ventana ---------- */
+
+.pmodal__bar {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 59px;
+  padding: 0 120px;
+  background: #343438;
+  box-shadow: inset 0 1.45px 0 #7e7e80, 0 1.45px 0 #0a0d0e;
+}
+
+.pmodal__lights {
+  position: absolute;
+  left: 31.6px;
+  top: 50%;
+  width: 75.42px;
+  height: 17.4px;
+  transform: translateY(-50%);
+}
+
+.pmodal__lights img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* El círculo rojo cierra la ventana; al pasar el ratón muestra la ×, como en macOS */
+.pmodal__close {
+  position: absolute;
+  left: 31.6px;
+  top: 50%;
+  width: 17.4px;
+  height: 17.4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.pmodal__close::before,
+.pmodal__close::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 1.6px;
+  border-radius: 1px;
+  background: #7a0f0a;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.pmodal__close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.pmodal__close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.pmodal__close:hover::before,
+.pmodal__close:hover::after,
+.pmodal__close:focus-visible::before,
+.pmodal__close:focus-visible::after {
+  opacity: 1;
+}
+
+.pmodal__close:focus-visible {
+  outline: 2px solid #fffcf9;
+  outline-offset: 3px;
+}
+
+.pmodal__title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  color: #fffcf9;
+  font-family: var(--font-head);
+  font-weight: 200;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.pmodal__title img {
+  flex: none;
+  width: 35px;
+  height: 31px;
+  object-fit: contain;
+  rotate: -3.29deg;
+}
+
+.pmodal__title span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Filtros (espacio blanco sobre los proyectos) ---------- */
+
+.pmodal__filters {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 48px 28px;
+}
+
+.pmodal__filter {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1.5px solid var(--c);
+  border-radius: 38px;
+  background: transparent;
+  color: var(--c);
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: 15.9px;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.pmodal__filter:hover {
+  background: color-mix(in srgb, var(--c) 10%, transparent);
+}
+
+.pmodal__filter.is-active {
+  background: var(--c);
+  color: #fff;
+}
+
+.pmodal__filter:focus-visible {
+  outline: 2px solid var(--c);
+  outline-offset: 3px;
+}
+
+/* ---------- Lista de proyectos (se desplaza dentro de la ventana) ---------- */
+
+.pmodal__list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px 0 48px;
+}
+
+.pmodal__empty {
+  padding: 40px;
+  text-align: center;
+  font-weight: 200;
+  font-size: 20px;
+}
+
+/* Cada proyecto: medios a la izquierda (256 × 444, Figma) y el texto a la derecha */
+.project {
+  display: grid;
+  grid-template-columns: 256px minmax(0, 1fr);
+  align-items: start;
+  gap: 40px;
+  margin: 0 72px 0 109px;
+  padding: 40px 0;
+}
+
+.project + .project {
+  border-top: 1px solid rgba(67, 47, 46, 0.14);
+}
+
+.project__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 550px;
+  padding-top: 4px;
+}
+
+.project__name {
+  margin: 0;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 40.4px;
+  line-height: 1.2;
+}
+
+/* Etiquetas solo como texto, sin fondos */
+.project__tags {
+  margin: -6px 0 4px;
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: 15.9px;
+  line-height: 1.35;
+  opacity: 0.8;
+}
+
+.project__text {
+  margin: 0;
+  font-family: var(--font-head);
+  font-weight: 200;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.project__text strong {
+  font-weight: 700;
+}
+
+.project__behance {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  margin-top: 6px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.project__behance img {
+  width: 32px;
+  height: 32px;
+}
+
+.project__behance:hover span,
+.project__behance:focus-visible span {
+  text-decoration: underline;
+}
+
+/* ---------- Medios del proyecto (MediaCarousel.jsx) ---------- */
+
+.media {
+  position: relative;
+  width: 256px;
+  height: 444px;
+  overflow: hidden;
+  border-radius: 36px;
+  background: #d9d9d9;
+}
+
+.media__item {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #d9d9d9;
+  object-fit: cover;
+}
+
+.media__next-area {
+  cursor: pointer;
+}
+
+.media__next-area img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.media__next-area:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: -3px;
+  border-radius: 36px;
+}
+
+/* Barras de posición (como las de «Sobre mí»): la actual en blanco, las vistas un poco menos */
+.media__bars {
+  position: absolute;
+  top: 16px;
+  left: 22px;
+  right: 22px;
+  display: flex;
+  gap: 4px;
+}
+
+.media__bar {
+  flex: 1;
+  height: 12px;
+  margin: 0;
+  padding: 5px 0;
+  border: 0;
+  background: rgba(255, 255, 255, 0.45);
+  background-clip: content-box;
+  border-radius: 99px;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.media__bar.is-done {
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.media__bar.is-current {
+  background-color: #fff;
+}
+
+.media__bar:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+}
+
+.media__arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 252, 249, 0.85);
+  color: var(--brown);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+/* Sin fotos ni videos todavía: el recuadro gris del diseño con un aviso discreto */
+.media--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  color: rgba(67, 47, 46, 0.55);
+  font-family: var(--font-head);
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.media__empty-icon {
+  width: 34px;
+  height: 34px;
+}
+
+/* ---------- Pantallas medianas: columnas más estrechas ---------- */
+@media (max-width: 1000px) {
+  .project {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 32px;
+    margin: 0 40px;
+  }
+
+  .media {
+    width: 220px;
+    height: 380px;
+  }
+}
+
+/* ---------- Celular: casi toda la pantalla; cada proyecto en columna ---------- */
+@media (max-width: 768px) {
+  .pmodal {
+    padding: 16px;
+  }
+
+  .pmodal__bar {
+    height: 50px;
+    padding: 0 60px 0 92px;
+  }
+
+  .pmodal__lights {
+    left: 18px;
+  }
+
+  .pmodal__close {
+    left: 18px;
+  }
+
+  .pmodal__title {
+    font-size: 17px;
+  }
+
+  .pmodal__title img {
+    width: 28px;
+    height: 25px;
+  }
+
+  /* Los filtros se desplazan en horizontal */
+  .pmodal__filters {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 18px 16px 14px;
+    scrollbar-width: none;
+  }
+
+  .pmodal__filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pmodal__filter {
+    flex: none;
+    height: 30px;
+    padding: 0 13px;
+    font-size: 14px;
+  }
+
+  .pmodal__list {
+    padding: 0 0 32px;
+  }
+
+  .project {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    margin: 0 18px;
+    padding: 24px 0;
+  }
+
+  .media {
+    width: 100%;
+    height: auto;
+    max-height: 420px;
+    aspect-ratio: 4 / 5;
+    border-radius: 26px;
+  }
+
+  .project__body {
+    gap: 12px;
+  }
+
+  .project__name {
+    font-size: 28px;
+  }
+
+  .project__tags {
+    margin: -4px 0 2px;
+    font-size: 14px;
+  }
+
+  .project__text {
+    font-size: 17px;
+    line-height: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pmodal,
+  .pmodal__window {
+    animation: none;
+  }
+}
