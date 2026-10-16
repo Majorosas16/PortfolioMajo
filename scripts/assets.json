@@ -1,7 +1,7 @@
 {
   "_nota": "Enlaces temporales de Figma (vencen ~7 días después del 15-oct-2026). Si vencen, vuelve a exportar desde Figma con el mismo nombre de archivo: los PNG en design-originals/ y los SVG en src/assets/ (en la carpeta de su sección). Luego ejecuta npm run images.",
   "shared/paper-background-original.png": "https://www.figma.com/api/mcp/asset/45192c2c-01ce-4d20-834f-a9d43bfbe411/dfebd.png",
-  "sections/intro/box-closed.png": "https://www.figma.com/api/mcp/asset/8262296d-edb6-47aa-a4a2-96d0d58ebb64.png",
+  "sections/intro/box-closed.en.png": "https://www.figma.com/api/mcp/asset/8262296d-edb6-47aa-a4a2-96d0d58ebb64.png",
   "shared/bubble-dark-reaction.svg": "https://www.figma.com/api/mcp/asset/949f2c5b-6c24-4497-869e-06afb061a517/d4217.svg",
   "shared/bubble-dark-dot.svg": "https://www.figma.com/api/mcp/asset/949f2c5b-6c24-4497-869e-06afb061a517/b5cc0.svg",
   "shared/bubble-dark-tail.svg": "https://www.figma.com/api/mcp/asset/949f2c5b-6c24-4497-869e-06afb061a517/1fc01.svg",
@@ -11,7 +11,7 @@
   "shared/bubble-light-reaction.svg": "https://www.figma.com/api/mcp/asset/ef76cbda-a0a0-42c3-a58f-542a8d32529b/d609a.svg",
   "shared/bubble-light-dot.svg": "https://www.figma.com/api/mcp/asset/ef76cbda-a0a0-42c3-a58f-542a8d32529b/3efee.svg",
   "shared/bubble-light-tail.svg": "https://www.figma.com/api/mcp/asset/ef76cbda-a0a0-42c3-a58f-542a8d32529b/2f6dc.svg",
-  "sections/intro/box-open.png": "https://www.figma.com/api/mcp/asset/f5ebd1dc-9aea-44c8-8db1-e055f0d2a53c.png",
+  "sections/intro/box-open.en.png": "https://www.figma.com/api/mcp/asset/f5ebd1dc-9aea-44c8-8db1-e055f0d2a53c.png",
   "sections/intro/keys.png": "https://www.figma.com/api/mcp/asset/45192c2c-01ce-4d20-834f-a9d43bfbe411/63227.png",
   "sections/intro/plant.png": "https://www.figma.com/api/mcp/asset/45192c2c-01ce-4d20-834f-a9d43bfbe411/a789f.png",
   "sections/intro/butterfly.png": "https://www.figma.com/api/mcp/asset/45192c2c-01ce-4d20-834f-a9d43bfbe411/41ba0.png",
