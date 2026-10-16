@@ -346,16 +346,23 @@
   border-radius: 12px;
 }
 
-/* Capa oscura: cubre la caja, los otros objetos y los mensajes mientras hay un objeto seleccionado.
+/* Capa oscura: velo sutil sobre toda la pantalla (fondo, caja y demás objetos) mientras hay un objeto
+   seleccionado. Es fija para no cortarse en el borde de la sección; al estar dentro del contexto de
+   #intro, el objeto seleccionado (101) y su mensaje (102) quedan encima, y el header (fijo, z 50) fuera.
    No recibe toques: el cierre al tocar fuera lo maneja Intro.jsx. */
+.intro {
+  /* El contexto del inicio (con su velo) se pinta sobre las secciones siguientes */
+  z-index: 1;
+}
+
 .intro__scrim {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 100;
-  background-color: rgba(38, 27, 26, 0.55);
+  background-color: rgba(0, 0, 0, 0.28);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
 }
 
 .intro[data-selected='true'] .intro__scrim {

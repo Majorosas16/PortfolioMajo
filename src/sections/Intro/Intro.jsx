@@ -145,9 +145,15 @@ export default function Intro() {
       setSelected(null);
       el?.focus();
     };
+    // El velo cubre la pantalla: si el inicio deja de verse (scroll), se cierra para no quedar sobre otra sección
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.intersectionRatio < 0.5) setSelected(null);
+    }, { threshold: 0.5 });
+    if (sectionRef.current) io.observe(sectionRef.current);
     document.addEventListener('click', onClick);
     document.addEventListener('keydown', onKey);
     return () => {
+      io.disconnect();
       document.removeEventListener('click', onClick);
       document.removeEventListener('keydown', onKey);
     };
