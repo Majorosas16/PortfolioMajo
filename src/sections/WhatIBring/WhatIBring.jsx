@@ -26,7 +26,7 @@ const DY = { closed: -330, open: -185 };
 // Etiquetas de habilidades (web): a la misma distancia (TAGS_GAP) del borde inferior de la carpeta (y 542 + 759) y
 // del final de la sección. Alto de cada grupo: 102.42 × 0.8 (WhatIBring.css las reduce al 80 %).
 const FOLDER_BOTTOM = 542 + 759;
-const TAGS_GAP = 140;
+const TAGS_GAP = 165;
 const TAGS_H = 102.42 * 0.8;
 
 // Frame 3 de Figma — "WEB" 1512 × 1792 (fondo oscuro)
