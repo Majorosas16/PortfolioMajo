@@ -626,16 +626,28 @@
   }
 
   /* La nota, más grande (×1.22) para que se lea bien: crece desde su borde izquierdo y la parte de arriba de la
-     carpeta, así no se sale de la carpeta ni tapa las fotos. El giro de entrada usa el mismo punto. */
+     carpeta (punto 230, 480), así no se sale de la carpeta ni tapa las fotos. Se dibuja a ese tamaño (su propia
+     --u) en lugar de escalarla: con scale el celular la pintaba a tamaño normal y la estiraba, y se veía borrosa. */
   .folder__note {
-    transform-origin: calc(var(--u) * 230) calc(var(--u) * 480);
-    scale: 1.22;
+    --u: calc(min(100vw - 40px, 620px) / 690 * 1.22);
+    inset: auto;
+    left: calc(min(100vw - 40px, 620px) / 690 * 230 * -0.22);
+    top: calc(min(100vw - 40px, 620px) / 690 * 480 * -0.22);
+    width: calc(var(--u) * 1082);
+    height: calc(var(--u) * 787);
+    transform-origin: calc(var(--u) * 390) calc(var(--u) * 550);
+    /* Cerrada baja menos que en la web: más grande, la hoja blanca asomaría por debajo de la carpeta */
+    transform: translateY(calc(var(--u) * 8)) rotate(2deg);
+  }
+
+  .folder__inner[data-state='open'] .folder__note {
+    transform: none;
   }
 
   /* La nota sigue siendo legible (y tocable) aunque la escena sea pequeña */
   .folder__note-item {
-    font-size: max(calc(var(--u) * 17.907), 10.5px);
-    line-height: max(calc(var(--u) * 23.876), 14px);
+    font-size: max(calc(var(--u) * 17.907), 12.8px);
+    line-height: max(calc(var(--u) * 23.876), 17px);
   }
 }
 
