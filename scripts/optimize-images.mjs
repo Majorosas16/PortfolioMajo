@@ -18,6 +18,9 @@ const origen = join(raiz, 'design-originals');
 const destino = join(raiz, 'src', 'assets');
 const anchos = JSON.parse(await readFile(join(raiz, 'scripts', 'image-sizes.json'), 'utf8'));
 const omitir = new Set(anchos._omitir ?? []);
+// Fotografías grandes con textura (cuero, papel…): WebP con pérdida de alta calidad (90), como las fotos de la galería.
+// Casi sin pérdida pesarían varios MB sin diferencia visible.
+const conPerdida = new Set(anchos._fotos ?? []);
 const forzar = process.argv.includes('--forzar');
 
 // Fotos del carrusel de «Sobre mí» (fotos de iPhone: HEIC, JPG, PNG). Se tratan aparte (ver el final del archivo).
@@ -78,7 +81,7 @@ for (const archivo of await recorrer(origen)) {
   await mkdir(dirname(salida), { recursive: true });
   const info = await sharp(archivo)
     .resize({ ...anchoExacto(ancho, width, height), fit: 'fill', kernel: 'lanczos3' })
-    .webp({ nearLossless: true, quality: 60, effort: 6 })
+    .webp(conPerdida.has(rel) ? { quality: 90, smartSubsample: true, effort: 6 } : { nearLossless: true, quality: 60, effort: 6 })
     .toFile(salida);
   const pesoAntes = (await stat(archivo)).size;
   antes += pesoAntes;

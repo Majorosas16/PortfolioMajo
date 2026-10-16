@@ -14,15 +14,12 @@
 
 .pmodal__window {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  width: min(957px, 100%);
-  height: min(1116px, 100%);
-  overflow: hidden;
-  border-radius: 11.6px;
-  background: #fffcf9;
+  /* Carpeta de anillos (Figma 190:2799, 2276 × 2403): tan alta como quepa en la pantalla */
+  width: min(calc((100dvh - 48px) * 2276 / 2403), 100%, 1000px);
+  aspect-ratio: 2276 / 2403;
+  background: url('../../assets/sections/projects/binder.webp') center / 100% 100% no-repeat;
   color: var(--brown);
-  box-shadow: 0 5.8px 5.8px rgba(0, 0, 0, 0.25), 0 24px 60px rgba(0, 0, 0, 0.3);
+  filter: drop-shadow(0 24px 40px rgba(0, 0, 0, 0.45));
   animation: pmodal-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -39,110 +36,72 @@
   }
 }
 
-/* ---------- Barra de ventana ---------- */
-
-.pmodal__bar {
-  position: relative;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 59px;
-  padding: 0 120px;
-  background: #343438;
-  box-shadow: inset 0 1.45px 0 #7e7e80, 0 1.45px 0 #0a0d0e;
-}
-
-.pmodal__lights {
+/* La hoja de la carpeta (9.7–77.6 % del ancho, 5.2–94.1 % del alto); el contenido termina antes de los anillos */
+.pmodal__page {
   position: absolute;
-  left: 31.6px;
-  top: 50%;
-  width: 75.42px;
-  height: 17.4px;
-  transform: translateY(-50%);
+  left: 9.67%;
+  top: 5.24%;
+  width: 62.5%;
+  height: 88.85%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.pmodal__lights img {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* El círculo rojo cierra la ventana; al pasar el ratón muestra la ×, como en macOS */
+/* Cerrar: en la tapa de la carpeta, arriba a la derecha */
 .pmodal__close {
   position: absolute;
-  left: 31.6px;
-  top: 50%;
-  width: 17.4px;
-  height: 17.4px;
+  z-index: 2;
+  right: 3.2%;
+  top: 2.4%;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
   margin: 0;
   padding: 0;
-  border: 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 50%;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f3efe9;
   cursor: pointer;
-  transform: translateY(-50%);
+  transition: background-color 0.2s ease;
 }
 
-.pmodal__close::before,
-.pmodal__close::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 9px;
-  height: 1.6px;
-  border-radius: 1px;
-  background: #7a0f0a;
-  opacity: 0;
-  transition: opacity 0.15s ease;
+.pmodal__close svg {
+  width: 16px;
+  height: 16px;
 }
 
-.pmodal__close::before {
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.pmodal__close::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-.pmodal__close:hover::before,
-.pmodal__close:hover::after,
-.pmodal__close:focus-visible::before,
-.pmodal__close:focus-visible::after {
-  opacity: 1;
+.pmodal__close:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .pmodal__close:focus-visible {
-  outline: 2px solid #fffcf9;
+  outline: 2px solid var(--orange);
   outline-offset: 3px;
 }
 
+/* Título de la categoría, arriba de la hoja */
 .pmodal__title {
+  flex: none;
   display: flex;
   align-items: center;
-  gap: 4px;
-  min-width: 0;
+  gap: 10px;
   margin: 0;
-  color: #fffcf9;
+  padding: 26px 28px 0;
   font-family: var(--font-head);
-  font-weight: 200;
-  font-size: 20px;
-  line-height: 28px;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.2;
 }
 
 .pmodal__title img {
   flex: none;
-  width: 35px;
-  height: 31px;
+  width: 40px;
+  height: 36px;
   object-fit: contain;
   rotate: -3.29deg;
-}
-
-.pmodal__title span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* ---------- Filtros por etiqueta (espacio blanco sobre los proyectos) ----------
@@ -151,7 +110,7 @@
 
 .pmodal__tools {
   flex: none;
-  padding: 32px 72px 12px 109px;
+  padding: 16px 28px 10px;
 }
 
 .pmodal__toolbar {
@@ -330,10 +289,10 @@
 /* Tarjetas tipo Polaroid, en cuadrícula, cada una un poco inclinada (--tilt); se enderezan al pasar el ratón */
 .pcards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(214px, 1fr));
-  gap: 44px 36px;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 36px 28px;
   margin: 0;
-  padding: 8px 72px 0 109px;
+  padding: 8px 28px 0;
   list-style: none;
 }
 
@@ -410,11 +369,11 @@
 /* ---------- Detalle de un proyecto ---------- */
 
 .pdetail {
-  padding: 24px 0 56px;
+  padding: 16px 0 48px;
 }
 
 .pdetail__top {
-  padding: 0 72px 0 109px;
+  padding: 0 28px;
 }
 
 .pdetail__back {
@@ -450,14 +409,18 @@
   outline-offset: 3px;
 }
 
-/* Polaroid grande a la izquierda y la información completa a la derecha */
+/* Polaroid arriba y la información completa debajo (la hoja es estrecha) */
 .project {
   display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: 44px;
-  margin: 0 72px 0 109px;
-  padding: 32px 0 0;
+  gap: 32px;
+  margin: 0 28px;
+  padding: 28px 0 0;
+}
+
+.polaroid--detail {
+  width: min(100%, 300px);
 }
 
 .polaroid--detail {
@@ -477,7 +440,7 @@
   margin: 0;
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 40.4px;
+  font-size: 34px;
   line-height: 1.2;
 }
 
@@ -495,8 +458,8 @@
   margin: 0;
   font-family: var(--font-head);
   font-weight: 200;
-  font-size: 20px;
-  line-height: 28px;
+  font-size: 18px;
+  line-height: 26px;
 }
 
 .project__text strong {
@@ -655,50 +618,50 @@
   height: 30px;
 }
 
-/* ---------- Pantallas medianas ---------- */
-@media (max-width: 1000px) {
-  .pmodal__tools,
-  .pdetail__top {
-    padding: 28px 40px 8px;
-  }
-
-  .pcards {
-    padding: 8px 40px 0;
-  }
-
-  .project {
-    grid-template-columns: 240px minmax(0, 1fr);
-    gap: 32px;
-    margin: 0 40px;
-  }
-}
-
 /* ---------- Celular: casi toda la pantalla; tarjetas en dos columnas, detalle en una ---------- */
 @media (max-width: 768px) {
   .pmodal {
     padding: 16px;
   }
 
-  .pmodal__bar {
-    height: 50px;
-    padding: 0 60px 0 92px;
+  /* En el celular la carpeta ocupa toda la pantalla: tapa negra con la hoja dentro y la barra de los anillos a la
+     derecha (la imagen, más ancha que alta, quedaría muy pequeña) */
+  .pmodal__window {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    border-radius: 18px;
+    background:
+      linear-gradient(90deg, transparent calc(100% - 26px), #b9b9b9 calc(100% - 25px), #f2f2f2 calc(100% - 20px), #8d8d8d calc(100% - 15px), transparent calc(100% - 14px)),
+      #111;
+    filter: none;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
   }
 
-  .pmodal__lights {
-    left: 18px;
+  .pmodal__page {
+    left: 10px;
+    top: 58px;
+    width: calc(100% - 46px);
+    height: calc(100% - 68px);
+    border-radius: 4px;
+    background: #dedbd6;
   }
 
   .pmodal__close {
-    left: 18px;
+    right: 40px;
+    top: 11px;
+    width: 36px;
+    height: 36px;
   }
 
   .pmodal__title {
-    font-size: 17px;
+    padding: 16px 18px 0;
+    font-size: 21px;
   }
 
   .pmodal__title img {
-    width: 28px;
-    height: 25px;
+    width: 32px;
+    height: 29px;
   }
 
   .pmodal__tools,
