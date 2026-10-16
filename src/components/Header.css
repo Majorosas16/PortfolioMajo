@@ -104,7 +104,7 @@
 
 html[data-box='closed'] .header--intro .header__brand,
 html[data-box='closed'] .header--intro .lang-switch,
-html[data-box='closed'] .header--intro:not(.header--menu-open) .header__toggle {
+html[data-box='closed'] .header--intro .header__toggle {
   opacity: 0.4;
 }
 
@@ -197,7 +197,7 @@ html[data-box='closed'] .header--intro .header__toggle:focus-visible {
     border-color: var(--cream);
   }
 
-  /* Tres líneas que se convierten en una X al abrir */
+  /* Ícono de tres líneas */
   .header__toggle-icon,
   .header__toggle-icon::before,
   .header__toggle-icon::after {
@@ -228,37 +228,9 @@ html[data-box='closed'] .header--intro .header__toggle:focus-visible {
     transform: translateY(5px);
   }
 
-  .header--menu-open .header__toggle-icon {
-    background-color: transparent;
-  }
-
-  .header--menu-open .header__toggle-icon::before {
-    transform: rotate(45deg);
-  }
-
-  .header--menu-open .header__toggle-icon::after {
-    transform: rotate(-45deg);
-  }
-
-  /* Menú: oculto (y fuera del orden de Tab) hasta que se abre; ocupa su propia fila debajo */
+  /* Los enlaces viven en el menú a pantalla completa (MobileMenu.css) */
   .header__nav {
     display: none;
-    order: 3;
-    flex-basis: 100%;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 14px 0 calc(var(--hm) * 0.4);
-  }
-
-  .header--menu-open .header__nav {
-    display: flex;
-  }
-
-  .header__link {
-    height: 36px;
-    padding: 0 16px;
-    font-size: 14px;
   }
 
   .header {
@@ -269,14 +241,6 @@ html[data-box='closed'] .header--intro .header__toggle:focus-visible {
 
   .header--dark {
     background-color: rgba(67, 47, 46, 0.88);
-  }
-
-  .header--menu-open {
-    background-color: rgba(255, 252, 249, 0.97);
-  }
-
-  .header--dark.header--menu-open {
-    background-color: rgba(67, 47, 46, 0.97);
   }
 }
 

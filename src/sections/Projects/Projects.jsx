@@ -2,6 +2,7 @@ import P from '../../components/P.jsx';
 import { byName } from '../../assets/images.js';
 import Message from '../../components/Message.jsx';
 import ObjectItem from '../../components/ObjectItem.jsx';
+import { socials } from '../../components/socials.js';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import { localizedSrc } from '../../i18n/images.js';
 import Rich from '../../i18n/Rich.jsx';
@@ -42,14 +43,6 @@ const objects = [
     x: 1169.96, y: 659.38, w: 277.74, h: 236.4, r: -6.64,
     label: { dx: 67.04, dy: 204 },
   },
-];
-
-// Redes: completa los enlaces que faltan (WhatsApp, LinkedIn, GitHub)
-const socials = [
-  { name: 'WhatsApp', icon: 'icon-whatsapp', size: 58.76, href: 'https://wa.me/57XXXXXXXXXX' },
-  { name: 'Behance', icon: 'icon-behance', size: 61.98, href: 'https://www.behance.net/marajrosasc' },
-  { name: 'LinkedIn', icon: 'icon-linkedin', size: 57.35, href: 'https://www.linkedin.com/in/TU-USUARIO' },
-  { name: 'GitHub', icon: 'icon-github', size: 62.56, href: 'https://github.com/TU-USUARIO' },
 ];
 
 // Frame 4 de Figma — "WEB" 1512 × 1937
@@ -127,7 +120,7 @@ export default function Projects() {
               {socials.map((s) => (
                 <li key={s.name}>
                   <a href={s.href} target="_blank" rel="noreferrer" aria-label={s.name} style={{ '--s': s.size }}>
-                    <img loading="lazy" decoding="async" src={img[s.icon]} alt="" />
+                    <img loading="lazy" decoding="async" src={s.icon} alt="" />
                   </a>
                 </li>
               ))}
