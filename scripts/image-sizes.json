@@ -1,5 +1,8 @@
 {
   "_info": "Ancho (px) de cada imagen en la web = ancho máximo en pantalla (medido a 1512, 1024, 768 y 390 px) × 6, sin superar el original. ×6 = 2 × los píxeles de una pantalla 3x: así el navegador siempre reduce la imagen con su método de alta calidad y se ve igual de nítida que el original. Si cambias el tamaño de una imagen en el diseño, actualiza su ancho aquí y ejecuta npm run images -- --forzar.",
+  "_fotos": [
+    "sections/projects/binder.png"
+  ],
   "_omitir": [
     "shared/paper-background-original.png"
   ],
@@ -18,6 +21,7 @@
   "sections/intro/keys.png": 1710,
   "sections/intro/mirror.png": 708,
   "sections/intro/plant.png": 1422,
+  "sections/projects/binder.png": 1800,
   "sections/projects/chess.png": 1260,
   "sections/projects/clip.png": 800,
   "sections/projects/coffee.png": 1024,
