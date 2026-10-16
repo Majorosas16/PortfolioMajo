@@ -333,6 +333,42 @@
   cursor: pointer;
 }
 
+/* Objeto seleccionado: queda sobre la capa oscura con sus colores y deja de flotar para no separarse
+   de su mensaje. !important gana al z-index en línea que pone el arrastre. */
+.intro .objects--box .obj.is-selected {
+  z-index: 101 !important;
+  animation-play-state: paused;
+}
+
+.objects--box .obj:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 6px;
+  border-radius: 12px;
+}
+
+/* Capa oscura: velo sutil sobre toda la pantalla (fondo, caja y demás objetos) mientras hay un objeto
+   seleccionado. Es fija para no cortarse en el borde de la sección; al estar dentro del contexto de
+   #intro, el objeto seleccionado (101) y su mensaje (102) quedan encima, y el header (fijo, z 50) fuera.
+   No recibe toques: el cierre al tocar fuera lo maneja Intro.jsx. */
+.intro {
+  /* El contexto del inicio (con su velo) se pinta sobre las secciones siguientes */
+  z-index: 1;
+}
+
+.intro__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.intro[data-selected='true'] .intro__scrim {
+  opacity: 1;
+}
+
 /* "Toca los objetos": aparece con un fundido cuando los cinco objetos ya llegaron.
    Medidas del mensaje de Figma (146:5517); k=0.86 en Intro.jsx ajusta la reacción. */
 .box__tap {
@@ -445,6 +481,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .intro__scrim {
+    transition: none;
+  }
+
   /* Entrada: la caja, el mensaje y el nombre solo aparecen con un fundido corto */
   .box,
   .intro__msg .msg {
