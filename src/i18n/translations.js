@@ -23,7 +23,7 @@ export const translations = {
       message: '¿Abrimos la caja?',
       read: 'Leído',
       openBox: 'Abrir la caja',
-      tap: 'Toca los objetos',
+      tap: 'Toca y mueve los objetos',
       objects: {
         keys: { label: 'Diseño de producto', alt: 'Llaves antiguas' },
         plant: { label: 'Prototipado y código', alt: 'Planta en matera de concreto' },
@@ -73,7 +73,7 @@ export const translations = {
     projects: {
       photoAlt: 'María José con los brazos abiertos',
       stickerAlt: 'Proyectos',
-      tap: 'Toca los objetos',
+      tap: 'Toca y mueve los objetos',
       objects: {
         prism: { label: 'UX/UI', alt: 'Prisma de cristal' },
         compass: { label: 'UX research', alt: 'Brújula' },
@@ -105,7 +105,7 @@ export const translations = {
       message: 'Shall we open?',
       read: 'Read',
       openBox: 'Open the box',
-      tap: 'Tap the objects',
+      tap: 'Tap and drag the objects',
       objects: {
         keys: { label: 'Product design', alt: 'Antique keys' },
         plant: { label: 'Prototyping & code', alt: 'Plant in a concrete pot' },
@@ -154,7 +154,7 @@ export const translations = {
     projects: {
       photoAlt: 'María José with her arms open',
       stickerAlt: 'Projects',
-      tap: 'Tap the objects',
+      tap: 'Tap and drag the objects',
       objects: {
         prism: { label: 'UX/UI', alt: 'Crystal prism' },
         compass: { label: 'UX research', alt: 'Compass' },
