@@ -110,8 +110,8 @@ export default function Folder({ img, open, onOpen }) {
   // Posición del detalle: el bloque entero (título, burbuja, explicación) con una sola alineación.
   // Escritorio y tablet: a su lado de la foto (side), siempre a la misma distancia G de ella; así los cuatro
   // detalles quedan igual de cerca de su imagen. Si por ese lado se sale de la pantalla, el bloque entero pasa al
-  // otro lado de la foto y cambia su alineación; si tampoco cabe, va encima de la foto (como en celular). Siempre suma el arrastre de la foto (la sigue) y nunca
-  // queda bajo el header ni fuera de la sección.
+  // otro lado de la foto y cambia su alineación; si tampoco cabe, va encima de la foto (como en celular). Siempre
+  // suma el arrastre de la foto (la sigue) y nunca sale de la sección.
   const place = useCallback(() => {
     const root = rootRef.current;
     const det = detailWrapRef.current;
@@ -145,8 +145,9 @@ export default function Folder({ img, open, onOpen }) {
     const G = 24 * u;
     const vw = document.documentElement.clientWidth;
     const sec = root.closest('section').getBoundingClientRect();
-    const headerBottom = document.querySelector('.header')?.getBoundingClientRect().bottom ?? 0;
-    const fitBottom = (b) => clamp(b, Math.max(sec.top, headerBottom) + 8 + bh, sec.bottom - 8);
+    // Dentro de la sección (sin depender del scroll: el header fijo no cuenta, así el bloque no se mueve al
+    // desplazar la página)
+    const fitBottom = (b) => clamp(b, sec.top + 8 + bh, sec.bottom - 8);
     const frames = [...root.querySelectorAll('.folder__frame')].map((f) => rectOf(f, f === el));
 
     let side = 'top';
@@ -196,7 +197,13 @@ export default function Folder({ img, open, onOpen }) {
     if (!selected) return undefined;
     place();
     const timer = setTimeout(place, 550);
-    const onResize = () => requestAnimationFrame(place);
+    // Solo si cambia el ancho: en el celular el alto cambia al desplazarse (se esconde la barra del navegador)
+    let width = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth === width) return;
+      width = window.innerWidth;
+      requestAnimationFrame(place);
+    };
     window.addEventListener('resize', onResize);
     document.fonts?.ready.then(place);
     return () => {

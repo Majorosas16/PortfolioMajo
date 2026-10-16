@@ -585,6 +585,20 @@
    detalle de la seleccionada (en px: el texto no se encoge con la pantalla). La distancia entre el título y las
    fotos es la misma con y sin foto seleccionada. */
 @media (max-width: 768px) {
+  /* La sombra de la carpeta va en sus piezas y no en el conjunto: un filtro sobre todo el conjunto hacía que el
+     celular (Safari) pintara la nota de dentro a baja resolución. La nota ya trae su propia sombra. */
+  .folder {
+    filter: none;
+  }
+
+  .folder__back,
+  .folder__photos,
+  .folder__front {
+    filter: drop-shadow(0 calc(var(--u) * 4.74) calc(var(--u) * 4.74) rgba(0, 0, 0, 0.3))
+      drop-shadow(0 calc(var(--u) * 7.11) calc(var(--u) * 7.11) rgba(0, 0, 0, 0.21))
+      drop-shadow(0 calc(var(--u) * 9.48) calc(var(--u) * 9.48) rgba(0, 0, 0, 0.1));
+  }
+
   .folder {
     /* Ancho de la columna del celular (100vw menos el relleno de 20px a cada lado), así queda centrada */
     --u: calc(min(100vw - 40px, 620px) / 690);
