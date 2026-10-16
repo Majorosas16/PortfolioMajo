@@ -13,7 +13,7 @@ const img = byName(import.meta.glob('../../assets/sections/about/*', { eager: tr
 // Frame 2 de Figma — "WEB" 1512 × 2888.
 // La caja abierta y los objetos (parte superior del frame) ahora están en Intro.jsx;
 // .about__canvas sube el resto TRIM px para no dejar ese espacio vacío.
-const TRIM = 1080;
+const TRIM = 1040;
 
 export default function About() {
   const sectionRef = useRef(null);

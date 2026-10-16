@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
 import LanguageSwitch from './LanguageSwitch.jsx';
 import './Header.css';
@@ -27,6 +27,10 @@ export default function Header() {
   const [dark, setDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [atIntro, setAtIntro] = useState(true);
+  // Menú hamburguesa (solo en celular; en escritorio el botón no se muestra)
+  const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef(null);
+  const toggleRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -54,9 +58,39 @@ export default function Header() {
     };
   }, []);
 
+  // Con el menú abierto: Escape lo cierra (y devuelve el foco al botón), igual que tocar fuera
+  // del encabezado o pasar a escritorio
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      setMenuOpen(false);
+      toggleRef.current?.focus();
+    };
+    const onPointer = (e) => {
+      if (!headerRef.current?.contains(e.target)) setMenuOpen(false);
+    };
+    const desktop = window.matchMedia('(min-width: 769px)');
+    const onMedia = () => desktop.matches && setMenuOpen(false);
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onPointer);
+    desktop.addEventListener('change', onMedia);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onPointer);
+      desktop.removeEventListener('change', onMedia);
+    };
+  }, [menuOpen]);
+
+  const onLinkClick = (e) => {
+    setMenuOpen(false);
+    goToSection(e);
+  };
+
   return (
     <header
-      className={`header ${dark ? 'header--dark' : ''} ${scrolled ? 'header--scrolled' : ''} ${atIntro ? 'header--intro' : ''}`}
+      ref={headerRef}
+      className={`header ${dark ? 'header--dark' : ''} ${scrolled ? 'header--scrolled' : ''} ${atIntro ? 'header--intro' : ''} ${menuOpen ? 'header--menu-open' : ''}`}
     >
       <div className="header__inner">
         <a href="#intro" className="header__brand" onClick={goToSection}>
@@ -64,9 +98,20 @@ export default function Header() {
           <span className="header__name">María José Rosas Cuellar</span>
         </a>
         <div className="header__actions">
-          <nav className="header__nav" aria-label={t.header.nav}>
+          <button
+            ref={toggleRef}
+            type="button"
+            className="header__toggle"
+            aria-expanded={menuOpen}
+            aria-controls="header-nav"
+            aria-label={menuOpen ? t.header.menuClose : t.header.menuOpen}
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            <span className="header__toggle-icon" aria-hidden="true" />
+          </button>
+          <nav id="header-nav" className="header__nav" aria-label={t.header.nav}>
             {links.map((l) => (
-              <a key={l.href} href={l.href} className="header__link" onClick={goToSection}>
+              <a key={l.href} href={l.href} className="header__link" onClick={onLinkClick}>
                 {t.header.links[l.key]}
               </a>
             ))}
