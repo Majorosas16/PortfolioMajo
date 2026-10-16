@@ -196,7 +196,7 @@ export default function Intro() {
         </div>
 
         <P x={1041.4} y={883 - Y0} cx className="caja__toca" style={{ '--mx': 50, '--my': 179 }} aria-hidden={estado !== 'abierta'}>
-          <Message text="Toca los objetos" emoji="👆🏽" k={25.77 / 37.14} />
+          <Message text="Toca los objetos" emoji="👆🏽" k={0.86} />
         </P>
       </div>
     </section>
