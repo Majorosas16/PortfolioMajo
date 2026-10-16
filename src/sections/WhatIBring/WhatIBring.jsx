@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import P from '../../components/P.jsx';
 import { byName } from '../../assets/images.js';
-import Message from '../../components/Message.jsx';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import { localizedSrc } from '../../i18n/images.js';
 import Folder from './Folder.jsx';
@@ -34,7 +33,6 @@ export default function WhatIBring() {
       id="what-i-bring"
       className="section section--dark what-i-bring"
       data-theme="dark"
-      data-folder={open ? 'open' : 'closed'}
       style={{ '--height': 1792 + dy }}
     >
       <div className="stage">
@@ -55,10 +53,6 @@ export default function WhatIBring() {
         </P>
 
         {/* Aparece cuando ya salieron las cuatro fotos (la invitación a abrir la carpeta está en Folder.jsx) */}
-        <P x={1009.3} y={1352 + dy} cx className="what-i-bring__tap" aria-hidden={!open}>
-          <Message text={t.whatIBring.tap} emoji="👆🏽" k={0.6} />
-        </P>
-
         <P x={756.5} y={1522 + dy} cx className="tags">
           {tags.map((tag) => (
             <div key={tag.id} className="tag">
