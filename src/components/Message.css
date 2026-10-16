@@ -202,3 +202,70 @@
   margin-left: 0;
   margin-right: calc(var(--u) * 7.8);
 }
+
+/* Variante verde (mensaje del sticker «Sobre mí», Figma 178:624) */
+.msg--green .msg__bubble {
+  background: #00dd5b;
+  color: #fff;
+}
+
+/* Tamaño pequeño: mensajes del sticker y del perrito en «Sobre mí» (Figma 178:624 / 178:605).
+   Se combina con la variante de color (light / green). Respeta los saltos de línea del texto. */
+.msg--small {
+  white-space: normal;
+}
+
+.msg--small .msg__row {
+  margin-bottom: calc(var(--u) * -9.47);
+}
+
+.msg--small .msg__bubble {
+  max-width: calc(var(--u) * 276.75);
+  padding: calc(var(--u) * 9.47) calc(var(--u) * 13.68);
+  margin-right: calc(var(--u) * -19.99);
+  border-radius: calc(var(--u) * 20);
+  font-size: calc(var(--u) * 16.61);
+}
+
+.msg--small .msg__bubble p {
+  white-space: pre-line;
+}
+
+.msg--small .msg__reaction {
+  width: calc(var(--u) * 34.73);
+}
+
+.msg--small .msg__reaction-bg,
+.msg--small .msg__emoji {
+  top: calc(var(--u) * -19.99);
+  width: calc(var(--u) * 32.11);
+}
+
+.msg--small .msg__reaction-bg {
+  height: calc(var(--u) * 35.14);
+}
+
+.msg--small .msg__emoji {
+  height: calc(var(--u) * 32.11);
+  font-size: calc(var(--u) * 20.4);
+}
+
+.msg--small .msg__reaction-dot {
+  left: calc(var(--u) * 31.24);
+  top: calc(var(--u) * 16.99);
+  width: calc(var(--u) * 4.85);
+  height: calc(var(--u) * 4.85);
+}
+
+/* El punto verde trae su borde por fuera (12.5 % por lado) */
+.msg--small.msg--green .msg__reaction-dot {
+  left: calc(var(--u) * 30.63);
+  top: calc(var(--u) * 16.38);
+  width: calc(var(--u) * 6.06);
+  height: calc(var(--u) * 6.06);
+}
+
+.msg--small .msg__tail {
+  width: calc(var(--u) * 25.25);
+  height: calc(var(--u) * 14.73);
+}
