@@ -35,14 +35,17 @@ const TRIM = 1040;
 // - Columnas: el texto de la izquierda termina y la bio empieza a la misma distancia de la foto (95).
 // - LEFT_DY / BIO_DY centran en la foto (y = 1582) el texto de la izquierda («Hola! soy» → «de Cali», el
 //   sticker se mueve con él pero no cuenta para el centrado) y la bio, así quedan alineados entre sí.
-// - COLS_DY separa «Mi enfoque» / «Mi toolkit» del final de la sección.
+// - GRAD_Y: texto de la graduación, centrado bajo las fotos.
+// - COLS_DY baja «Mi enfoque» / «Mi toolkit» para dejar aire tras las fotos y el texto de la graduación.
 const LEFT_DY = 5;
 const BIO_DY = 30;
-const COLS_DY = 100;
+const GRAD_Y = 2010;
+const COLS_DY = 200;
 // «Mi enfoque» / «Mi toolkit»: los textos empiezan a la misma altura bajo su subtítulo (TEXT_Y, borde superior);
-// el texto de toolkit es más largo, así que su recuadro y su cursor bajan TOOLKIT_DY.
+// cada recuadro y su cursor quedan a 26 del final de su texto (APPROACH_DY / TOOLKIT_DY; el de toolkit es más largo).
 const TEXT_Y = 2214;
-const TOOLKIT_DY = 73;
+const APPROACH_DY = -18;
+const TOOLKIT_DY = 49;
 
 // Tiempo que se ve el mensaje del sticker o del perrito al tocarlos
 const BUBBLE_MS = 2600;
@@ -165,6 +168,10 @@ export default function About() {
             </p>
           </P>
 
+          <P x={756} y={GRAD_Y} w={900} fs={30} cx className="about__grad">
+            <p>{a.graduation}</p>
+          </P>
+
           {/* Mi enfoque */}
           <div className="grp grp--col">
             <P x={392} y={2006 + COLS_DY} w={67.82} className="about__reaction">
@@ -173,16 +180,16 @@ export default function About() {
             <P x={442.7} y={2138.68 + COLS_DY} fs={81.68} r={-0.97} cx cy className="hand about__subtitle">
               <h3>{a.approach.title}</h3>
             </P>
-            <P x={445.5} y={TEXT_Y + COLS_DY} w={461} fs={32} cx className="about__text">
+            <P x={445.5} y={TEXT_Y + COLS_DY} w={461} fs={29} cx className="about__text">
               <p>
                 <Rich text={a.approach.text} />
               </p>
             </P>
-            <P x={453} y={2438.4 + COLS_DY} w={446} h={127} r={-2.22} fs={32} cx className="selection selection--orange">
+            <P x={453} y={2438.4 + COLS_DY + APPROACH_DY} w={446} h={127} r={-2.22} fs={32} cx className="selection selection--orange">
               <p>{a.approach.highlight}</p>
               <SelectionFrame />
             </P>
-            <P x={579} y={2589 + COLS_DY} className="cursor-tag cursor-tag--orange">
+            <P x={579} y={2589 + COLS_DY + APPROACH_DY} className="cursor-tag cursor-tag--orange">
               <img loading="lazy" decoding="async" src={img['cursor-orange']} alt="" />
               <span>{a.approach.cursor}</span>
             </P>
@@ -201,7 +208,7 @@ export default function About() {
             <P x={1094.57} y={2138.89 + COLS_DY} fs={81.68} r={-0.97} cx cy className="hand about__subtitle">
               <h3>{a.toolkit.title}</h3>
             </P>
-            <P x={1102} y={TEXT_Y + COLS_DY} w={560} fs={32} cx className="about__text">
+            <P x={1102} y={TEXT_Y + COLS_DY} w={560} fs={29} cx className="about__text">
               <p>
                 <Rich text={a.toolkit.text} />
               </p>
