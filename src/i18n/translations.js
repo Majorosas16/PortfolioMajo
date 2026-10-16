@@ -66,6 +66,7 @@ export const translations = {
       dogAlt: 'Perro asomándose',
       dogMsg: 'Lola, la\ninspiración\nde Majo',
       stickerMsg: 'Mango, mi\nfruta favorita',
+      graduation: 'Próxima a graduarme como Diseñadora de Medios Interactivos de la Universidad Icesi, con reconocimientos académicos y mucha emoción por lo que viene. ✨',
       bio: 'Creativa por naturaleza, **curiosa por diseño** y tecnología. Siempre explorando **nuevas tendencias**, creando interfaces y **coleccionando inspiración.**',
       approach: {
         title: 'Mi enfoque',
@@ -171,6 +172,7 @@ export const translations = {
       dogAlt: 'Dog peeking out',
       dogMsg: 'Lola, Majo’s\ninspiration',
       stickerMsg: 'Mango, my\nfavorite fruit',
+      graduation: 'About to graduate as an Interactive Media Designer from Universidad Icesi, with academic honors and lots of excitement for what comes next. ✨',
       bio: 'Creative by nature, **curious about design** and technology. Always exploring **new trends**, building interfaces and **collecting inspiration.**',
       approach: {
         title: 'My approach',
