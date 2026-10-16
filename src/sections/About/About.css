@@ -130,6 +130,11 @@
 }
 
 @media (max-width: 768px) {
+  /* Un poco más de aire después del inicio (las demás secciones mantienen 72px, ver styles.css) */
+  .section.about .stage {
+    padding-top: 96px;
+  }
+
   .about__canvas {
     display: contents;
   }

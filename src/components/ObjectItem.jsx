@@ -34,11 +34,12 @@ export default function ObjectItem({ src, alt, x, y, w, h, r = 0, crop, flip = f
               alt={alt}
               loading={loading}
               decoding="async"
+              draggable={false}
               style={{ width: `${crop.w}%`, height: `${crop.h}%`, left: `${crop.left}%`, top: `${crop.top}%` }}
             />
           </div>
         ) : (
-          <img src={src} alt={alt} loading={loading} decoding="async" />
+          <img src={src} alt={alt} loading={loading} decoding="async" draggable={false} />
         )}
       </div>
       <figcaption className="obj__label" style={labelStyle}>

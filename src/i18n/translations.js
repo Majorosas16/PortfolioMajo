@@ -11,6 +11,8 @@ export const translations = {
     header: {
       role: 'Diseñadora de producto',
       nav: 'Secciones',
+      menuOpen: 'Abrir menú',
+      menuClose: 'Cerrar menú',
       links: { about: 'Sobre mí', whatIBring: 'Lo que aporto', projects: 'Proyectos', contact: 'Hablemos' },
       language: 'Idioma',
     },
@@ -89,6 +91,8 @@ export const translations = {
     header: {
       role: 'Product Designer',
       nav: 'Sections',
+      menuOpen: 'Open menu',
+      menuClose: 'Close menu',
       links: { about: 'About me', whatIBring: 'What I bring', projects: 'Projects', contact: "Let's talk" },
       language: 'Language',
     },

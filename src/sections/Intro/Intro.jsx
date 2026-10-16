@@ -4,6 +4,7 @@ import { byName } from '../../assets/images.js';
 import Message from '../../components/Message.jsx';
 import ObjectItem from '../../components/ObjectItem.jsx';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
+import useDraggableObjects from './useDraggableObjects.js';
 import './Intro.css';
 
 // Imágenes de esta sección (src/assets/sections/intro/)
@@ -107,6 +108,10 @@ export default function Intro() {
   const timers = useRef([]);
   const stageRef = useRef(null);
   const boxRef = useRef(null);
+  const sectionRef = useRef(null);
+
+  // Con la caja abierta los objetos se pueden agarrar y mover por la sección
+  useDraggableObjects(sectionRef, boxState === 'open');
 
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
@@ -162,6 +167,7 @@ export default function Intro() {
 
   return (
     <section
+      ref={sectionRef}
       id="intro"
       className="section section--paper intro"
       data-state={boxState}

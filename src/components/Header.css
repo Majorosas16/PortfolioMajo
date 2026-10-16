@@ -12,7 +12,7 @@
   /* Retícula de 12 columnas con margen lateral de 110px en escritorio (proporcional en pantallas menores) */
   --margin: clamp(24px, calc(100vw * 110 / 1512), 110px);
   width: 100%;
-  padding: max(16px, calc(var(--u) * 32)) var(--margin);
+  padding: max(20px, calc(var(--u) * 32)) var(--margin);
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: calc(var(--u) * 24);
@@ -86,21 +86,31 @@
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Pantalla de la caja cerrada: sin navegación y con el nombre al 40 % (como en Figma) */
-html[data-box='closed'] .header--intro .header__nav {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+/* Botón del menú hamburguesa: solo en celular (ver abajo) */
+.header__toggle {
+  display: none;
+}
+
+/* Pantalla de la caja cerrada: sin navegación y con el nombre al 40 % (como en Figma).
+   En celular la navegación vive en el menú hamburguesa, que se atenúa en lugar de ocultarse. */
+@media (min-width: 769px) {
+  html[data-box='closed'] .header--intro .header__nav {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+  }
 }
 
 html[data-box='closed'] .header--intro .header__brand,
-html[data-box='closed'] .header--intro .lang-switch {
+html[data-box='closed'] .header--intro .lang-switch,
+html[data-box='closed'] .header--intro:not(.header--menu-open) .header__toggle {
   opacity: 0.4;
 }
 
-/* Con teclado el selector recupera la opacidad completa para que el foco se vea bien */
-html[data-box='closed'] .header--intro .lang-switch:focus-within {
+/* Con teclado el selector y el botón recuperan la opacidad completa para que el foco se vea bien */
+html[data-box='closed'] .header--intro .lang-switch:focus-within,
+html[data-box='closed'] .header--intro .header__toggle:focus-visible {
   opacity: 1;
 }
 
@@ -127,48 +137,128 @@ html[data-box='closed'] .header--intro .lang-switch:focus-within {
 }
 
 @media (max-width: 768px) {
-  /* Encabezado en dos filas: nombre arriba, menú deslizable abajo */
+  /* Una fila: nombre a la izquierda; idioma y menú hamburguesa a la derecha.
+     --hm es el mismo margen arriba y a ambos lados. */
   .header__inner {
+    --hm: clamp(20px, 5vw, 28px);
     width: 100%;
     height: auto;
-    padding: 12px 20px;
+    padding: var(--hm) var(--hm) calc(var(--hm) * 0.6);
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 12px;
   }
 
   .header__brand {
     gap: 2px;
+    min-width: 0;
   }
 
-  /* El selector de idioma sube a la fila del nombre, a la derecha */
   .header__actions {
     display: contents;
   }
 
+  /* Idioma y botón juntos a la derecha (el botón va primero en el HTML para que,
+     con Tab, después de él sigan los enlaces del menú) */
   .header .lang-switch {
+    order: 1;
+    height: 36px;
+    margin-left: auto;
+  }
+
+  .header__toggle {
+    order: 2;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    margin: 0 0 0 8px;
+    padding: 0;
+    border: 1.2px solid var(--brown-border);
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: opacity 0.4s ease, background-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .header__toggle:focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 2px;
+  }
+
+  .header--dark .header__toggle {
+    border-color: var(--cream);
+  }
+
+  /* Tres líneas que se convierten en una X al abrir */
+  .header__toggle-icon,
+  .header__toggle-icon::before,
+  .header__toggle-icon::after {
+    display: block;
+    width: 16px;
+    height: 1.6px;
+    border-radius: 2px;
+    background-color: currentColor;
+    transition: transform 0.25s ease, background-color 0.2s ease;
+  }
+
+  .header__toggle-icon {
+    position: relative;
+  }
+
+  .header__toggle-icon::before,
+  .header__toggle-icon::after {
+    content: '';
     position: absolute;
-    top: 12px;
-    right: 20px;
+    left: 0;
   }
 
+  .header__toggle-icon::before {
+    transform: translateY(-5px);
+  }
+
+  .header__toggle-icon::after {
+    transform: translateY(5px);
+  }
+
+  .header--menu-open .header__toggle-icon {
+    background-color: transparent;
+  }
+
+  .header--menu-open .header__toggle-icon::before {
+    transform: rotate(45deg);
+  }
+
+  .header--menu-open .header__toggle-icon::after {
+    transform: rotate(-45deg);
+  }
+
+  /* Menú: oculto (y fuera del orden de Tab) hasta que se abre; ocupa su propia fila debajo */
   .header__nav {
-    width: 100%;
-    gap: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding-bottom: 2px;
+    display: none;
+    order: 3;
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 0 calc(var(--hm) * 0.4);
   }
 
-  .header__nav::-webkit-scrollbar {
-    display: none;
+  .header--menu-open .header__nav {
+    display: flex;
   }
 
   .header__link {
-    height: 32px;
-    padding: 0 14px;
-    font-size: 13px;
+    height: 36px;
+    padding: 0 16px;
+    font-size: 14px;
   }
 
   .header {
@@ -180,11 +270,25 @@ html[data-box='closed'] .header--intro .lang-switch:focus-within {
   .header--dark {
     background-color: rgba(67, 47, 46, 0.88);
   }
+
+  .header--menu-open {
+    background-color: rgba(255, 252, 249, 0.97);
+  }
+
+  .header--dark.header--menu-open {
+    background-color: rgba(67, 47, 46, 0.97);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   /* El nombre solo aparece con un fundido corto */
   .header__brand {
     animation: header-enter 0.2s ease backwards;
+  }
+
+  .header__toggle-icon,
+  .header__toggle-icon::before,
+  .header__toggle-icon::after {
+    transition: none;
   }
 }
