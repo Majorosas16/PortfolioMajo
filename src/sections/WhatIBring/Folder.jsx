@@ -14,36 +14,45 @@ import { useLanguage } from '../../i18n/LanguageContext.jsx';
 
 // En el orden de la nota (01–04), que es también el orden del teclado. z = orden de capas en Figma (mayor = delante).
 // x, y, bw, bh: caja de la foto ya girada · w, h: la foto sin girar · r: giro (CSS) · bd: grosor del borde
-// side / anchor: en escritorio y tablet el detalle va a un lado de las fotos (01 y 02 a la izquierda, 03 y 04 a la
-//   derecha; 02 y 03 más cerca de los bordes). anchor = punta de la cola, sin contar el arrastre.
-// tip: en celular el detalle va encima de la foto: punta de la cola sobre el punto más alto de la foto
-//   ya elevada (y de su caja − LIFT 40 − 6 del zoom; Folder.css), para no taparla
+// side: en escritorio y tablet el detalle va a ese lado de las fotos (01 y 02 a la izquierda, 03 y 04 a la derecha),
+//   a la misma distancia de la foto más cercana en los cuatro casos (place)
+// tip: en celular el detalle va encima de la foto; tip.y es el punto más alto de la foto ya elevada
+//   (y de su caja − LIFT 40 − 6 del zoom; Folder.css), y tip.x donde empieza el bloque
 const photos = [
   {
-    id: 'listening', src: 'project-4', z: 4, side: 'left', anchor: { x: 180, y: 215 },
+    id: 'listening', src: 'project-4', z: 4, side: 'left',
     x: 204.83, y: 168.7, bw: 270.07, bh: 328.1, w: 208.74, h: 287.29, r: -13.51,
     crop: { w: 116.49, h: 150.75, left: 0, top: -50.76 },
     tip: { x: 228, y: 123 },
   },
   {
-    id: 'curiosity', src: 'project-3', z: 3, side: 'left', anchor: { x: 90, y: 215 },
+    id: 'curiosity', src: 'project-3', z: 3, side: 'left',
     x: 280, y: 138, bw: 253.04, bh: 283.15, w: 226.93, h: 261.01, r: -5.96, soft: true,
     crop: { w: 145, h: 224.15, left: -16.29, top: -91.68 },
     tip: { x: 300, y: 92 },
   },
   {
-    id: 'teamwork', src: 'project-2', z: 2, side: 'right', anchor: { x: 980, y: 215 },
+    id: 'teamwork', src: 'project-2', z: 2, side: 'right',
     x: 475, y: 153, bw: 207.44, bh: 351.92, w: 193.72, h: 344.39, r: 2.31,
     tip: { x: 506, y: 107 },
   },
   {
-    id: 'detail', src: 'project-1', z: 1, side: 'right', anchor: { x: 890, y: 215 },
+    id: 'detail', src: 'project-1', z: 1, side: 'right',
     x: 545, y: 138, bw: 321.13, bh: 597.58, w: 194, h: 568, r: 13.49,
     tip: { x: 692, y: 92 },
   },
 ];
 
 const clamp = (v, min, max) => Math.min(Math.max(v, min), Math.max(min, max));
+
+// Ícono de imagen al inicio de la explicación de la foto
+const ImageIcon = () => (
+  <svg className="folder-detail__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    <rect x="1.5" y="2.5" width="13" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.3" />
+    <circle cx="5.5" cy="6.2" r="1.3" fill="currentColor" />
+    <path d="M2.5 12.2 6.4 8.4l2.4 2.3 1.7-1.6 3 3" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+  </svg>
+);
 
 // open / onOpen: el estado lo guarda la sección (al abrirla la composición baja y aparece «Toca las imágenes»)
 export default function Folder({ img, open, onOpen }) {
@@ -98,10 +107,11 @@ export default function Folder({ img, open, onOpen }) {
 
   const current = photos.find((p) => p.id === selected);
 
-  // Posición del detalle (left/top en px dentro de la carpeta; el punto es la esquina inferior del lado de la cola).
-  // Prueba, en orden: a su lado de las fotos (escritorio y tablet), al otro lado de la foto y encima de ella (la única
-  // en celular). Se queda con la primera que no tapa ninguna foto, o con la que menos tapa. Siempre suma el arrastre
-  // de la foto, así la sigue mientras se mueve, y nunca sale de la pantalla ni queda bajo el header.
+  // Posición del detalle: el bloque entero (título, burbuja, explicación) con una sola alineación.
+  // Escritorio y tablet: a su lado de la foto (side), siempre a la misma distancia G de ella; así los cuatro
+  // detalles quedan igual de cerca de su imagen. Si por ese lado se sale de la pantalla, el bloque entero pasa al
+  // otro lado de la foto y cambia su alineación; si tampoco cabe, va encima de la foto (como en celular). Siempre suma el arrastre de la foto (la sigue) y nunca
+  // queda bajo el header ni fuera de la sección.
   const place = useCallback(() => {
     const root = rootRef.current;
     const det = detailWrapRef.current;
@@ -115,43 +125,56 @@ export default function Folder({ img, open, onOpen }) {
     const dy = parseFloat(el.style.getPropertyValue('--dy')) || 0;
     const R = root.getBoundingClientRect();
     const r = el.getBoundingClientRect();
-    const tail = 0.4574 * parseFloat(getComputedStyle(det).fontSize);
     const bw = box.offsetWidth;
     const bh = box.offsetHeight;
     const margin = 16;
+    const G = 24 * u;
     const vw = document.documentElement.clientWidth;
     const sec = root.closest('section').getBoundingClientRect();
     const headerBottom = document.querySelector('.header')?.getBoundingClientRect().bottom ?? 0;
-    const minBottom = Math.max(sec.top, headerBottom) + 8 + bh;
+    const fitBottom = (b) => clamp(b, Math.max(sec.top, headerBottom) + 8 + bh, sec.bottom - 8);
     const frames = [...root.querySelectorAll('.folder__frame')].map((f) => f.getBoundingClientRect());
 
-    // Caja en pantalla para la cola en (ax, ay) px de la carpeta, ajustada a la pantalla y a la sección
-    const candidate = (side, ax, ay) => {
-      const x = clamp(R.left + (side === 'left' ? ax + tail - bw : ax - tail), margin, vw - margin - bw);
-      const bottom = clamp(R.top + ay, minBottom, sec.bottom - 8);
-      const covered = frames.reduce((sum, f) => {
-        const w = Math.min(x + bw, f.right) - Math.max(x, f.left);
-        const h = Math.min(bottom, f.bottom) - Math.max(bottom - bh, f.top);
-        return sum + (w > 0 && h > 0 ? w * h : 0);
-      }, 0);
-      return { side, x, bottom, covered };
-    };
+    let side = 'top';
+    let x = clamp(R.left + p.tip.x * u + dx, margin, vw - margin - bw);
+    let bottom = fitBottom(R.top + (p.tip.y - 14) * u + dy);
 
-    const other = p.side === 'left' ? 'right' : 'left';
-    const top = candidate('top', p.tip.x * u + dx, (p.tip.y - 14) * u + dy);
-    const options = window.matchMedia('(max-width: 768px)').matches
-      ? [top]
-      : [
-          candidate(p.side, p.anchor.x * u + dx, p.anchor.y * u + dy),
-          candidate(other, (other === 'right' ? r.right + 24 * u : r.left - 24 * u) - R.left, p.anchor.y * u + dy),
-          top,
-        ];
-    // «No tapa»: menos del 3 % de la caja sobre las fotos (sus cajas giradas son algo más grandes que la foto)
-    const best = options.find((o) => o.covered < bw * bh * 0.03) ?? options.reduce((a, b) => (b.covered < a.covered ? b : a));
+    if (!window.matchMedia('(max-width: 768px)').matches) {
+      // Junto a su foto, siempre a la misma distancia G (los cuatro detalles igual de cerca de su imagen). Si a esa
+      // altura taparía otra foto (02 y 03 tienen fotos al lado), el bloque sube todo lo que puede, sin pasar del
+      // título. Las cajas giradas de las fotos son algo más grandes que la foto: un roce de menos
+      // de 12px no cuenta.
+      const titleBottom = root.closest('section').querySelector('.what-i-bring__title img')?.getBoundingClientRect().bottom ?? 0;
+      const lowest = fitBottom(Math.max(titleBottom + 12 + bh, 0));
+      const overlap = (left, bottom, f) =>
+        Math.min(left + bw, f.right) - Math.max(left, f.left) > 12 &&
+        Math.min(bottom, f.bottom) - Math.max(bottom - bh, f.top) > 12;
+      const others = frames.filter((f, i) => i !== photos.indexOf(p));
+      const besides = (s) => {
+        const left = s === 'left' ? r.left - G - bw : r.right + G;
+        let bottom = fitBottom(R.top + 230 * u + dy);
+        const hits = others.filter((f) => overlap(left, bottom, f));
+        if (hits.length) bottom = Math.max(Math.min(...hits.map((f) => f.top)) - G, lowest);
+        const fits = left >= 10 && left + bw <= vw - 10;
+        return { s, left, bottom, fits, free: !others.some((f) => overlap(left, bottom, f)) };
+      };
+      const other = p.side === 'left' ? 'right' : 'left';
+      const opts = [besides(p.side), besides(other)].filter((o) => o.fits);
+      // Prioridad: la misma distancia a su foto. Si por su lado se sale de la pantalla pasa todo el bloque al otro
+      // lado; si no hay hueco libre, se queda junto a su foto lo más arriba posible aunque roce la foto vecina (que
+      // está oscurecida; la seleccionada nunca se tapa). Solo si no cabe a ningún lado va encima de la foto.
+      const pick = opts.find((o) => o.free) ?? opts[0];
+      if (pick) {
+        side = pick.s;
+        x = pick.left;
+        bottom = pick.bottom;
+      }
+    }
 
-    det.style.left = `${Math.round(best.x - R.left)}px`;
-    det.style.top = `${Math.round(best.bottom - R.top)}px`;
-    det.dataset.side = best.side;
+    det.style.left = `${Math.round(x - R.left)}px`;
+    det.style.top = `${Math.round(bottom - R.top)}px`;
+    // Todo el bloque con una sola alineación: hacia la foto (a la derecha si está a su izquierda)
+    det.dataset.align = side === 'left' ? 'end' : 'start';
   }, [selected]);
 
   // Al elegir otra foto, al cambiar de idioma (otro texto) y al terminar de elevarse la foto
@@ -314,8 +337,11 @@ export default function Folder({ img, open, onOpen }) {
         {current && (
           <div key={current.id} ref={detailRef} className="folder-detail__box">
             <p className="folder-detail__title">{a.aportes[current.id].title}</p>
-            <p className="folder-detail__caption">{a.aportes[current.id].caption}</p>
             <Message variant="blue" text={a.aportes[current.id].text} />
+            <p className="folder-detail__caption">
+              <ImageIcon />
+              <span>{a.aportes[current.id].caption}</span>
+            </p>
           </div>
         )}
       </div>
