@@ -625,6 +625,13 @@
     max-width: min(19em, calc(100vw - 60px));
   }
 
+  /* La nota, más grande (×1.22) para que se lea bien: crece desde su borde izquierdo y la parte de arriba de la
+     carpeta, así no se sale de la carpeta ni tapa las fotos. El giro de entrada usa el mismo punto. */
+  .folder__note {
+    transform-origin: calc(var(--u) * 230) calc(var(--u) * 480);
+    scale: 1.22;
+  }
+
   /* La nota sigue siendo legible (y tocable) aunque la escena sea pequeña */
   .folder__note-item {
     font-size: max(calc(var(--u) * 17.907), 10.5px);

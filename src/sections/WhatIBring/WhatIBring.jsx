@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import P from '../../components/P.jsx';
 import { byName } from '../../assets/images.js';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
@@ -23,17 +23,36 @@ const tags = [
 // Abierta deja sitio para la foto elevada y su detalle sin tapar el título.
 const DY = { closed: -330, open: -185 };
 
+// Etiquetas de habilidades (web): a la misma distancia (TAGS_GAP) del borde inferior de la carpeta (y 542 + 759) y
+// del final de la sección. Alto de cada grupo: 102.42 × 0.8 (WhatIBring.css las reduce al 80 %).
+const FOLDER_BOTTOM = 542 + 759;
+const TAGS_GAP = 140;
+const TAGS_H = 102.42 * 0.8;
+
 // Frame 3 de Figma — "WEB" 1512 × 1792 (fondo oscuro)
 export default function WhatIBring() {
   const { lang, t } = useLanguage();
   const [open, setOpen] = useState(false);
   const dy = open ? DY.open : DY.closed;
+
+  // Las etiquetas entran (una tras otra, rasgándose) cuando llegan a la pantalla
+  const tagsRef = useRef(null);
+  const [tagsIn, setTagsIn] = useState(false);
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      setTagsIn(true);
+      io.disconnect();
+    }, { threshold: 0.4 });
+    io.observe(tagsRef.current);
+    return () => io.disconnect();
+  }, []);
   return (
     <section
       id="what-i-bring"
       className="section section--dark what-i-bring"
       data-theme="dark"
-      style={{ '--height': 1792 + dy }}
+      style={{ '--height': FOLDER_BOTTOM + TAGS_GAP + TAGS_H + TAGS_GAP + dy }}
     >
       <div className="stage">
         <div className="grp grp--title">
@@ -53,9 +72,15 @@ export default function WhatIBring() {
         </P>
 
         {/* Aparece cuando ya salieron las cuatro fotos (la invitación a abrir la carpeta está en Folder.jsx) */}
-        <P x={756.5} y={1522 + dy} cx className="tags">
-          {tags.map((tag) => (
-            <div key={tag.id} className="tag">
+        <P
+          ref={tagsRef}
+          x={756.5}
+          y={FOLDER_BOTTOM + TAGS_GAP + dy}
+          cx
+          className={`tags${tagsIn ? ' is-in' : ''}`}
+        >
+          {tags.map((tag, i) => (
+            <div key={tag.id} className="tag" style={{ '--i': i }}>
               <div className="tag__label" style={{ '--tw': t.whatIBring.tags[tag.id].w }}>
                 <img loading="lazy" decoding="async" src={img[tag.bg]} alt="" />
                 <span>{t.whatIBring.tags[tag.id].text}</span>
