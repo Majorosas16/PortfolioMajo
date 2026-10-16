@@ -75,7 +75,7 @@ export const translations = {
       },
       toolkit: {
         title: 'Mi toolkit',
-        text: 'Trabajo con Figma, componentes y Design Tokens para construir **sistemas de diseño escalables.** También exploro el desarrollo front-end con HTML, CSS, JS y React.',
+        text: 'Trabajo con Figma, componentes y Design Tokens para construir **sistemas de diseño escalables.** Exploro herramientas de IA para potenciar el proceso creativo, optimizar flujos de trabajo y conectar diseño con desarrollo front-end mediante HTML, CSS, JavaScript y React.',
         highlight: 'Conecto el diseño y la tecnología',
         cursor: 'y así...',
       },
@@ -180,7 +180,7 @@ export const translations = {
       },
       toolkit: {
         title: 'My toolkit',
-        text: 'I work with Figma, components and Design Tokens to build **scalable design systems.** I also explore front-end development with HTML, CSS, JS and React.',
+        text: 'I work with Figma, components, and Design Tokens to build **scalable design systems.** I explore AI tools to enhance the creative process, optimize workflows, and connect design with front-end development using HTML, CSS, JavaScript, and React.',
         highlight: 'I connect design and technology',
         cursor: 'and so...',
       },

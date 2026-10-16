@@ -39,11 +39,31 @@ const TRIM = 1040;
 const LEFT_DY = 5;
 const BIO_DY = 30;
 const COLS_DY = 100;
+// «Mi enfoque» / «Mi toolkit»: los textos empiezan a la misma altura bajo su subtítulo (TEXT_Y, borde superior);
+// el texto de toolkit es más largo, así que su recuadro y su cursor bajan TOOLKIT_DY.
+const TEXT_Y = 2214;
+const TOOLKIT_DY = 73;
 
 // Tiempo que se ve el mensaje del sticker o del perrito al tocarlos
 const BUBBLE_MS = 2600;
 // Duración del desvanecimiento al ocultarse (About.css: .about__bubble .msg)
 const BUBBLE_FADE_MS = 350;
+
+// Marco de selección «estilo Figma» de los recuadros de Mi enfoque / Mi toolkit: trazo SVG (se dibuja al
+// aparecer, ver About.css) y las 4 esquinas.
+function SelectionFrame() {
+  return (
+    <>
+      <svg className="selection__stroke" aria-hidden="true">
+        <rect width="100%" height="100%" pathLength="1" />
+      </svg>
+      <i className="c c--tl" />
+      <i className="c c--tr" />
+      <i className="c c--br" />
+      <i className="c c--bl" />
+    </>
+  );
+}
 
 export default function About() {
   const sectionRef = useRef(null);
@@ -153,17 +173,14 @@ export default function About() {
             <P x={442.7} y={2138.68 + COLS_DY} fs={81.68} r={-0.97} cx cy className="hand about__subtitle">
               <h3>{a.approach.title}</h3>
             </P>
-            <P x={445.5} y={2309 + COLS_DY} w={461} fs={32} cx cy className="about__text">
+            <P x={445.5} y={TEXT_Y + COLS_DY} w={461} fs={32} cx className="about__text">
               <p>
                 <Rich text={a.approach.text} />
               </p>
             </P>
             <P x={453} y={2438.4 + COLS_DY} w={446} h={127} r={-2.22} fs={32} cx className="selection selection--orange">
               <p>{a.approach.highlight}</p>
-              <i className="c c--tl" />
-              <i className="c c--tr" />
-              <i className="c c--bl" />
-              <i className="c c--br" />
+              <SelectionFrame />
             </P>
             <P x={579} y={2589 + COLS_DY} className="cursor-tag cursor-tag--orange">
               <img loading="lazy" decoding="async" src={img['cursor-orange']} alt="" />
@@ -184,19 +201,16 @@ export default function About() {
             <P x={1094.57} y={2138.89 + COLS_DY} fs={81.68} r={-0.97} cx cy className="hand about__subtitle">
               <h3>{a.toolkit.title}</h3>
             </P>
-            <P x={1102} y={2308.5 + COLS_DY} w={514} fs={32} cx cy className="about__text">
+            <P x={1102} y={TEXT_Y + COLS_DY} w={560} fs={32} cx className="about__text">
               <p>
                 <Rich text={a.toolkit.text} />
               </p>
             </P>
-            <P x={1103.76} y={2438.4 + COLS_DY} w={350.87} h={127} r={2.25} fs={32} cx className="selection selection--blue">
+            <P x={1103.76} y={2438.4 + COLS_DY + TOOLKIT_DY} w={350.87} h={127} r={2.25} fs={32} cx className="selection selection--blue">
               <p>{a.toolkit.highlight}</p>
-              <i className="c c--tl" />
-              <i className="c c--tr" />
-              <i className="c c--bl" />
-              <i className="c c--br" />
+              <SelectionFrame />
             </P>
-            <P x={1207} y={2589 + COLS_DY} className="cursor-tag cursor-tag--blue">
+            <P x={1207} y={2589 + COLS_DY + TOOLKIT_DY} className="cursor-tag cursor-tag--blue">
               <img loading="lazy" decoding="async" src={img['cursor-blue']} alt="" />
               <span>{a.toolkit.cursor}</span>
             </P>
