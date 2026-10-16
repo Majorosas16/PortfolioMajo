@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import './P.css';
 
 // P = "Posicionado". Ubica un elemento con las coordenadas del frame de Figma (en px de un lienzo de 1512 de ancho).
 // En escritorio/tablet las coordenadas se escalan con la variable CSS --u.
@@ -41,6 +42,3 @@ const P = forwardRef(function P({
 });
 
 export default P;
-
-// Ruta a un archivo de public/img (funciona también en GitHub Pages)
-export const asset = (nombre) => `${import.meta.env.BASE_URL}img/${nombre}`;

@@ -1,0 +1,35 @@
+/* Elemento posicionado con coordenadas de Figma (componente <P>) */
+
+.abs {
+  --tx: 0;
+  --ty: 0;
+  position: absolute;
+  left: calc(var(--u) * var(--x));
+  top: calc(var(--u) * var(--y));
+  width: calc(var(--u) * var(--w));
+  height: calc(var(--u) * var(--h));
+  transform: translate(var(--tx), var(--ty)) rotate(var(--r, 0deg));
+}
+
+.abs.cx {
+  --tx: -50%;
+}
+
+.abs.cy {
+  --ty: -50%;
+}
+
+.abs > img {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .abs {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    height: auto;
+    transform: rotate(var(--r, 0deg));
+  }
+}

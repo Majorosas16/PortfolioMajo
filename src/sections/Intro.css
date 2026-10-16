@@ -1,0 +1,483 @@
+/* Sección 1 · Inicio (caja interactiva) */
+
+/* ---------- Sección 1 · Caja interactiva ----------
+   Estados (data-estado en la sección): cerrada → abriendo → abierta.
+   data-salida="true" lanza los objetos desde la boca de la caja
+   (--fx / --fy los calcula Intro.jsx). Los tiempos coinciden con T en Intro.jsx. */
+
+.intro {
+  /* Toda la secuencia cabe en una pantalla: se escala también por la altura */
+  --u: min(calc(min(100vw, 1512px) / 1512), calc(100vh / 980));
+  --u: min(calc(min(100vw, 1512px) / 1512), calc(100svh / 980));
+}
+
+.intro__boton {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.intro__boton:disabled {
+  cursor: default;
+}
+
+.intro__boton:focus-visible {
+  outline: 2px solid var(--naranja);
+  outline-offset: 6px;
+  border-radius: 16px;
+}
+
+/* Cerrada: la caja queda 50px más arriba; al abrir baja a su sitio (antes del FLIP de los objetos, 420ms) */
+.intro[data-estado='cerrada'] .caja {
+  transform: translateY(calc(var(--u) * -50));
+}
+
+.caja {
+  z-index: 1;
+  transition: transform 0.38s ease;
+  /* Entrada al cargar: lo primero que aparece. translate/scale no chocan con el transform de .abs */
+  animation: caja-entrar 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards;
+}
+
+@keyframes caja-entrar {
+  from {
+    opacity: 0;
+    translate: 0 calc(var(--u) * 28);
+    scale: 0.94;
+  }
+}
+
+.caja__frames {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform-origin: 50% 92%;
+  transition: transform 0.25s ease;
+}
+
+.abs > img.caja__frame,
+.caja__frame {
+  position: absolute;
+  max-width: none;
+  height: auto;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro[data-estado='cerrada'] .caja__frame--0,
+.intro[data-estado='abierta'] .caja__frame--3 {
+  opacity: 1;
+}
+
+/* La caja invita al clic */
+.intro[data-estado='cerrada'] .caja:hover .caja__frames,
+.intro[data-estado='cerrada'] .caja:focus-visible .caja__frames {
+  transform: translateY(calc(var(--u) * -6)) rotate(-1deg);
+}
+
+/* Apertura: una sola línea de tiempo de 1.15s.
+   Los 4 renders se encadenan con fundidos solapados (el que entra queda encima, así la caja
+   nunca se transparenta) mientras la caja se aplasta, se estira y se asienta. */
+.intro[data-estado='abriendo'] .caja__frames {
+  animation: caja-abrir 1.15s ease-in-out both;
+}
+
+.intro[data-estado='abriendo'] .caja__frame--0 {
+  animation: caja-f0 1.15s ease-in-out both;
+}
+
+.intro[data-estado='abriendo'] .caja__frame--1 {
+  animation: caja-f1 1.15s ease-in-out both;
+}
+
+.intro[data-estado='abriendo'] .caja__frame--2 {
+  animation: caja-f2 1.15s ease-in-out both;
+}
+
+.intro[data-estado='abriendo'] .caja__frame--3 {
+  animation: caja-f3 1.15s ease-in-out both;
+}
+
+@keyframes caja-abrir {
+  0% {
+    transform: none;
+  }
+  10% {
+    transform: scale(1.04, 0.93);
+  }
+  30% {
+    transform: translateY(calc(var(--u) * -6)) scale(0.97, 1.05);
+  }
+  55% {
+    transform: scale(1.015, 0.985);
+  }
+  76% {
+    transform: scale(0.996, 1.006);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes caja-f0 {
+  0%,
+  20% {
+    opacity: 1;
+  }
+  34%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes caja-f1 {
+  0%,
+  12% {
+    opacity: 0;
+  }
+  26%,
+  46% {
+    opacity: 1;
+  }
+  60%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes caja-f2 {
+  0%,
+  38% {
+    opacity: 0;
+  }
+  52%,
+  70% {
+    opacity: 1;
+  }
+  84%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes caja-f3 {
+  0%,
+  64% {
+    opacity: 0;
+  }
+  80%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* El mensaje aparece después de la caja, como un globo de chat que hace "pop" */
+.intro__msg .msg {
+  transform-origin: 12% 85%;
+  animation: msg-pop 0.5s cubic-bezier(0.3, 0.7, 0.4, 1) 0.75s backwards;
+}
+
+.intro__msg .msg__meta--bottom {
+  animation: msg-leido 0.3s ease 1.15s backwards;
+}
+
+@keyframes msg-pop {
+  0% {
+    opacity: 0;
+    scale: 0.4;
+    translate: 0 calc(var(--u) * 12);
+  }
+  45% {
+    opacity: 1;
+  }
+  70% {
+    scale: 1.06;
+    translate: 0 0;
+  }
+  100% {
+    scale: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes msg-leido {
+  from {
+    opacity: 0;
+  }
+}
+
+.intro__msg {
+  z-index: 3;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0s;
+}
+
+.intro:not([data-estado='cerrada']) .intro__msg {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, calc(var(--u) * -16));
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+}
+
+/* Objetos: escondidos dentro de la caja hasta que salen */
+.objetos--caja .obj {
+  z-index: 2;
+  opacity: 0;
+  transform: translate(var(--fx, 0px), var(--fy, 0px)) scale(0.2);
+}
+
+/* Salen desde la boca de la caja (--fx/--fy) hasta su sitio, con un pequeño arco hacia arriba.
+   transform solo tiene dos keyframes, así el recorrido es una sola curva sin pausas. */
+.intro[data-salida='true'] .objetos--caja .obj {
+  animation:
+    obj-salir 0.95s cubic-bezier(0.22, 0.8, 0.3, 1) calc(var(--i) * 110ms) both,
+    obj-arco 0.95s calc(var(--i) * 110ms) both;
+}
+
+/* Al llegar flotan despacio; translate/rotate no chocan con el transform de la salida */
+.intro[data-estado='abierta'] .objetos--caja .obj {
+  animation:
+    obj-salir 0.95s cubic-bezier(0.22, 0.8, 0.3, 1) calc(var(--i) * 110ms) both,
+    obj-arco 0.95s calc(var(--i) * 110ms) both,
+    obj-flotar calc(4.6s + var(--i) * 0.6s) ease-in-out calc(var(--i) * 0.3s) infinite alternate,
+    obj-mecer calc(6.2s + var(--i) * 0.8s) ease-in-out calc(var(--i) * 0.45s) infinite alternate;
+}
+
+/* Cada objeto se mece hacia un lado distinto; con ritmos que no coinciden, el vaivén no se repite igual */
+.objetos--caja .obj:nth-child(odd) {
+  --mecer: -1.4deg;
+}
+
+.objetos--caja .obj:nth-child(even) {
+  --mecer: 1.6deg;
+}
+
+@keyframes obj-salir {
+  0% {
+    opacity: 0;
+    transform: translate(var(--fx, 0px), var(--fy, 0px)) scale(0.2);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes obj-arco {
+  0% {
+    translate: 0 0;
+    animation-timing-function: cubic-bezier(0.3, 0.6, 0.5, 1);
+  }
+  45% {
+    translate: 0 calc(var(--u) * -36);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.6, 1);
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+@keyframes obj-flotar {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(var(--u) * -13);
+  }
+}
+
+@keyframes obj-mecer {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: var(--mecer, 1deg);
+  }
+}
+
+/* Solo se pueden tocar cuando la caja terminó de abrirse */
+.intro:not([data-estado='abierta']) .objetos--caja .obj {
+  pointer-events: none;
+}
+
+.obj.is-clickable {
+  cursor: pointer;
+}
+
+/* "Toca los objetos": aparece con un fundido cuando los cinco objetos ya llegaron.
+   Medidas del mensaje de Figma (146:5517); k=0.86 en Intro.jsx ajusta la reacción. */
+.caja__toca {
+  z-index: 3;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+}
+
+.intro[data-estado='abierta'] .caja__toca {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease, visibility 0s linear 0s;
+}
+
+.caja__toca .msg__bubble {
+  padding: calc(var(--u) * 11.8) calc(var(--u) * 17.04);
+  border-radius: calc(var(--u) * 26.22);
+  font-size: calc(var(--u) * 19.66);
+}
+
+.caja__toca .msg__tail {
+  width: calc(var(--u) * 23.6);
+  height: calc(var(--u) * 18.4);
+  margin-left: calc(var(--u) * 7.9);
+}
+
+@media (max-width: 768px) {
+  /* ----- Inicio · caja interactiva -----
+     Escena de ancho --s; las posiciones (--mx, --my, --mw) están en % de ese ancho.
+     Los objetos se mantienen en arco sobre la caja para que todo quepa en pantalla. */
+  .intro {
+    /* espacio superior para el encabezado (más alto en tablet) */
+    --top: clamp(112px, calc(15vw + 50px), 160px);
+    /* ancho de la escena; también limitado por la altura para que todo quepa en pantalla */
+    --s: min(calc(100vw - 40px), 480px, calc((100vh - var(--top) - 28px) / 1.9));
+    --s: min(calc(100vw - 40px), 480px, calc((100svh - var(--top) - 28px) / 1.9));
+    /* mensajes y etiquetas escalan con la escena, no con la pantalla */
+    --u: calc(var(--s) / 575);
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--top) 0 28px;
+  }
+
+  .intro .stage {
+    display: block;
+    width: var(--s);
+    height: calc(var(--s) * 1.9);
+    padding: 0;
+    margin: 0;
+    transition: transform 0.3s ease;
+  }
+
+  /* Cerrada: la escena sube para que el mensaje y la caja queden centrados; al abrir baja a su sitio */
+  .intro[data-estado='cerrada'] .stage {
+    transform: translateY(calc(var(--s) * -0.4));
+  }
+
+  .intro .abs,
+  .intro .obj {
+    position: absolute;
+    left: calc(var(--s) * var(--mx) / 100);
+    top: calc(var(--s) * var(--my) / 100);
+    width: calc(var(--s) * var(--mw) / 100);
+    height: auto;
+  }
+
+  .intro .intro__msg,
+  .intro .caja__toca {
+    width: auto;
+    transform: translateX(-50%);
+  }
+
+  .intro .caja {
+    aspect-ratio: 713.3 / 581.3;
+  }
+
+  .intro .objetos {
+    display: contents;
+  }
+
+  .intro .obj {
+    display: block;
+  }
+
+  .intro .obj__media {
+    width: 100%;
+    height: auto;
+  }
+
+  /* En pantallas bajas la escena se reduce; las etiquetas bajan con ella (mínimo ~10px de texto) */
+  .intro .pill {
+    --p: max(var(--u), 0.56px);
+  }
+
+  .intro .obj__label {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 4px);
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Entrada: la caja, el mensaje y el nombre solo aparecen con un fundido corto */
+  .caja,
+  .intro__msg .msg {
+    animation: msg-leido 0.2s ease backwards;
+  }
+
+  .intro__msg .msg__meta--bottom {
+    animation: none;
+  }
+
+  .caja {
+    transition: none;
+  }
+
+  /* Caja: sin deformación ni fotogramas intermedios, solo un fundido corto al estado abierto */
+  .caja__frame {
+    transition: opacity 0.2s ease;
+  }
+
+  .intro .caja__frame {
+    animation: none !important;
+  }
+
+  .intro .stage {
+    transition: none;
+  }
+
+  .intro .caja__frames {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Objetos: aparecen con un fundido, sin recorrido ni flotación */
+  .intro .objetos--caja .obj,
+  .intro[data-salida='true'] .objetos--caja .obj,
+  .intro[data-estado='abierta'] .objetos--caja .obj {
+    transform: none;
+  }
+
+  .intro[data-salida='true'] .objetos--caja .obj,
+  .intro[data-estado='abierta'] .objetos--caja .obj {
+    animation: obj-aparecer 0.2s ease both;
+  }
+
+  @keyframes obj-aparecer {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .intro .intro__msg,
+  .intro:not([data-estado='cerrada']) .intro__msg,
+  .intro .caja__toca,
+  .intro[data-estado='abierta'] .caja__toca {
+    transform: translateX(-50%);
+    transition: opacity 0.2s ease, visibility 0s linear;
+  }
+}

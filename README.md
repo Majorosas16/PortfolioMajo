@@ -16,7 +16,7 @@ Landing page construida en **React + Vite** a partir de los 4 frames "WEB" del a
 
 ```bash
 npm install      # instala React y Vite (solo la primera vez)
-npm run assets   # descarga las imágenes desde Figma a public/img/
+npm run assets   # comprueba/descarga las imágenes de Figma en src/assets/
 npm run dev      # abre la web en http://localhost:5173
 ```
 
@@ -24,11 +24,29 @@ npm run dev      # abre la web en http://localhost:5173
 
 ### Sobre las imágenes (importante)
 
-`npm run assets` descarga las imágenes con enlaces temporales de Figma que **vencen alrededor del 22 de octubre de 2026**. Hazlo cuanto antes; una vez descargadas quedan guardadas en `public/img/` y ya no dependen de Figma.
+Las imágenes viven en `src/assets/`, una carpeta por sección, y se importan desde el código (Vite las incluye en el build con un nombre versionado):
 
-Las imágenes de la caja (`caja-cerrada`, `caja-abriendo-1`, `caja-abriendo-2`, `caja-abierta`) y `majo-letras`, `nota-naranja`, `nota-verde`, `reaccion-enfoque`, `reaccion-toolkit`, `foto-proyectos`, `foto-contacto` y `titulo-aporto` ya están en `public/img/` a 3x y con fondo transparente. **No las vuelvas a descargar con `npm run assets -- --forzar`**: sus enlaces en `scripts/assets.json` apuntan a la exportación antigua (1x y con fondo blanco).
+```
+src/assets/
+  imagenes.js             helper porNombre() para usar import.meta.glob
+  shared/                 lo que usan varias secciones: burbujas de chat y el papel del fondo
+  sections/inicio/        caja (4 estados) y los 5 objetos
+  sections/sobre-mi/      sticker, MAJO, foto, nota, perro, reacciones, cursores
+  sections/lo-que-aporto/ título, carpeta, fotos de proyectos, etiquetas
+  sections/proyectos/     foto, sticker, corona, objetos, foto de contacto, íconos de redes
+```
 
-Si algún enlace venció, el script te dice qué archivos faltan. En ese caso, exporta ese elemento desde Figma (panel derecho → *Export* → PNG o SVG), ponle **exactamente el mismo nombre** que aparece en `scripts/assets.json` y guárdalo en `public/img/`.
+Para usar una imagen en una sección: `img['nombre.png']` (cada sección define `img` con su carpeta). Si añades una imagen nueva, ponla en la carpeta de su sección (o en `shared/` si la usan varias); no la dupliques.
+
+`npm run assets` descarga las imágenes con enlaces temporales de Figma (**vencen alrededor del 22 de octubre de 2026**) a la ruta indicada en `scripts/assets.json`; si el archivo ya existe, no lo toca.
+
+Las imágenes de la caja (`caja-cerrada`, `caja-abriendo-1`, `caja-abriendo-2`, `caja-abierta`) y `majo-letras`, `nota-naranja`, `nota-verde`, `reaccion-enfoque`, `reaccion-toolkit`, `foto-proyectos`, `foto-contacto` y `titulo-aporto` ya están a 3x y con fondo transparente. **No las vuelvas a descargar con `npm run assets -- --forzar`**: sus enlaces apuntan a la exportación antigua (1x y con fondo blanco). `shared/fondo-papel.png` es el original del que se generó `fondo-papel-continuo.jpg` (el que usa la web).
+
+Si algún enlace venció, exporta ese elemento desde Figma (panel derecho → *Export* → PNG o SVG) con **exactamente el mismo nombre** y guárdalo en la ruta que indica `scripts/assets.json` dentro de `src/assets/`.
+
+### Estilos
+
+`src/styles.css` solo tiene lo compartido (variables, reset, base y el lienzo de las secciones). Cada componente y sección tiene su propio CSS al lado de su `.jsx` (`Header.css`, `Message.css`, `Intro.css`, `SobreMi.css`, etc.) y lo importa él mismo.
 
 ## 2. Subir a GitHub
 
@@ -48,20 +66,21 @@ git push -u origin main
 El proyecto ya incluye `.github/workflows/deploy.yml`, que publica la web automáticamente cada vez que subes cambios a `main`.
 
 1. En el repositorio de GitHub ve a **Settings → Pages**.
-2. En *Source* elige **GitHub Actions**.
-3. Haz un push (o ve a *Actions* → *Publicar en GitHub Pages* → *Run workflow*).
-4. En unos minutos la web queda en `https://TU-USUARIO.github.io/portafolio/`.
+2. En *Build and deployment → Source* elige **GitHub Actions**. **Sin este paso el despliegue falla** con `Failed to create deployment (status: 404) … Ensure GitHub Pages has been enabled`.
+3. Haz un push (o ve a *Actions* → *Publicar en GitHub Pages* → *Re-run* / *Run workflow*).
+4. En unos minutos la web queda en `https://majorosas16.github.io/PortfolioMajo/`.
 
 ## Pendientes por completar
 
 - **Enlaces de redes** en `src/sections/Proyectos.jsx` (arreglo `redes`): WhatsApp, LinkedIn y GitHub tienen enlaces de ejemplo. Behance ya apunta a `behance.net/marajrosasc` y el correo a `multimedia.mr16@gmail.com`.
-- **Animaciones**: la caja del inicio ya se abre al hacer clic (estados `cerrada → abriendo → abierta` en `Intro.jsx`, con CSS). Faltan otras (objetos que flotan, fotos que salen de la carpeta, etc.).
+- **Animaciones**: la caja del inicio entra, se abre al hacer clic (estados `cerrada → abriendo → abierta` en `Intro.jsx`, con CSS) y los objetos flotan; "Sobre mí" aparece con un fundido al hacer scroll. Faltan otras (fotos que salen de la carpeta, etc.).
 - **Acción de los objetos**: "Toca los objetos" aún no hace nada al tocarlos; `ObjectItem` acepta un `onClick` para conectarlo más adelante.
 
 ## Cómo está construido
 
 - **Escritorio y tablet**: cada sección reproduce el frame de Figma con las mismas coordenadas (lienzo de 1512 px). La variable CSS `--u` equivale a 1 px de Figma y se reduce proporcionalmente en pantallas más pequeñas, así la composición se mantiene igual al diseño.
-- **Celular (≤ 768 px)**: los elementos dejan de usar coordenadas y se apilan en una columna; los objetos con etiqueta pasan a una cuadrícula de 2 columnas y el menú se vuelve deslizable.
+- **Celular (≤ 768 px)**: los elementos dejan de usar coordenadas y se apilan en una columna (en el inicio, los objetos se mantienen en arco sobre la caja) y el menú se vuelve deslizable.
+- **Encabezado**: retícula de 12 columnas con margen lateral de 110 px en escritorio (proporcional en pantallas menores, 20 px en celular).
 - El componente `P` (`src/components/P.jsx`) recibe las coordenadas de Figma (`x`, `y`, `w`, `h`, rotación `r`, tamaño de fuente `fs`). Para mover algo, cambia esos números.
 - Tipografías de Google Fonts: **Stack Sans Headline**, **Stack Sans Text** y **Reenie Beanie** (cargadas en `index.html`).
 - Elementos complejos de Figma (cajas, títulos tipo recorte, post-its, fotos con máscara) se exportaron como imagen completa; los textos, botones, etiquetas, burbujas de chat y la carpeta azul están construidos en código.

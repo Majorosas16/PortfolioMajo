@@ -4,7 +4,7 @@ import Intro from './sections/Intro.jsx';
 import SobreMi from './sections/SobreMi.jsx';
 import Aporto from './sections/Aporto.jsx';
 import Proyectos from './sections/Proyectos.jsx';
-import { asset } from './components/P.jsx';
+import papel from './assets/shared/fondo-papel-continuo.jpg';
 
 export default function App() {
   const mainRef = useRef(null);
@@ -28,7 +28,7 @@ export default function App() {
   return (
     <>
       <Header />
-      <main ref={mainRef} style={{ '--papel': `url(${asset('fondo-papel-continuo.jpg')})` }}>
+      <main ref={mainRef} style={{ '--papel': `url(${papel})` }}>
         <Intro />
         <SobreMi />
         <Aporto />
