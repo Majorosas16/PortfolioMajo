@@ -9,21 +9,24 @@ const img = byName(import.meta.glob('../assets/shared/bubble-*.svg', { eager: tr
 // variant "light": las de "Toca los objetos" / "Toca las imagenes"
 // variant "blue": los mensajes de los objetos del inicio (Figma 170:111…170:272)
 // flip: burbuja volteada (reacción a la izquierda y cola a la derecha), como "Colaboración"
+// Sin emoji: burbuja sola, sin reacción (como el detalle de «Lo que aporto», Figma 183:2671)
 // k: escala de la burbuja clara (1 = texto de 37px como en Figma)
 export default function Message({ text, emoji, variant = 'light', k = 1, flip = false, top, bottom, className = '' }) {
   const prefix = `bubble-${variant}`;
   return (
-    <div className={`msg msg--${variant} ${flip ? 'msg--flip' : ''} ${className}`} style={{ '--k': k }}>
+    <div className={`msg msg--${variant} ${flip ? 'msg--flip' : ''} ${emoji ? '' : 'msg--plain'} ${className}`} style={{ '--k': k }}>
       {top && <p className="msg__meta msg__meta--top">{top}</p>}
       <div className="msg__row">
         <div className="msg__bubble">
           <p>{text}</p>
         </div>
-        <div className="msg__reaction" aria-hidden="true">
-          <img className="msg__reaction-bg" src={img[`${prefix}-reaction`]} alt="" />
-          <img className="msg__reaction-dot" src={img[`${prefix}-dot`]} alt="" />
-          <span className="msg__emoji">{emoji}</span>
-        </div>
+        {emoji && (
+          <div className="msg__reaction" aria-hidden="true">
+            <img className="msg__reaction-bg" src={img[`${prefix}-reaction`]} alt="" />
+            <img className="msg__reaction-dot" src={img[`${prefix}-dot`]} alt="" />
+            <span className="msg__emoji">{emoji}</span>
+          </div>
+        )}
       </div>
       <img className="msg__tail" src={img[`${prefix}-tail`]} alt="" aria-hidden="true" />
       {bottom && (

@@ -85,18 +85,44 @@ export const translations = {
     whatIBring: {
       lead: 'Lo que',
       titleAlt: 'Aporto',
-      tap: 'Toca las imagenes',
+      tap: 'Toca las imágenes',
       // w: ancho del fondo de la etiqueta (px de Figma). Si cambias un texto, ajústalo: ancho del texto + ~57.
       tags: {
         frontend: { text: 'Front-End', w: 207.46 },
         uxui: { text: 'UX / UI', w: 164.57 },
         ds: { text: 'Sistemas de diseño', w: 339 },
       },
-      photos: {
-        'project-1': 'Proyecto: pantalla de app',
-        'project-2': 'Proyecto: collage',
-        'project-3': 'Proyecto: interfaz en pantalla',
-        'project-4': 'Proyecto: pantallas oscuras',
+      tapFolder: 'Toca la carpeta',
+      openFolder: 'Abrir la carpeta',
+      // Lo que aporto: una foto por aporte, en el orden de la nota de la carpeta (01–04).
+      // title: el de la nota y el detalle · caption: qué muestra la foto (bajo el título) · text: el mensaje azul ·
+      // alt: descripción de la foto para lectores de pantalla
+      aportes: {
+        listening: {
+          title: 'Escucha y empatía',
+          text: 'Entiendo necesidades y diseño pensando en las personas.',
+          caption: 'Fui moderadora en unas sesiones de validación con una empresa mediana.',
+          alt: 'Videollamada de equipo en un portátil',
+        },
+        curiosity: {
+          title: 'Curiosidad',
+          text: 'Investigo y exploro distintas posibilidades antes de elegir una solución.',
+          caption:
+            'Trabajé en un proyecto con un equipo integral y aprendí a usar herramientas de programación, gestión de proyectos e inteligencia artificial.',
+          alt: 'Interfaz de ShotPlay proyectada en un salón de clases',
+        },
+        teamwork: {
+          title: 'Colaboración',
+          text: 'Aporto ideas y construyo sobre las de otras personas.',
+          caption: 'Muestra de un proyecto en las instalaciones de la universidad, después de semanas de trabajo en equipo.',
+          alt: 'Collage del proyecto Ecocampus con el equipo y sus carteles',
+        },
+        detail: {
+          title: 'Atención al detalle',
+          text: 'Cuido la coherencia entre concepto, interacción y resultado visual.',
+          caption: 'Prototipo de la simulación de una app para presentar ante el jurado de un concurso.',
+          alt: 'Pantallas de una app de finanzas en modo oscuro',
+        },
       },
     },
     projects: {
@@ -198,11 +224,35 @@ export const translations = {
         uxui: { text: 'UX / UI', w: 164.57 },
         ds: { text: 'Design Systems', w: 288.87 },
       },
-      photos: {
-        'project-1': 'Project: app screen',
-        'project-2': 'Project: collage',
-        'project-3': 'Project: on-screen interface',
-        'project-4': 'Project: dark screens',
+      tapFolder: 'Tap the folder',
+      openFolder: 'Open the folder',
+      aportes: {
+        listening: {
+          title: 'Listening & empathy',
+          text: 'I understand needs and design with people in mind.',
+          // Espacios duros: «with a mid-sized» no se separa (así «with a» no queda al final de la primera línea)
+          caption: 'I moderated validation sessions with\u00a0a\u00a0mid\u2011sized company.',
+          alt: 'Team video call on a laptop',
+        },
+        curiosity: {
+          title: 'Curiosity',
+          text: 'I research and explore different possibilities before choosing a solution.',
+          // cross\u2011functional: guion que no corta la palabra
+          caption: 'I worked on a project with a cross\u2011functional team and learned to use programming, project management and AI tools.',
+          alt: 'ShotPlay interface projected in a classroom',
+        },
+        teamwork: {
+          title: 'Collaboration',
+          text: 'I share ideas and build on those of others.',
+          caption: 'A project showcase on the university campus, after weeks of teamwork.',
+          alt: 'Collage of the Ecocampus project with the team and its posters',
+        },
+        detail: {
+          title: 'Attention to detail',
+          text: 'I care for the coherence between concept, interaction and visual result.',
+          caption: 'Prototype of an app simulation presented to a competition jury.',
+          alt: 'Screens of a finance app in dark mode',
+        },
       },
     },
     projects: {

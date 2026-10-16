@@ -175,6 +175,11 @@
   margin-left: calc(var(--u) * 6.6);
 }
 
+/* Sin reacción: la burbuja no deja hueco para el emoji */
+.msg--plain .msg__bubble {
+  margin-right: 0;
+}
+
 /* Volteada: reacción a la izquierda y cola a la derecha (Figma 170:272, "Colaboración") */
 .msg--flip {
   align-items: flex-end;
