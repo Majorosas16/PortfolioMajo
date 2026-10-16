@@ -467,7 +467,8 @@
   white-space: nowrap;
 }
 
-/* Explicación de la foto: debajo de la burbuja, más pequeña y en Extra Light, con un ícono de imagen al inicio */
+/* Explicación de la foto: debajo de la burbuja, más pequeña y en Extra Light, con un ícono de imagen del lado de
+   la alineación (a la izquierda, o a la derecha cuando el bloque va alineado a la derecha) */
 .folder-detail__caption {
   display: flex;
   align-items: flex-start;
@@ -547,7 +548,15 @@
 }
 
 .folder-detail[data-align='end'] .folder-detail__caption {
-  justify-content: flex-end;
+  flex-direction: row-reverse;
+}
+
+/* Escritorio (≥1000px): explicación más ancha (~19em de texto, más el ícono y la sangría), así «Escucha y empatía»
+   queda en 2 líneas y «Curiosidad» en 4. En pantallas más estrechas no cabría al lado de las fotos. */
+@media (min-width: 1000px) {
+  .folder-detail__caption {
+    max-width: 22.2em;
+  }
 }
 
 /* Tablet estrecha: bloque un poco más angosto para que quepa al lado de las fotos, como en pantallas grandes */
