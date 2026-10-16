@@ -7,7 +7,7 @@ import { localizedSrc } from '../../i18n/images.js';
 import Rich from '../../i18n/Rich.jsx';
 import './About.css';
 
-// Imágenes de esta sección (src/assets/sections/about/)
+// Imágenes de esta sección (src/assets/sections/about/). Están debajo del inicio: se cargan al acercarse con el scroll (loading="lazy")
 const img = byName(import.meta.glob('../../assets/sections/about/*', { eager: true, import: 'default' }));
 
 // Frame 2 de Figma — "WEB" 1512 × 2888.
@@ -47,13 +47,13 @@ export default function About() {
           {/* Presentación */}
           <div className="grp grp--presentation">
             <P x={197} y={1212} w={257} r={-6.44} className="about__sticker">
-              <img src={localizedSrc(img, 'sticker-about-me.png', lang)} alt={a.stickerAlt} />
+              <img loading="lazy" decoding="async" src={localizedSrc(img, 'sticker-about-me', lang)} alt={a.stickerAlt} />
             </P>
             <P x={394.4} y={1461.19} fs={85.35} r={-2.6} cx cy className="hand about__hello">
               <h2>{a.hello}</h2>
             </P>
             <P x={234.61} y={1484.35} w={328.68} className="about__majo">
-              <img src={img['majo-letters.png']} alt="MAJO" />
+              <img loading="lazy" decoding="async" src={img['majo-letters']} alt="MAJO" />
             </P>
             <P x={155.9} y={1596.16} w={384} fs={34.81} className="about__role">
               <p>
@@ -67,13 +67,13 @@ export default function About() {
 
           <div className="grp grp--photo">
             <P x={756.16} y={1269} w={352.31} h={626} cx className="about__photo">
-              <img src={img['photo-majo.png']} alt={a.photoAlt} />
+              <img loading="lazy" decoding="async" src={img['photo-majo']} alt={a.photoAlt} />
             </P>
             <P x={569} y={1356} w={107.28} className="about__note">
-              <img src={img['note-orange.png']} alt="" />
+              <img loading="lazy" decoding="async" src={img['note-orange']} alt="" />
             </P>
             <P x={804} y={1651} w={256} h={455.11} className="about__dog">
-              <img src={img['dog.png']} alt={a.dogAlt} />
+              <img loading="lazy" decoding="async" src={img['dog']} alt={a.dogAlt} />
             </P>
           </div>
 
@@ -86,7 +86,7 @@ export default function About() {
           {/* Mi enfoque */}
           <div className="grp grp--col">
             <P x={392} y={2006} w={67.82} className="about__reaction">
-              <img src={img['reaction-approach.png']} alt="" />
+              <img loading="lazy" decoding="async" src={img['reaction-approach']} alt="" />
             </P>
             <P x={442.7} y={2138.68} fs={81.68} r={-0.97} cx cy className="hand about__subtitle">
               <h3>{a.approach.title}</h3>
@@ -104,7 +104,7 @@ export default function About() {
               <i className="c c--br" />
             </P>
             <P x={579} y={2589} className="cursor-tag cursor-tag--orange">
-              <img src={img['cursor-orange.svg']} alt="" />
+              <img loading="lazy" decoding="async" src={img['cursor-orange']} alt="" />
               <span>{a.approach.cursor}</span>
             </P>
           </div>
@@ -112,7 +112,7 @@ export default function About() {
           {/* Mi toolkit */}
           <div className="grp grp--col">
             <P x={1061} y={1996} w={69.01} className="about__reaction">
-              <img src={img['reaction-toolkit.png']} alt="" />
+              <img loading="lazy" decoding="async" src={img['reaction-toolkit']} alt="" />
             </P>
             <P x={1094.57} y={2138.89} fs={81.68} r={-0.97} cx cy className="hand about__subtitle">
               <h3>{a.toolkit.title}</h3>
@@ -130,7 +130,7 @@ export default function About() {
               <i className="c c--br" />
             </P>
             <P x={1207} y={2589} className="cursor-tag cursor-tag--blue">
-              <img src={img['cursor-blue.svg']} alt="" />
+              <img loading="lazy" decoding="async" src={img['cursor-blue']} alt="" />
               <span>{a.toolkit.cursor}</span>
             </P>
           </div>

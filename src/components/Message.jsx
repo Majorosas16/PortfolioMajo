@@ -18,12 +18,12 @@ export default function Message({ text, emoji, variant = 'light', k = 1, top, bo
           <p>{text}</p>
         </div>
         <div className="msg__reaction" aria-hidden="true">
-          <img className="msg__reaction-bg" src={img[`${prefix}-reaction.svg`]} alt="" />
-          <img className="msg__reaction-dot" src={img[`${prefix}-dot.svg`]} alt="" />
+          <img className="msg__reaction-bg" src={img[`${prefix}-reaction`]} alt="" />
+          <img className="msg__reaction-dot" src={img[`${prefix}-dot`]} alt="" />
           <span className="msg__emoji">{emoji}</span>
         </div>
       </div>
-      <img className="msg__tail" src={img[`${prefix}-tail.svg`]} alt="" aria-hidden="true" />
+      <img className="msg__tail" src={img[`${prefix}-tail`]} alt="" aria-hidden="true" />
       {bottom && (
         <p className="msg__meta msg__meta--bottom">
           <strong>{bottom[0]}</strong> {bottom[1]}
