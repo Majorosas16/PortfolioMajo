@@ -60,6 +60,8 @@ export const translations = {
         },
       },
       dogAlt: 'Perro asomándose',
+      dogMsg: 'Lola, la\ninspiración\nde Majo',
+      stickerMsg: 'Mango, mi\nfruta favorita',
       bio: 'Creativa por naturaleza, **curiosa por diseño** y tecnología. Siempre explorando **nuevas tendencias**, creando interfaces y **coleccionando inspiración.**',
       approach: {
         title: 'Mi enfoque',
@@ -159,6 +161,8 @@ export const translations = {
         },
       },
       dogAlt: 'Dog peeking out',
+      dogMsg: 'Lola, Majo’s\ninspiration',
+      stickerMsg: 'Mango, my\nfavorite fruit',
       bio: 'Creative by nature, **curious about design** and technology. Always exploring **new trends**, building interfaces and **collecting inspiration.**',
       approach: {
         title: 'My approach',
