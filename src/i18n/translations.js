@@ -144,7 +144,13 @@ export const translations = {
       // Modal de proyectos (ProjectsModal.jsx). Las categorías son los objetos (projects.js define sus etiquetas)
       modal: {
         title: 'Proyectos de {category}',
-        filters: 'Filtrar por categoría',
+        filtersButton: 'Filtros',
+        filtersLabel: 'Filtrar por etiqueta',
+        clear: 'Limpiar filtros',
+        count: '{n} proyectos',
+        countOne: '1 proyecto',
+        countFiltered: '{n} de {total} proyectos',
+        noResults: 'Ningún proyecto tiene todas esas etiquetas.',
         close: 'Cerrar',
         contribution: 'Mi aporte:',
         tools: 'Herramientas:',
@@ -155,7 +161,6 @@ export const translations = {
         mediaPosition: '{n} de {total}',
         next: 'Siguiente',
         goTo: 'Ver {n} de {total}',
-        empty: 'Pronto habrá proyectos en esta categoría.',
       },
       tags: {
         mobile: 'App móvil',
@@ -433,7 +438,13 @@ export const translations = {
       faceAlt: 'María José smiling with a sticky note on her forehead',
       modal: {
         title: '{category} Projects',
-        filters: 'Filter by category',
+        filtersButton: 'Filters',
+        filtersLabel: 'Filter by tag',
+        clear: 'Clear filters',
+        count: '{n} projects',
+        countOne: '1 project',
+        countFiltered: '{n} of {total} projects',
+        noResults: 'No project has all of those tags.',
         close: 'Close',
         contribution: 'My contribution:',
         tools: 'Tools:',
@@ -444,7 +455,6 @@ export const translations = {
         mediaPosition: '{n} of {total}',
         next: 'Next',
         goTo: 'View {n} of {total}',
-        empty: 'Projects in this category are coming soon.',
       },
       tags: {
         mobile: 'Mobile app',

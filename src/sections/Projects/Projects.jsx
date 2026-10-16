@@ -113,7 +113,7 @@ export default function Projects() {
                 loading="lazy"
                 onClick={(e) => openCategory(o.id, e)}
                 selected={open === o.id}
-                controls="projects-modal"
+                controls={`projects-modal-${o.id}`}
               />
             ))}
           </div>
@@ -166,7 +166,8 @@ export default function Projects() {
         </div>
       </div>
 
-      {open && <ProjectsModal category={open} onCategoryChange={setOpen} onClose={closeModal} />}
+      {/* Un modal por categoría (key): cada uno con sus proyectos y sus filtros, que empiezan vacíos */}
+      {open && <ProjectsModal key={open} category={open} onClose={closeModal} />}
     </section>
   );
 }
