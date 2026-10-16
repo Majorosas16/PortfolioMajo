@@ -1,0 +1,501 @@
+/* Carpeta de «Lo que aporto» (Folder.jsx). Medidas en px de Figma dentro de la carpeta (1082 × 787), × --u. */
+
+.folder {
+  filter: drop-shadow(0 calc(var(--u) * 4.74) calc(var(--u) * 4.74) rgba(0, 0, 0, 0.3))
+    drop-shadow(0 calc(var(--u) * 7.11) calc(var(--u) * 7.11) rgba(0, 0, 0, 0.21))
+    drop-shadow(0 calc(var(--u) * 9.48) calc(var(--u) * 9.48) rgba(0, 0, 0, 0.1));
+}
+
+.folder__inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--u) * 1082);
+  height: calc(var(--u) * 787);
+}
+
+.folder__back {
+  position: absolute;
+  left: calc(var(--u) * 263);
+  top: calc(var(--u) * 291);
+  width: calc(var(--u) * 556.86) !important;
+  height: calc(var(--u) * 468);
+}
+
+/* ---------- Invitación a abrir la carpeta ----------
+   Burbuja pequeña sobre la pestaña. Está detrás de la carpeta en el orden de capas: al abrirla se encoge y baja
+   hasta quedar tapada, y luego salen las fotos. Mientras espera flota despacio (translate, aparte del transform). */
+.folder__hint {
+  position: absolute;
+  left: calc(var(--u) * 541);
+  top: calc(var(--u) * 280);
+  transform: translate(-50%, -100%);
+  transform-origin: 50% 100%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  animation: folder-hint-float 2.6s ease-in-out infinite alternate;
+  transition:
+    transform 0.45s cubic-bezier(0.55, 0, 0.75, 0.2),
+    opacity 0.4s ease,
+    visibility 0s linear 0.45s;
+}
+
+.folder__inner[data-state='open'] .folder__hint {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, calc(-100% + var(--u) * 90)) scale(0.6);
+  pointer-events: none;
+}
+
+@keyframes folder-hint-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(var(--u) * -6);
+  }
+}
+
+/* ---------- Fotos ---------- */
+
+/* Solo se recorta lo que bajaría del fondo de la carpeta mientras las fotos suben (y > 745): ese corte queda siempre
+   detrás de la parte delantera, así que las fotos se ven enteras, sin bordes cortados. */
+.folder__photos {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(-100% -100% calc(var(--u) * 42) -100%);
+}
+
+.folder__photo {
+  position: absolute;
+  left: calc(var(--u) * var(--fx));
+  top: calc(var(--u) * var(--fy));
+  width: calc(var(--u) * var(--bw));
+  height: calc(var(--u) * var(--bh));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Ninguna capa de la caja girada recibe toques: solo la foto (el botón) */
+  pointer-events: none;
+  /* Cerrada: dentro de la carpeta. Al abrirla (cuando la burbuja ya se escondió) salen una tras otra, enteras,
+     hasta su sitio del diseño */
+  transform: translateY(calc(var(--u) * 140)) scale(0.92);
+  opacity: 0;
+  transition:
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(0.35s + var(--i) * 0.08s),
+    opacity 0.3s ease-out calc(0.35s + var(--i) * 0.08s);
+}
+
+.folder__inner[data-state='open'] .folder__photo {
+  transform: none;
+  opacity: 1;
+}
+
+.folder__frame {
+  position: relative;
+  flex: none;
+  display: block;
+  width: calc(var(--u) * var(--iw));
+  height: calc(var(--u) * var(--ih));
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: calc(var(--u) * var(--bd, 3)) solid var(--cream);
+  background: none;
+  font: inherit;
+  transform: rotate(var(--r));
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s ease,
+    border-color 0.3s ease;
+}
+
+.folder__frame.is-soft {
+  border-color: rgba(255, 252, 249, 0.62);
+}
+
+.folder__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.folder__frame img.is-crop {
+  position: absolute;
+  max-width: none;
+  object-fit: fill;
+}
+
+/* Capa oscura de cada foto: aparece solo en las no seleccionadas mientras hay una seleccionada */
+.folder__veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 10, 10, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.folder__inner[data-selected] .folder__photo:not(.is-selected) .folder__veil {
+  opacity: 1;
+}
+
+/* El borde claro también se apaga (la capa queda por dentro del borde) */
+.folder__inner[data-selected] .folder__photo:not(.is-selected) .folder__frame {
+  border-color: #8a8381;
+}
+
+/* Seleccionada: pasa delante de las demás (z-index en Folder.jsx), sube fuera de la carpeta (LIFT = 48, ver los
+   tip de Folder.jsx) y conserva sus colores */
+.folder__photo.is-selected .folder__frame {
+  transform: translateY(calc(var(--u) * -48)) rotate(var(--r)) scale(1.06);
+  box-shadow: 0 calc(var(--u) * 18) calc(var(--u) * 40) rgba(0, 0, 0, 0.5);
+}
+
+@media (hover: hover) {
+  .folder__inner[data-state='open'] .folder__photo:not(.is-selected) .folder__frame:hover {
+    transform: translateY(calc(var(--u) * -6)) rotate(var(--r));
+  }
+}
+
+.folder__frame:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 4px;
+}
+
+/* ---------- Parte delantera ---------- */
+
+.folder__front {
+  position: absolute;
+  left: calc(var(--u) * 263);
+  top: calc(var(--u) * 370.38);
+  width: calc(var(--u) * 556.86);
+  height: calc(var(--u) * 388.62);
+  border-radius: calc(var(--u) * 42.65);
+  background: linear-gradient(180deg, #73d7ff 0%, #6bcbf3 100%);
+  box-shadow: 0 calc(var(--u) * -9.48) calc(var(--u) * 37.91) rgba(0, 132, 205, 0.5),
+    inset 0 calc(var(--u) * 3.55) calc(var(--u) * 3.55) rgba(255, 255, 255, 0.2),
+    inset 0 calc(var(--u) * -18.96) calc(var(--u) * 75.83) rgba(12, 112, 168, 0.3);
+}
+
+.folder__front::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--texture);
+  background-size: calc(var(--u) * 296.2) calc(var(--u) * 296.2);
+  mix-blend-mode: multiply;
+  opacity: 0.1;
+}
+
+.folder__strip {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: calc(var(--u) * 10.66);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 calc(var(--u) * 3.55) calc(var(--u) * 3.55) rgba(0, 132, 205, 0.1),
+    inset 0 calc(var(--u) * -3.55) calc(var(--u) * 3.55) rgba(0, 132, 205, 0.1);
+}
+
+.folder__strip--1 {
+  top: calc(var(--u) * 330.56);
+}
+
+.folder__strip--2 {
+  top: calc(var(--u) * 352.48);
+}
+
+/* Botón de la carpeta cerrada: cubre toda la carpeta */
+.folder__open {
+  position: absolute;
+  z-index: 20;
+  left: calc(var(--u) * 263);
+  top: calc(var(--u) * 291);
+  width: calc(var(--u) * 556.86);
+  height: calc(var(--u) * 468);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--u) * 42.65);
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.folder__open:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 6px;
+}
+
+/* ---------- Nota con clip y sticker (Figma 183:1323, 183:2670) ----------
+   Cada pieza se ubica en el origen de su capa en Figma y gira alrededor de él (transform-origin 0 0).
+   Los SVG llevan 4 px de margen a la izquierda para la sombra: el giro se hace en ese punto. */
+
+.folder__note {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(calc(var(--u) * -16));
+  transition:
+    opacity 0.4s ease 0.55s,
+    transform 0.6s cubic-bezier(0.3, 0.8, 0.3, 1.2) 0.55s;
+}
+
+.folder__inner[data-state='open'] .folder__note {
+  opacity: 1;
+  transform: none;
+}
+
+.folder__note > * {
+  position: absolute;
+  max-width: none;
+}
+
+.folder__note-paper {
+  left: calc(var(--u) * 300.82);
+  top: calc(var(--u) * 714.84);
+  width: calc(var(--u) * 291.742);
+  height: calc(var(--u) * 235.093);
+  transform-origin: calc(var(--u) * 4) 0;
+  transform: rotate(-102.08deg);
+}
+
+.folder__note-yellow {
+  left: calc(var(--u) * 250.54);
+  top: calc(var(--u) * 473.34);
+  width: calc(var(--u) * 316.79);
+  height: calc(var(--u) * 205.218);
+  transform-origin: calc(var(--u) * 4) 0;
+  transform: rotate(-3.71deg);
+}
+
+.folder__note-list {
+  left: calc(var(--u) * 298.15);
+  top: calc(var(--u) * 542.04);
+  width: calc(var(--u) * 229.21);
+  margin: 0;
+  padding: calc(var(--u) * 1.8) 0 0;
+  list-style: none;
+  transform-origin: 0 0;
+  transform: rotate(-3.96deg);
+}
+
+.folder__note-item {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brown);
+  font-family: var(--font-head);
+  font-weight: 200;
+  font-size: calc(var(--u) * 17.907);
+  line-height: calc(var(--u) * 23.876);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.folder__note-item b {
+  font-weight: 600;
+}
+
+.folder__note-item:hover,
+.folder__note-item.is-selected {
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, calc(var(--u) * 1.4));
+  text-underline-offset: calc(var(--u) * 3);
+}
+
+.folder__note-clip {
+  left: calc(var(--u) * 209.69);
+  top: calc(var(--u) * 529.39);
+  width: calc(var(--u) * 43.39);
+  height: calc(var(--u) * 135.36);
+  transform-origin: 0 0;
+  transform: rotate(-91.2deg);
+}
+
+.folder__sticker {
+  left: calc(var(--u) * 369.36);
+  top: calc(var(--u) * 429.7);
+  width: calc(var(--u) * 113);
+  height: calc(var(--u) * 102.8);
+  transform-origin: 0 0;
+  transform: rotate(-8.05deg);
+}
+
+/* ---------- Detalle de la foto seleccionada (Figma 183:2691 + 183:2671) ----------
+   .folder-detail es el punto donde termina la cola (--tx, --ty); el título y el mensaje quedan encima.
+   --shift (Folder.jsx) lo corre a un lado si no cabe en la pantalla. */
+
+.folder-detail {
+  position: absolute;
+  z-index: 30;
+  left: calc(var(--u) * var(--tx, 0));
+  top: calc(var(--u) * var(--ty, 0));
+  pointer-events: none;
+  /* Tamaño del texto del mensaje (16.6 en Figma); no baja de 14px para que se lea en pantallas pequeñas */
+  font-size: max(calc(var(--u) * 16.614), 14px);
+}
+
+.folder-detail:not([data-open]) {
+  visibility: hidden;
+}
+
+.folder-detail__box {
+  position: absolute;
+  left: calc(-0.4574em + var(--shift, 0px));
+  bottom: 0;
+  width: max-content;
+  transform-origin: 0.46em 100%;
+  animation: folder-detail-pop 0.45s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+
+.folder-detail__title {
+  margin: 0 0 0.332em 0.498em;
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.16em;
+  line-height: 1.39;
+  white-space: nowrap;
+}
+
+.folder-detail .msg {
+  font-size: inherit;
+  pointer-events: auto;
+}
+
+.folder-detail .msg__row {
+  margin-bottom: -0.5417em;
+}
+
+.folder-detail .msg--blue .msg__bubble {
+  max-width: 14.27em;
+  padding: 0.5417em 0.7825em;
+  border-radius: 1.204em;
+  font-family: var(--font-text);
+  font-weight: 200;
+  font-size: 1em;
+  line-height: 1.2;
+  text-wrap: pretty;
+}
+
+/* Cola del diseño (Figma 183:2671 «Frame 2234») en lugar de la del componente */
+.folder-detail .msg__tail {
+  display: none;
+}
+
+.folder-detail .msg::after {
+  content: '';
+  display: block;
+  width: 1.6em;
+  height: 0.9333em;
+  background: url('../../assets/sections/what-i-bring/detail-tail.svg') no-repeat 0 0 / 100% 100%;
+}
+
+@keyframes folder-detail-pop {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em) scale(0.85);
+  }
+}
+
+/* ---------- Celular ----------
+   La escena se recorta a la parte con contenido (x 176–866) para que las fotos se vean más grandes.
+   Cerrada: y 180–780 (la invitación y la carpeta, sin hueco arriba). Abierta: y 10–780, la carpeta baja
+   para dejar sitio a las fotos. */
+@media (max-width: 768px) {
+  .folder {
+    --u: calc(min(100vw - 32px, 620px) / 690);
+    width: calc(var(--u) * 690);
+    height: calc(var(--u) * 600);
+    margin-inline: auto;
+  }
+
+  .folder__inner {
+    left: calc(var(--u) * -176);
+    top: calc(var(--u) * -180);
+    transition: top 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .folder:has([data-state='open']) {
+    height: calc(var(--u) * 770);
+  }
+
+  .folder__inner[data-state='open'] {
+    top: calc(var(--u) * -10);
+  }
+
+  /* La invitación no baja de ~15px de texto */
+  .folder__hint .msg {
+    --m: max(calc(var(--u) * 0.55), 0.4px);
+  }
+
+  .folder-detail {
+    font-size: 15px;
+  }
+
+  /* La nota sigue siendo legible (y tocable) aunque la escena sea pequeña */
+  .folder__note-item {
+    font-size: max(calc(var(--u) * 17.907), 10.5px);
+    line-height: max(calc(var(--u) * 23.876), 14px);
+  }
+}
+
+/* ---------- Reducir movimiento: sin subida, sin rebotes; solo fundidos cortos ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .folder,
+  .folder__inner {
+    transition: none;
+  }
+
+  .folder__hint {
+    animation: none;
+    transition:
+      opacity 0.2s ease,
+      visibility 0s linear 0.2s;
+  }
+
+  .folder__inner[data-state='open'] .folder__hint {
+    transform: translate(-50%, -100%);
+  }
+
+  .folder__photo {
+    transform: none;
+    transition: opacity 0.2s ease;
+  }
+
+  /* La foto seleccionada queda elevada igual, pero sin movimiento */
+  .folder__frame {
+    transition: border-color 0.2s ease;
+  }
+
+  .folder__inner[data-state='open'] .folder__photo:not(.is-selected) .folder__frame:hover {
+    transform: rotate(var(--r));
+  }
+
+  .folder__note {
+    transform: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .folder-detail__box {
+    animation: none;
+  }
+}
