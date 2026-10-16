@@ -160,6 +160,9 @@ export const translations = {
         media: 'Imágenes y videos de {project}',
         mediaPosition: '{n} de {total}',
         next: 'Siguiente',
+        prev: 'Anterior',
+        open: 'Ver detalles de {project}',
+        back: 'Volver a {category}',
         goTo: 'Ver {n} de {total}',
       },
       tags: {
@@ -454,6 +457,9 @@ export const translations = {
         media: 'Images and videos of {project}',
         mediaPosition: '{n} of {total}',
         next: 'Next',
+        prev: 'Previous',
+        open: 'View details of {project}',
+        back: 'Back to {category}',
         goTo: 'View {n} of {total}',
       },
       tags: {
