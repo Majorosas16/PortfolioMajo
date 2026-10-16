@@ -33,6 +33,8 @@
 
 .about__text {
   text-align: center;
+  /* Evita que la última línea quede con una palabra suelta */
+  text-wrap: pretty;
 }
 
 /* Graduación: centrada entre las fotos y «Mi enfoque / Mi toolkit» */
@@ -419,8 +421,10 @@
   bottom: calc(var(--u) * -9.3);
 }
 
-/* «(practicante)» tras el rol */
+/* «(practicante)»: tercera línea, bajo el rol */
 .about__role-note {
+  display: block;
+  margin-top: 0.15em;
   font-size: 0.55em;
   font-weight: 300;
   opacity: 0.75;
