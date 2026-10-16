@@ -37,21 +37,25 @@
 }
 
 .tags {
+  /* Escala de las etiquetas: 80 % del diseño en la web (Figma se sentía muy grande); en celular, el tamaño de siempre */
+  --tk: 0.8;
   display: flex;
   align-items: center;
-  gap: calc(var(--u) * 39.52);
+  gap: calc(var(--u) * 39.52 * var(--tk));
 }
 
 .tag {
+  /* Unidad de las etiquetas (--u reducido por --tk) */
+  --tu: calc(var(--u) * var(--tk));
   display: flex;
   align-items: flex-start;
-  gap: calc(var(--u) * 16.63);
+  gap: calc(var(--tu) * 16.63);
 }
 
 .tag__label {
   position: relative;
-  width: calc(var(--u) * var(--tw));
-  height: calc(var(--u) * 102.42);
+  width: calc(var(--tu) * var(--tw));
+  height: calc(var(--tu) * 102.42);
   display: grid;
   place-items: center;
 }
@@ -68,22 +72,59 @@
   position: relative;
   color: var(--brown);
   font-weight: 700;
-  font-size: calc(var(--u) * 30.64);
+  font-size: calc(var(--tu) * 30.64);
   white-space: nowrap;
 }
 
 .tag__icon {
   position: relative;
-  width: calc(var(--u) * 119.05);
-  height: calc(var(--u) * 98.04);
+  width: calc(var(--tu) * 119.05);
+  height: calc(var(--tu) * 98.04);
   display: grid;
   place-items: center;
 }
 
 .tag__icon span {
   position: relative;
-  font-size: calc(var(--u) * 46);
+  font-size: calc(var(--tu) * 46);
   line-height: 1;
+}
+
+/* Entrada de las etiquetas: los tres grupos aparecen uno tras otro (--i) como recortes de papel que se rasgan y se
+   colocan sobre el fondo. Un borde dentado (clip-path) recorre la etiqueta de izquierda a derecha, en sintonía con
+   los bordes rasgados del dibujo, mientras la pieza baja y se endereza con un pequeño asentamiento. El ícono llega
+   justo después de su etiqueta. Empieza cuando las etiquetas llegan a la pantalla (.is-in, WhatIBring.jsx). */
+.tags .tag__label,
+.tags .tag__icon {
+  opacity: 0;
+}
+
+.tags.is-in .tag__label,
+.tags.is-in .tag__icon {
+  animation: tag-tear 0.75s cubic-bezier(0.3, 0.7, 0.3, 1) calc(var(--i) * 0.22s) both;
+}
+
+.tags.is-in .tag__icon {
+  animation-delay: calc(var(--i) * 0.22s + 0.14s);
+}
+
+@keyframes tag-tear {
+  0% {
+    opacity: 0;
+    transform: translate(calc(var(--tu) * -10), calc(var(--tu) * -12)) rotate(-3deg);
+    clip-path: polygon(0 0, 0% 0, 4% 14%, -3% 28%, 3% 42%, -2% 57%, 4% 71%, -3% 85%, 2% 100%, 0 100%);
+  }
+  20% {
+    opacity: 1;
+  }
+  75% {
+    transform: translate(0, calc(var(--tu) * 2)) rotate(0.6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    clip-path: polygon(0 0, 106% 0, 110% 14%, 103% 28%, 109% 42%, 104% 57%, 110% 71%, 103% 85%, 108% 100%, 0 100%);
+  }
 }
 
 @media (max-width: 768px) {
@@ -101,6 +142,8 @@
   }
 
   .tags {
+    /* También más pequeñas en celular */
+    --tk: 0.8;
     flex-wrap: wrap;
     justify-content: center;
     gap: 14px 20px;
@@ -109,6 +152,14 @@
 
 @media (prefers-reduced-motion: reduce) {
   .what-i-bring__title img {
+    animation: none;
+  }
+
+  .tags .tag__label,
+  .tags .tag__icon,
+  .tags.is-in .tag__label,
+  .tags.is-in .tag__icon {
+    opacity: 1;
     animation: none;
   }
 
