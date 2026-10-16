@@ -4,97 +4,35 @@
   color: var(--cream);
 }
 
-.folder {
-  filter: drop-shadow(0 calc(var(--u) * 4.74) calc(var(--u) * 4.74) rgba(0, 0, 0, 0.3))
-    drop-shadow(0 calc(var(--u) * 7.11) calc(var(--u) * 7.11) rgba(0, 0, 0, 0.21))
-    drop-shadow(0 calc(var(--u) * 9.48) calc(var(--u) * 9.48) rgba(0, 0, 0, 0.1));
+/* Al abrir la carpeta la composición baja un poco (DY en WhatIBring.jsx) */
+.what-i-bring .stage {
+  transition: height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.folder__back {
-  position: absolute;
-  left: calc(var(--u) * 263);
-  top: calc(var(--u) * 291);
-  width: calc(var(--u) * 556.86) !important;
-  height: calc(var(--u) * 468);
+.what-i-bring .tags {
+  transition: top 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.folder__photo {
-  position: absolute;
-  left: calc(var(--u) * var(--fx));
-  top: calc(var(--u) * var(--fy));
-  width: calc(var(--u) * var(--bw));
-  height: calc(var(--u) * var(--bh));
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* En celular la carpeta cambia de alto (Folder.css) en lugar de bajar */
+.what-i-bring .folder {
+  transition:
+    top 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.folder__frame {
-  position: relative;
-  flex: none;
-  width: calc(var(--u) * var(--iw));
-  height: calc(var(--u) * var(--ih));
-  overflow: hidden;
-  border: calc(var(--u) * 3) solid var(--cream);
-  transform: rotate(var(--r));
+/* «Toca las imágenes»: pequeña y discreta, solo cuando las cuatro fotos ya salieron */
+.what-i-bring__tap {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    top 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.5s ease 1.4s,
+    visibility 0s linear 1.4s;
 }
 
-.folder__frame.is-soft {
-  border-color: rgba(255, 252, 249, 0.62);
-}
-
-.folder__frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.folder__frame img.is-crop {
-  position: absolute;
-  max-width: none;
-  object-fit: fill;
-}
-
-.folder__front {
-  position: absolute;
-  left: calc(var(--u) * 263);
-  top: calc(var(--u) * 370.38);
-  width: calc(var(--u) * 556.86);
-  height: calc(var(--u) * 388.62);
-  border-radius: calc(var(--u) * 42.65);
-  background: linear-gradient(180deg, #73d7ff 0%, #6bcbf3 100%);
-  box-shadow: 0 calc(var(--u) * -9.48) calc(var(--u) * 37.91) rgba(0, 132, 205, 0.5),
-    inset 0 calc(var(--u) * 3.55) calc(var(--u) * 3.55) rgba(255, 255, 255, 0.2),
-    inset 0 calc(var(--u) * -18.96) calc(var(--u) * 75.83) rgba(12, 112, 168, 0.3);
-}
-
-.folder__front::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background-image: var(--texture);
-  background-size: calc(var(--u) * 296.2) calc(var(--u) * 296.2);
-  mix-blend-mode: multiply;
-  opacity: 0.1;
-}
-
-.folder__strip {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: calc(var(--u) * 10.66);
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 calc(var(--u) * 3.55) calc(var(--u) * 3.55) rgba(0, 132, 205, 0.1),
-    inset 0 calc(var(--u) * -3.55) calc(var(--u) * 3.55) rgba(0, 132, 205, 0.1);
-}
-
-.folder__strip--1 {
-  top: calc(var(--u) * 330.56);
-}
-
-.folder__strip--2 {
-  top: calc(var(--u) * 352.48);
+.what-i-bring[data-folder='open'] .what-i-bring__tap {
+  opacity: 1;
+  visibility: visible;
 }
 
 .tags {
@@ -157,15 +95,23 @@
     width: min(94%, 460px);
   }
 
-  .folder {
-    --u: calc(min(100vw - 40px, 560px) / 1082);
-    width: calc(var(--u) * 1082);
-    height: calc(var(--u) * 787);
-  }
-
   .tags {
     flex-wrap: wrap;
     justify-content: center;
     gap: 14px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .what-i-bring .stage,
+  .what-i-bring .folder,
+  .what-i-bring .tags {
+    transition: none;
+  }
+
+  .what-i-bring__tap {
+    transition:
+      opacity 0.2s ease,
+      visibility 0s;
   }
 }

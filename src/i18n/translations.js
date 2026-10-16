@@ -85,18 +85,38 @@ export const translations = {
     whatIBring: {
       lead: 'Lo que',
       titleAlt: 'Aporto',
-      tap: 'Toca las imagenes',
+      tap: 'Toca las imágenes',
       // w: ancho del fondo de la etiqueta (px de Figma). Si cambias un texto, ajústalo: ancho del texto + ~57.
       tags: {
         frontend: { text: 'Front-End', w: 207.46 },
         uxui: { text: 'UX / UI', w: 164.57 },
         ds: { text: 'Sistemas de diseño', w: 339 },
       },
-      photos: {
-        'project-1': 'Proyecto: pantalla de app',
-        'project-2': 'Proyecto: collage',
-        'project-3': 'Proyecto: interfaz en pantalla',
-        'project-4': 'Proyecto: pantallas oscuras',
+      tapFolder: 'Toca la carpeta',
+      openFolder: 'Abrir la carpeta',
+      // Lo que aporto: una foto por aporte, en el orden de la nota de la carpeta (01–04).
+      // title: el de la nota y el detalle · text: el mensaje azul al tocar la foto · alt: qué muestra la foto
+      aportes: {
+        listening: {
+          title: 'Escucha y comprensión',
+          text: 'Entiendo las necesidades y el diseño, pensando en las personas.',
+          alt: 'Videollamada de equipo en un portátil',
+        },
+        curiosity: {
+          title: 'Curiosidad constante',
+          text: 'Pregunto, exploro y aprendo algo nuevo en cada proyecto.',
+          alt: 'Interfaz de ShotPlay proyectada en un salón de clases',
+        },
+        teamwork: {
+          title: 'Trabajo en equipo',
+          text: 'Escucho, propongo y construyo junto a otras personas.',
+          alt: 'Collage del proyecto Ecocampus con el equipo y sus carteles',
+        },
+        detail: {
+          title: 'Atención al detalle',
+          text: 'Cuido cada pantalla, componente y espacio hasta que todo encaja.',
+          alt: 'Pantallas de una app de finanzas en modo oscuro',
+        },
       },
     },
     projects: {
@@ -198,11 +218,29 @@ export const translations = {
         uxui: { text: 'UX / UI', w: 164.57 },
         ds: { text: 'Design Systems', w: 288.87 },
       },
-      photos: {
-        'project-1': 'Project: app screen',
-        'project-2': 'Project: collage',
-        'project-3': 'Project: on-screen interface',
-        'project-4': 'Project: dark screens',
+      tapFolder: 'Tap the folder',
+      openFolder: 'Open the folder',
+      aportes: {
+        listening: {
+          title: 'Listening & understanding',
+          text: 'I understand needs and design with people in mind.',
+          alt: 'Team video call on a laptop',
+        },
+        curiosity: {
+          title: 'Constant curiosity',
+          text: 'I ask, explore and learn something new in every project.',
+          alt: 'ShotPlay interface projected in a classroom',
+        },
+        teamwork: {
+          title: 'Teamwork',
+          text: 'I listen, propose and build alongside others.',
+          alt: 'Collage of the Ecocampus project with the team and its posters',
+        },
+        detail: {
+          title: 'Attention to detail',
+          text: 'I care for every screen, component and spacing until everything fits.',
+          alt: 'Screens of a finance app in dark mode',
+        },
       },
     },
     projects: {
