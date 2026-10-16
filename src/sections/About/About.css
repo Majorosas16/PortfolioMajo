@@ -41,6 +41,71 @@
   height: 100%;
   object-fit: cover;
   transform: scaleX(-1);
+  /* Flota como los objetos del inicio (Intro.css: obj-float / obj-sway); translate y rotate no chocan con el transform */
+  transform-origin: 50% 100%;
+  animation:
+    dog-float 4.8s ease-in-out infinite alternate,
+    dog-sway 6.4s ease-in-out 0.4s infinite alternate;
+}
+
+@keyframes dog-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(var(--u) * -12);
+  }
+}
+
+@keyframes dog-sway {
+  from {
+    rotate: -0.6deg;
+  }
+  to {
+    rotate: 1.4deg;
+  }
+}
+
+/* Sticker «Sobre mí»: llega desde arriba girado, se pega con un pequeño rebote (una vez, al aparecer la sección).
+   Se anima el img para no pisar el giro del contenedor (.abs). */
+.about.reveal-ready .about__sticker.is-visible img {
+  animation: sticker-stick 0.9s cubic-bezier(0.3, 0.7, 0.4, 1) 0.15s both;
+}
+
+@keyframes sticker-stick {
+  0% {
+    opacity: 0;
+    translate: calc(var(--u) * -18) calc(var(--u) * -28);
+    rotate: -14deg;
+    scale: 1.25;
+    filter: drop-shadow(0 calc(var(--u) * 22) calc(var(--u) * 18) rgba(67, 47, 46, 0.28));
+  }
+  25% {
+    opacity: 1;
+  }
+  60% {
+    translate: 0 0;
+    rotate: 2deg;
+    scale: 0.96;
+    filter: drop-shadow(0 0 0 rgba(67, 47, 46, 0));
+  }
+  80% {
+    rotate: -1deg;
+    scale: 1.02;
+  }
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+    scale: 1;
+    filter: none;
+  }
+}
+
+/* Escritorio: textos de la sección un 10 % más pequeños */
+@media (min-width: 769px) {
+  .about .fs {
+    font-size: calc(var(--u) * var(--fs) * 0.9);
+  }
 }
 
 .selection {
@@ -163,9 +228,9 @@
 
   .grp--photo .about__note {
     position: absolute;
-    left: -28px;
-    top: 36px;
-    width: 76px;
+    left: -50px;
+    top: 30px;
+    width: 148px;
   }
 
   .grp--photo .about__dog {
@@ -219,5 +284,10 @@
 @media (prefers-reduced-motion: reduce) {
   .about.reveal-ready .abs {
     transition-duration: 0.2s;
+  }
+
+  .about__dog img,
+  .about.reveal-ready .about__sticker.is-visible img {
+    animation: none;
   }
 }

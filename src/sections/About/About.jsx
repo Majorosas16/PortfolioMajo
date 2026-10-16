@@ -61,21 +61,21 @@ export default function About() {
         <div className="about__canvas" style={{ '--trim': TRIM }}>
           {/* Presentación */}
           <div className="grp grp--presentation">
-            <P x={197} y={1212} w={257} r={-6.44} className="about__sticker">
+            <P x={173} y={1212} w={257} r={-6.44} className="about__sticker">
               <img loading="lazy" decoding="async" src={localizedSrc(img, 'sticker-about-me', lang)} alt={a.stickerAlt} />
             </P>
-            <P x={394.4} y={1461.19} fs={85.35} r={-2.6} cx cy className="hand about__hello">
+            <P x={370.4} y={1461.19} fs={85.35} r={-2.6} cx cy className="hand about__hello">
               <h2>{a.hello}</h2>
             </P>
-            <P x={234.61} y={1484.35} w={328.68} className="about__majo">
+            <P x={210.61} y={1484.35} w={328.68} className="about__majo">
               <img loading="lazy" decoding="async" src={img['majo-letters']} alt="MAJO" />
             </P>
-            <P x={155.9} y={1596.16} w={384} fs={34.81} className="about__role">
+            <P x={131.9} y={1596.16} w={384} fs={34.81} className="about__role">
               <p>
                 <Rich text={a.role} />
               </p>
             </P>
-            <P x={338.8} y={1710.7} r={-0.53} className="about__city">
+            <P x={314.8} y={1710.7} r={-0.53} className="about__city">
               <Pill size="lg">{a.from}</Pill>
             </P>
           </div>
@@ -84,7 +84,7 @@ export default function About() {
             <P x={756.16} y={1269} w={352.31} h={626} cx className="about__photo">
               <PhotoStack photos={PHOTOS} labels={a.photos} sizes={PHOTO_SIZES} />
             </P>
-            <P x={569} y={1356} w={107.28} className="about__note">
+            <P x={518} y={1341} w={208} className="about__note">
               <img loading="lazy" decoding="async" src={img['note-orange']} alt="" />
             </P>
             <P x={804} y={1651} w={256} h={455.11} className="about__dog">
@@ -92,7 +92,7 @@ export default function About() {
             </P>
           </div>
 
-          <P x={967} y={1420} w={435} fs={32} className="about__bio">
+          <P x={1005} y={1420} w={420} fs={32} className="about__bio">
             <p>
               <Rich text={a.bio} />
             </p>
