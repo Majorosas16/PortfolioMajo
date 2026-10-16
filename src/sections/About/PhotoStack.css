@@ -78,18 +78,18 @@
 .photo-stack__progress {
   position: absolute;
   z-index: 100;
-  top: calc(var(--u) * 18);
-  left: calc(var(--u) * 24);
-  right: calc(var(--u) * 24);
+  top: calc(var(--u) * 32);
+  left: calc(var(--u) * 44);
+  right: calc(var(--u) * 44);
   display: flex;
-  gap: calc(var(--u) * 5);
+  gap: calc(var(--u) * 4);
   pointer-events: none;
 }
 
 .photo-stack__bar {
   position: relative;
   flex: 1;
-  height: max(2px, calc(var(--u) * 4));
+  height: max(2px, calc(var(--u) * 3));
   overflow: hidden;
   border-radius: 99px;
   background: rgba(255, 255, 255, 0.45);
@@ -138,14 +138,14 @@
   }
 
   .photo-stack__progress {
-    top: 12px;
-    left: 18px;
-    right: 18px;
+    top: 20px;
+    left: 30px;
+    right: 30px;
     gap: 4px;
   }
 
   .photo-stack__bar {
-    height: 3px;
+    height: 2.5px;
   }
 }
 
