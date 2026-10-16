@@ -97,10 +97,15 @@ export default function Header() {
     if (!menuOpen) return undefined;
     const outside = [headerRef.current, document.querySelector('main')].filter(Boolean);
     outside.forEach((el) => (el.inert = true));
-    const root = document.documentElement;
-    const prevOverflow = root.style.overflow;
-    root.style.overflow = 'hidden';
-    closeRef.current?.focus();
+    // Bloqueo del scroll que conserva la posición: el body queda fijo en el punto donde estaba
+    // (top negativo) y al cerrar se vuelve exactamente ahí. Con overflow: hidden en <html> el body
+    // (que tiene overflow-x: hidden) pasaba a ser el contenedor de scroll y la página volvía al inicio,
+    // y en iOS overflow: hidden no impide desplazarse.
+    const body = document.body;
+    const scrollY = window.scrollY;
+    const prevBody = body.getAttribute('style');
+    Object.assign(body.style, { position: 'fixed', top: `-${scrollY}px`, left: '0', right: '0' });
+    closeRef.current?.focus({ preventScroll: true });
 
     const onKey = (e) => {
       if (e.key === 'Escape') {
@@ -131,7 +136,10 @@ export default function Header() {
     desktop.addEventListener('change', onMedia);
     return () => {
       outside.forEach((el) => (el.inert = false));
-      root.style.overflow = prevOverflow;
+      if (prevBody === null) body.removeAttribute('style');
+      else body.setAttribute('style', prevBody);
+      // 'instant': sin la animación de scroll-behavior: smooth (styles.css)
+      window.scrollTo({ top: scrollY, behavior: 'instant' });
       document.removeEventListener('keydown', onKey);
       desktop.removeEventListener('change', onMedia);
     };
