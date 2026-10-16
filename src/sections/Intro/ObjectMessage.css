@@ -1,0 +1,42 @@
+/* Mensaje del objeto seleccionado (ObjectMessage.jsx). Va sobre la capa oscura (.intro__scrim)
+   y sobre el objeto resaltado. left/top los calcula ObjectMessage.jsx. */
+
+.obj-msg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 102;
+  pointer-events: none;
+}
+
+.obj-msg:not([data-open]) {
+  visibility: hidden;
+}
+
+/* El mensaje en sí sí recibe toques (tocarlo no lo cierra) */
+.obj-msg .msg {
+  pointer-events: auto;
+  transform-origin: 12% 85%;
+  animation: msg-pop 0.45s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+
+.obj-msg .msg--flip {
+  transform-origin: 88% 85%;
+}
+
+@media (max-width: 768px) {
+  /* En celular la escena es pequeña: el mensaje usa su propia escala para que el texto quede en ~15px o más */
+  .obj-msg {
+    --u: max(calc(var(--s) / 575), 0.78px);
+  }
+
+  .obj-msg .msg--blue .msg__bubble {
+    max-width: min(calc(var(--u) * 345), calc(100vw - 32px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .obj-msg .msg {
+    animation: none;
+  }
+}

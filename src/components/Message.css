@@ -149,3 +149,56 @@
   font-size: calc(var(--u) * 17.74);
   letter-spacing: calc(var(--u) * 0.71);
 }
+
+/* Variante azul (mensajes de los objetos del inicio) · Figma "Message" Color=iMessage (170:111…170:272).
+   La reacción usa la geometría clara con k=0.86 (43.77px en Figma). */
+.msg--blue {
+  white-space: normal;
+}
+
+.msg--blue .msg__bubble {
+  max-width: calc(var(--u) * 345);
+  padding: calc(var(--u) * 11.8) calc(var(--u) * 17.04);
+  border-radius: calc(var(--u) * 26.22);
+  background: #269dfd;
+  color: #fff;
+  font-size: calc(var(--u) * 19.66);
+}
+
+.msg--blue .msg__emoji {
+  font-size: calc(var(--u) * 22);
+}
+
+.msg--blue .msg__tail {
+  width: calc(var(--u) * 24.9);
+  height: calc(var(--u) * 18.4);
+  margin-left: calc(var(--u) * 6.6);
+}
+
+/* Volteada: reacción a la izquierda y cola a la derecha (Figma 170:272, "Colaboración") */
+.msg--flip {
+  align-items: flex-end;
+}
+
+.msg--flip .msg__row {
+  flex-direction: row-reverse;
+}
+
+.msg--flip .msg__bubble {
+  margin-right: 0;
+  margin-left: calc(var(--m) * -29.9);
+}
+
+.msg--flip .msg__reaction {
+  transform: scaleX(-1);
+}
+
+.msg--flip .msg__emoji {
+  transform: scaleX(-1);
+}
+
+.msg--flip .msg__tail {
+  transform: scaleX(-1);
+  margin-left: 0;
+  margin-right: calc(var(--u) * 7.8);
+}
