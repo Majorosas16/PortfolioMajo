@@ -249,11 +249,130 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: calc(var(--u) * 2.95) solid var(--sel);
   font-weight: 200;
   line-height: 1.317;
   text-align: center;
   padding: 0 calc(var(--u) * 20);
+}
+
+/* Borde del recuadro: trazo SVG (en vez de border) para poder dibujarlo al aparecer */
+.selection__stroke {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.selection__stroke rect {
+  fill: none;
+  stroke: var(--sel);
+  stroke-width: max(1.5px, calc(var(--u) * 2.95));
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* Aparición «como al seleccionar en Figma», una vez al entrar en pantalla (is-visible, About.jsx):
+   el recuadro crece un poco desde su centro, el borde se dibuja desde la esquina superior izquierda
+   en el sentido del reloj y cada esquina aparece cuando el trazo llega a ella; después, el texto. */
+.about.reveal-ready .selection.is-visible {
+  transition: none;
+  animation: sel-grow 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s both;
+}
+
+.about.reveal-ready .selection.is-visible .selection__stroke rect {
+  animation: sel-draw 0.9s cubic-bezier(0.45, 0, 0.2, 1) 0.1s both;
+}
+
+.about.reveal-ready .selection.is-visible .c {
+  animation: sel-corner 0.35s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+
+.about.reveal-ready .selection.is-visible .c--tl {
+  animation-delay: 0.1s;
+}
+
+.about.reveal-ready .selection.is-visible .c--tr {
+  animation-delay: 0.44s;
+}
+
+.about.reveal-ready .selection.is-visible .c--br {
+  animation-delay: 0.56s;
+}
+
+.about.reveal-ready .selection.is-visible .c--bl {
+  animation-delay: 0.9s;
+}
+
+.about.reveal-ready .selection.is-visible p {
+  animation: sel-text 0.5s ease 0.65s both;
+}
+
+/* Después llega el cursor con su etiqueta y queda flotando muy poco */
+.about.reveal-ready .cursor-tag.is-visible {
+  transition: none;
+  animation:
+    cursor-in 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) 1.05s both,
+    cursor-float 3.8s ease-in-out 1.7s infinite alternate;
+}
+
+@keyframes sel-grow {
+  from {
+    scale: 0.94;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes sel-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes sel-corner {
+  from {
+    opacity: 0;
+    scale: 0.2;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes sel-text {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cursor-in {
+  from {
+    opacity: 0;
+    translate: calc(var(--u) * 28) calc(var(--u) * 22);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes cursor-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(var(--u) * -5);
+  }
 }
 
 .selection--orange {
@@ -452,6 +571,15 @@
   }
 
   .about__bubble.is-pop .msg {
+    animation: none;
+  }
+
+  /* Recuadros y cursores: directamente en su estado final */
+  .about.reveal-ready .selection.is-visible,
+  .about.reveal-ready .selection.is-visible .selection__stroke rect,
+  .about.reveal-ready .selection.is-visible .c,
+  .about.reveal-ready .selection.is-visible p,
+  .about.reveal-ready .cursor-tag.is-visible {
     animation: none;
   }
 }
