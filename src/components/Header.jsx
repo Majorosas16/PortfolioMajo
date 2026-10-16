@@ -34,6 +34,8 @@ export default function Header() {
   const [atIntro, setAtIntro] = useState(true);
   // Menú hamburguesa a pantalla completa (solo en celular; en escritorio el botón no se muestra)
   const [menuOpen, setMenuOpen] = useState(false);
+  // El panel sigue montado mientras hace su animación de salida (menu--closing)
+  const [menuMounted, setMenuMounted] = useState(false);
   const headerRef = useRef(null);
   const toggleRef = useRef(null);
   const menuRef = useRef(null);
@@ -64,6 +66,24 @@ export default function Header() {
       window.removeEventListener('resize', onScroll);
     };
   }, []);
+
+  const openMenu = () => {
+    setMenuMounted(true);
+    setMenuOpen(true);
+  };
+
+  // Al terminar el fundido de salida se desmonta el panel
+  const onMenuAnimationEnd = (e) => {
+    if (e.target === e.currentTarget && !menuOpen) setMenuMounted(false);
+  };
+
+  // Respaldo por si no llega animationend (sin animaciones con prefers-reduced-motion, pestaña oculta…)
+  useEffect(() => {
+    if (menuOpen || !menuMounted) return undefined;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const timer = setTimeout(() => setMenuMounted(false), reduced ? 0 : 400);
+    return () => clearTimeout(timer);
+  }, [menuOpen, menuMounted]);
 
   const closeMenu = () => {
     // flushSync: el scroll de la página se libera antes de que un enlace la desplace
@@ -102,7 +122,11 @@ export default function Header() {
       }
     };
     const desktop = window.matchMedia('(min-width: 769px)');
-    const onMedia = () => desktop.matches && setMenuOpen(false);
+    const onMedia = () => {
+      if (!desktop.matches) return;
+      setMenuOpen(false);
+      setMenuMounted(false);
+    };
     document.addEventListener('keydown', onKey);
     desktop.addEventListener('change', onMedia);
     return () => {
@@ -138,7 +162,7 @@ export default function Header() {
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
               aria-label={t.header.menuOpen}
-              onClick={() => setMenuOpen(true)}
+              onClick={openMenu}
             >
               <span className="header__toggle-icon" aria-hidden="true" />
             </button>
@@ -155,9 +179,19 @@ export default function Header() {
       </header>
 
       {/* Fuera del header: su backdrop-filter haría que el panel fijo no cubriera toda la pantalla */}
-      {menuOpen &&
+      {menuMounted &&
         createPortal(
-          <div id="mobile-menu" className="menu" role="dialog" aria-modal="true" aria-label={t.header.menu} ref={menuRef}>
+          <div
+            id="mobile-menu"
+            className={`menu ${menuOpen ? '' : 'menu--closing'}`}
+            role="dialog"
+            aria-modal="true"
+            aria-label={t.header.menu}
+            aria-hidden={!menuOpen}
+            inert={menuOpen ? undefined : ''}
+            ref={menuRef}
+            onAnimationEnd={onMenuAnimationEnd}
+          >
             <div className="menu__top">
               <div className="header__brand menu__brand">
                 <span className="header__role">{t.header.role}</span>

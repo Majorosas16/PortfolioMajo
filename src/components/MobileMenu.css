@@ -24,6 +24,20 @@
   }
 }
 
+/* Al cerrar: el mismo movimiento a la inversa, un poco más suave. La página ya se puede usar
+   debajo mientras se desvanece (Header.jsx lo desmonta al terminar). */
+.menu--closing {
+  pointer-events: none;
+  animation: menu-leave 0.3s ease both;
+}
+
+@keyframes menu-leave {
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
 .menu__top {
   display: flex;
   align-items: center;
@@ -174,7 +188,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu {
+  .menu,
+  .menu--closing {
     animation: none;
   }
 
