@@ -37,7 +37,7 @@
 
 /* Graduación: centrada entre las fotos y «Mi enfoque / Mi toolkit» */
 .about__grad {
-  font-weight: 400;
+  font-weight: 200;
   line-height: 1.4;
   text-align: center;
   text-wrap: balance;
@@ -419,9 +419,29 @@
   bottom: calc(var(--u) * -9.3);
 }
 
+/* «(practicante)» tras el rol */
+.about__role-note {
+  font-size: 0.55em;
+  font-weight: 300;
+  opacity: 0.75;
+}
+
+/* Los cursores se pueden arrastrar (useDraggableObjects): --dx / --dy se suman a left/top para no
+   chocar con translate (entrada y flotación) ni con transform (posición del lienzo). */
 .cursor-tag {
+  left: calc(var(--u) * var(--x) + var(--dx, 0px));
+  top: calc(var(--u) * var(--y) + var(--dy, 0px));
   width: calc(var(--u) * 209);
   height: calc(var(--u) * 76);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.cursor-tag.is-dragging {
+  cursor: grabbing;
+  animation-play-state: paused !important;
 }
 
 .cursor-tag img {
@@ -430,6 +450,8 @@
   top: calc(var(--u) * -8.7);
   width: calc(var(--u) * 40) !important;
   height: calc(var(--u) * 45.2);
+  pointer-events: none;
+  -webkit-user-drag: none;
 }
 
 /* Etiqueta del cursor: más pequeña que en Figma para que quede proporcionada con el recuadro */
@@ -537,7 +559,7 @@
   .about__grad {
     font-size: 18px;
     max-width: 420px;
-    margin-top: 48px;
+    margin: 72px 0 16px;
   }
 
   .grp--col {
@@ -566,6 +588,8 @@
   }
 
   .cursor-tag {
+    left: var(--dx, 0px);
+    top: var(--dy, 0px);
     width: 150px;
     height: 48px;
     align-self: center;

@@ -48,6 +48,7 @@ export const translations = {
       stickerAlt: 'Sticker: Sobre mí',
       hello: 'Hola! soy',
       role: 'Diseñadora de \nMedios Interactivos',
+      roleNote: '(practicante)',
       from: 'de Cali, Colombia',
       photos: {
         label: 'Fotos de María José',
@@ -66,7 +67,7 @@ export const translations = {
       dogAlt: 'Perro asomándose',
       dogMsg: 'Lola, la\ninspiración\nde Majo',
       stickerMsg: 'Mango, mi\nfruta favorita',
-      graduation: 'Próxima a graduarme como Diseñadora de Medios Interactivos de la Universidad Icesi, con reconocimientos académicos y mucha emoción por lo que viene. ✨',
+      graduation: 'Próxima a graduarme como **Diseñadora de Medios Interactivos de la Universidad Icesi**, con reconocimientos académicos y mucha emoción por lo que viene.',
       bio: 'Creativa por naturaleza, **curiosa por diseño** y tecnología. Siempre explorando **nuevas tendencias**, creando interfaces y **coleccionando inspiración.**',
       approach: {
         title: 'Mi enfoque',
@@ -76,8 +77,8 @@ export const translations = {
       },
       toolkit: {
         title: 'Mi toolkit',
-        text: 'Trabajo con Figma, componentes y Design Tokens para construir **sistemas de diseño escalables.** Exploro herramientas de IA para potenciar el proceso creativo, optimizar flujos de trabajo y conectar diseño con desarrollo front-end mediante HTML, CSS, JavaScript y React.',
-        highlight: 'Conecto el diseño y la tecnología',
+        text: 'Trabajo con Figma, componentes y Design Tokens para construir **sistemas de diseño escalables.** Exploro herramientas de IA para potenciar el proceso creativo y optimizar flujos de trabajo.',
+        highlight: 'y conectar diseño con desarrollo front-end mediante HTML, CSS, JavaScript y React.',
         cursor: 'y así...',
       },
     },
@@ -154,6 +155,7 @@ export const translations = {
       stickerAlt: 'Sticker: About me',
       hello: "Hi! I'm",
       role: 'Interactive Media \nDesigner',
+      roleNote: '(intern)',
       from: 'from Cali, Colombia',
       photos: {
         label: 'Photos of María José',
@@ -172,7 +174,7 @@ export const translations = {
       dogAlt: 'Dog peeking out',
       dogMsg: 'Lola, Majo’s\ninspiration',
       stickerMsg: 'Mango, my\nfavorite fruit',
-      graduation: 'About to graduate as an Interactive Media Designer from Universidad Icesi, with academic honors and lots of excitement for what comes next. ✨',
+      graduation: 'About to graduate as an **Interactive Media Designer from Universidad Icesi**, with academic honors and lots of excitement for what comes next.',
       bio: 'Creative by nature, **curious about design** and technology. Always exploring **new trends**, building interfaces and **collecting inspiration.**',
       approach: {
         title: 'My approach',
@@ -182,8 +184,8 @@ export const translations = {
       },
       toolkit: {
         title: 'My toolkit',
-        text: 'I work with Figma, components, and Design Tokens to build **scalable design systems.** I explore AI tools to enhance the creative process, optimize workflows, and connect design with front-end development using HTML, CSS, JavaScript, and React.',
-        highlight: 'I connect design and technology',
+        text: 'I work with Figma, components, and Design Tokens to build **scalable design systems.** I explore AI tools to enhance the creative process and optimize workflows.',
+        highlight: 'and connect design with front-end development using HTML, CSS, JavaScript, and React.',
         cursor: 'and so...',
       },
     },

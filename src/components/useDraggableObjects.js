@@ -19,12 +19,13 @@ const boundsOf = (el) => {
 
 const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 
-// Permite agarrar y mover los objetos de la caja (mouse y pantalla táctil) dentro de la sección.
+// Permite agarrar y mover elementos (mouse y pantalla táctil) dentro de la sección: los objetos de la caja
+// del inicio y los cursores de «Mi enfoque / Mi toolkit». selector: qué elementos se pueden arrastrar.
 // El desplazamiento se guarda en --dx / --dy (ver Intro.css). Solo se encarga del arrastre:
 // el clic de cada objeto sigue siendo cosa de ObjectItem (onClick). Si hubo arrastre,
 // se descarta el clic que el navegador dispara al soltar.
 // onMove (opcional): se llama en cada movimiento del arrastre (Intro lo usa para que el mensaje siga al objeto).
-export default function useDraggableObjects(sectionRef, enabled, onMove) {
+export default function useDraggableObjects(sectionRef, enabled, onMove, selector = '.objects--box .obj') {
   const onMoveRef = useRef(onMove);
   onMoveRef.current = onMove;
 
@@ -37,7 +38,7 @@ export default function useDraggableObjects(sectionRef, enabled, onMove) {
 
     const onPointerDown = (e) => {
       if (e.button !== 0 || drag) return;
-      const el = e.target.closest('.objects--box .obj');
+      const el = e.target.closest(selector);
       if (!el) return;
       const sec = section.getBoundingClientRect();
       const box = boundsOf(el);
@@ -101,7 +102,7 @@ export default function useDraggableObjects(sectionRef, enabled, onMove) {
     const onResize = () => {
       if (window.innerWidth === width) return;
       width = window.innerWidth;
-      section.querySelectorAll('.objects--box .obj').forEach((el) => {
+      section.querySelectorAll(selector).forEach((el) => {
         el.style.removeProperty('--dx');
         el.style.removeProperty('--dy');
       });
@@ -119,5 +120,5 @@ export default function useDraggableObjects(sectionRef, enabled, onMove) {
       section.removeEventListener('pointercancel', onPointerEnd);
       window.removeEventListener('resize', onResize);
     };
-  }, [sectionRef, enabled]);
+  }, [sectionRef, enabled, selector]);
 }
