@@ -152,10 +152,10 @@
   border-color: #8a8381;
 }
 
-/* Seleccionada: pasa delante de las demás (z-index en Folder.jsx), sube fuera de la carpeta (LIFT = 48, ver los
+/* Seleccionada: pasa delante de las demás (z-index en Folder.jsx), sube fuera de la carpeta (LIFT = 40, ver los
    tip de Folder.jsx) y conserva sus colores */
 .folder__photo.is-selected .folder__frame {
-  transform: translateY(calc(var(--u) * -48)) rotate(var(--r)) scale(1.06);
+  transform: translateY(calc(var(--u) * -40)) rotate(var(--r)) scale(1.06);
   box-shadow: 0 calc(var(--u) * 18) calc(var(--u) * 40) rgba(0, 0, 0, 0.5);
 }
 
@@ -418,8 +418,8 @@
 
 /* ---------- Celular ----------
    La escena se recorta a la parte con contenido (x 176–866) para que las fotos se vean más grandes.
-   Cerrada: y 180–780 (la invitación y la carpeta, sin hueco arriba). Abierta: y 10–780, la carpeta baja
-   para dejar sitio a las fotos. */
+   Cerrada: y 180–780 (la invitación y la carpeta, sin hueco arriba). Abierta: y −50–780, la carpeta baja
+   para dejar sitio a las fotos y al detalle de la seleccionada. */
 @media (max-width: 768px) {
   .folder {
     --u: calc(min(100vw - 32px, 620px) / 690);
@@ -435,11 +435,11 @@
   }
 
   .folder:has([data-state='open']) {
-    height: calc(var(--u) * 770);
+    height: calc(var(--u) * 830);
   }
 
   .folder__inner[data-state='open'] {
-    top: calc(var(--u) * -10);
+    top: calc(var(--u) * 50);
   }
 
   /* La invitación no baja de ~15px de texto */
