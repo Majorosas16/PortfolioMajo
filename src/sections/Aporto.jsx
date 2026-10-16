@@ -1,5 +1,10 @@
-import P, { asset } from '../components/P.jsx';
+import P from '../components/P.jsx';
+import { porNombre } from '../assets/imagenes.js';
 import Message from '../components/Message.jsx';
+import './Aporto.css';
+
+// Imágenes de esta sección (src/assets/sections/lo-que-aporto/)
+const img = porNombre(import.meta.glob('../assets/sections/lo-que-aporto/*', { eager: true, import: 'default' }));
 
 // Fotos que salen de la carpeta (coordenadas relativas a la carpeta de 1082 × 787)
 // Orden = orden de capas en Figma (la primera queda más atrás)
@@ -41,13 +46,13 @@ export default function Aporto() {
           </P>
           <P x={415} y={357} w={683} className="aporto__titulo">
             <h2>
-              <img src={asset('titulo-aporto.png')} alt="Aporto" />
+              <img src={img['titulo-aporto.png']} alt="Aporto" />
             </h2>
           </P>
         </div>
 
         <P x={756} y={542} w={1082} h={787} cx className="carpeta">
-          <img className="carpeta__atras" src={asset('carpeta-atras.png')} alt="" />
+          <img className="carpeta__atras" src={img['carpeta-atras.png']} alt="" />
           {fotos.map((f) => (
             <div
               key={f.src}
@@ -58,17 +63,17 @@ export default function Aporto() {
                 {f.crop ? (
                   <img
                     className="is-crop"
-                    src={asset(f.src)}
+                    src={img[f.src]}
                     alt={f.alt}
                     style={{ width: `${f.crop.w}%`, height: `${f.crop.h}%`, left: `${f.crop.left}%`, top: `${f.crop.top}%` }}
                   />
                 ) : (
-                  <img src={asset(f.src)} alt={f.alt} />
+                  <img src={img[f.src]} alt={f.alt} />
                 )}
               </div>
             </div>
           ))}
-          <div className="carpeta__frente" style={{ '--textura': `url(${asset('carpeta-textura.png')})` }}>
+          <div className="carpeta__frente" style={{ '--textura': `url(${img['carpeta-textura.png']})` }}>
             <span className="carpeta__tira carpeta__tira--1" />
             <span className="carpeta__tira carpeta__tira--2" />
           </div>
@@ -82,11 +87,11 @@ export default function Aporto() {
           {tags.map((t) => (
             <div key={t.texto} className="tag">
               <div className="tag__label" style={{ '--tw': t.w }}>
-                <img src={asset(t.bg)} alt="" />
+                <img src={img[t.bg]} alt="" />
                 <span>{t.texto}</span>
               </div>
               <div className="tag__icono">
-                <img src={asset(t.icono)} alt="" />
+                <img src={img[t.icono]} alt="" />
                 <span aria-hidden="true">{t.emoji}</span>
               </div>
             </div>

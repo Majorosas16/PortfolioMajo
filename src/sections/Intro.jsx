@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import P, { asset } from '../components/P.jsx';
+import P from '../components/P.jsx';
+import { porNombre } from '../assets/imagenes.js';
 import Message from '../components/Message.jsx';
 import ObjectItem from '../components/ObjectItem.jsx';
+import './Intro.css';
+
+// Imágenes de esta sección (src/assets/sections/inicio/)
+const img = porNombre(import.meta.glob('../assets/sections/inicio/*', { eager: true, import: 'default' }));
 
 // Inicio — la caja cerrada que se abre y deja salir los objetos.
 // Une el frame 1 de Figma (121:2271, caja cerrada) con la parte superior del frame 2 (130:4479, caja abierta).
@@ -71,10 +76,30 @@ const T = {
 
 const pct = (v) => `${v}%`;
 
+// Hora local del visitante en formato de 24 h ("21:39"), según el reloj y la zona horaria del navegador.
+// Se actualiza al empezar cada minuto.
+const formatoHora = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+
+function useHoraLocal() {
+  const [hora, setHora] = useState(() => formatoHora.format(new Date()));
+  useEffect(() => {
+    let t;
+    const programar = () => {
+      const ahora = new Date();
+      setHora(formatoHora.format(ahora));
+      t = setTimeout(programar, 60000 - (ahora.getSeconds() * 1000 + ahora.getMilliseconds()) + 50);
+    };
+    programar();
+    return () => clearTimeout(t);
+  }, []);
+  return hora;
+}
+
 export default function Intro() {
   // cerrada → abriendo → abierta
   const [estado, setEstado] = useState('cerrada');
   const [salida, setSalida] = useState(false);
+  const hora = useHoraLocal();
   const fase = useRef('cerrada');
   const timers = useRef([]);
   const stageRef = useRef(null);
@@ -161,7 +186,7 @@ export default function Intro() {
               <img
                 key={f.src}
                 className={`caja__frame caja__frame--${i}`}
-                src={asset(f.src)}
+                src={img[f.src]}
                 alt=""
                 style={{
                   left: pct(((f.x - CAJA.x) / CAJA.w) * 100),
@@ -177,21 +202,21 @@ export default function Intro() {
           as="button"
           type="button"
           x={756}
-          y={431.7 - Y0}
+          y={431.7 - 50 - Y0}
           cx
           className="intro__msg intro__boton"
-          style={{ '--mx': 50, '--my': 97 }}
+          style={{ '--mx': 50, '--my': 88.3 }}
           onClick={abrir}
           disabled={estado !== 'cerrada'}
           aria-hidden={estado !== 'cerrada'}
           tabIndex={-1}
         >
-          <Message variant="oscura" text="¿Abrimos la caja?" emoji="📦" top="Hey!" bottom={['Read', '9:39']} />
+          <Message variant="oscura" text="¿Abrimos la caja?" emoji="📦" top="Hey!" bottom={['Read', hora]} />
         </P>
 
         <div className="objetos objetos--caja">
           {objetos.map((o, i) => (
-            <ObjectItem key={o.src} {...o} y={o.y - Y0} index={i} />
+            <ObjectItem key={o.src} {...o} src={img[o.src]} y={o.y - Y0} index={i} />
           ))}
         </div>
 

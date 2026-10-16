@@ -1,0 +1,89 @@
+/* Objetos con etiqueta */
+
+.obj {
+  position: absolute;
+  left: calc(var(--u) * var(--x));
+  top: calc(var(--u) * var(--y));
+  width: calc(var(--u) * var(--w));
+  height: calc(var(--u) * var(--h));
+}
+
+.obj__media {
+  width: 100%;
+  height: 100%;
+  transform: rotate(var(--r, 0deg));
+}
+
+.obj__media > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.obj__media.is-flipped {
+  transform: rotate(var(--r, 0deg)) scaleX(-1);
+}
+
+.obj__crop {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.obj__crop > img {
+  position: absolute;
+  max-width: none;
+}
+
+.obj__label {
+  position: absolute;
+  left: calc(var(--u) * var(--lx));
+  top: calc(var(--u) * var(--ly));
+  transform: translateX(var(--ltx, 0));
+}
+
+@media (max-width: 768px) {
+  /* ----- Objetos en cuadrícula ----- */
+  .objetos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 12px;
+    width: 100%;
+    max-width: 480px;
+    margin-top: 8px;
+  }
+
+  .obj {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .obj__media {
+    width: auto;
+    height: 110px;
+    max-width: 100%;
+    aspect-ratio: calc(var(--w) / var(--h));
+  }
+
+  .obj__media > img {
+    object-fit: contain;
+  }
+
+  .obj__label {
+    position: static;
+    transform: none;
+  }
+
+  /* Si sobra un objeto, queda centrado en su propia fila */
+  .obj:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}

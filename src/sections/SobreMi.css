@@ -1,0 +1,228 @@
+/* Sección 2 · Sobre mí */
+
+/* Aparición al entrar en pantalla (SobreMi.jsx añade revelar-listo y marca cada elemento con is-visible) */
+.sobre.revelar-listo .abs {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.sobre.revelar-listo .abs.is-visible {
+  opacity: 1;
+}
+
+/* Sube el contenido del frame 2 para quitar el espacio que ocupaba la caja (ver Intro.jsx) */
+.sobre__lienzo {
+  position: absolute;
+  left: 0;
+  top: calc(var(--u) * var(--recorte) * -1);
+  width: 100%;
+  height: calc(var(--u) * 2888);
+}
+
+.sobre__rol {
+  font-weight: 500;
+  line-height: 1.21;
+  text-align: right;
+}
+
+.sobre__bio,
+.sobre__texto {
+  font-weight: 200;
+  line-height: 1.317;
+}
+
+.sobre__texto {
+  text-align: center;
+}
+
+.sobre__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: calc(var(--u) * 53);
+}
+
+.sobre__perro img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.seleccion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: calc(var(--u) * 2.95) solid var(--sel);
+  font-weight: 200;
+  line-height: 1.317;
+  text-align: center;
+  padding: 0 calc(var(--u) * 20);
+}
+
+.seleccion--naranja {
+  --sel: var(--naranja);
+}
+
+.seleccion--azul {
+  --sel: var(--azul);
+}
+
+.seleccion .c {
+  position: absolute;
+  width: calc(var(--u) * 15.74);
+  height: calc(var(--u) * 15.74);
+  background: #fff;
+  border: calc(var(--u) * 1.97) solid var(--sel);
+}
+
+.c--tl {
+  left: calc(var(--u) * -9.3);
+  top: calc(var(--u) * -9.3);
+}
+
+.c--tr {
+  right: calc(var(--u) * -9.3);
+  top: calc(var(--u) * -9.3);
+}
+
+.c--bl {
+  left: calc(var(--u) * -9.3);
+  bottom: calc(var(--u) * -9.3);
+}
+
+.c--br {
+  right: calc(var(--u) * -9.3);
+  bottom: calc(var(--u) * -9.3);
+}
+
+.cursor-tag {
+  width: calc(var(--u) * 209);
+  height: calc(var(--u) * 76);
+}
+
+.cursor-tag img {
+  position: absolute;
+  left: calc(var(--u) * -9.5);
+  top: calc(var(--u) * -8.7);
+  width: calc(var(--u) * 46.6) !important;
+  height: calc(var(--u) * 52.7);
+}
+
+.cursor-tag span {
+  position: absolute;
+  left: calc(var(--u) * 28.23);
+  top: calc(var(--u) * 29.34);
+  padding: calc(var(--u) * 4.34) calc(var(--u) * 8.69);
+  color: #fff;
+  font-size: calc(var(--u) * 23.75);
+  letter-spacing: calc(var(--u) * 0.12);
+  white-space: nowrap;
+  box-shadow: 0 calc(var(--u) * 4.34) calc(var(--u) * 8.69) rgba(0, 0, 0, 0.12);
+}
+
+.cursor-tag--naranja span {
+  background: var(--naranja);
+}
+
+.cursor-tag--azul span {
+  background: var(--azul);
+}
+
+@media (max-width: 768px) {
+  .sobre__lienzo {
+    display: contents;
+  }
+
+  .sobre__sticker {
+    width: 190px;
+  }
+
+  .sobre__hola {
+    font-size: 64px;
+    margin-bottom: -18px;
+  }
+
+  .sobre__majo {
+    width: 240px;
+  }
+
+  .sobre__rol {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .grp--foto {
+    width: min(78%, 330px);
+    margin-top: 12px;
+  }
+
+  .sobre__foto {
+    width: 100%;
+    aspect-ratio: 352 / 626;
+  }
+
+  .sobre__foto img {
+    border-radius: 36px;
+  }
+
+  .grp--foto .sobre__nota {
+    position: absolute;
+    left: -28px;
+    top: 36px;
+    width: 76px;
+  }
+
+  .grp--foto .sobre__perro {
+    position: absolute;
+    right: -44px;
+    bottom: -56px;
+    width: 48%;
+    aspect-ratio: 256 / 455;
+  }
+
+  .sobre__bio {
+    font-size: 21px;
+    text-align: center;
+    max-width: 480px;
+    margin-top: 40px;
+  }
+
+  .grp--col {
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  .sobre__reaccion {
+    width: 60px;
+  }
+
+  .sobre__subtitulo {
+    font-size: 60px;
+  }
+
+  .sobre__texto {
+    font-size: 19px;
+    max-width: 440px;
+  }
+
+  .seleccion {
+    width: min(100%, 330px);
+    padding: 16px 22px;
+    font-size: 19px;
+    margin-top: 10px;
+  }
+
+  .cursor-tag {
+    width: 150px;
+    height: 48px;
+    align-self: center;
+    margin-left: 80px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sobre.revelar-listo .abs {
+    transition-duration: 0.2s;
+  }
+}

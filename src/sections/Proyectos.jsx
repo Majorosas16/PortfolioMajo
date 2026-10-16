@@ -1,6 +1,11 @@
-import P, { asset } from '../components/P.jsx';
+import P from '../components/P.jsx';
+import { porNombre } from '../assets/imagenes.js';
 import Message from '../components/Message.jsx';
 import ObjectItem from '../components/ObjectItem.jsx';
+import './Proyectos.css';
+
+// Imágenes de esta sección (src/assets/sections/proyectos/)
+const img = porNombre(import.meta.glob('../assets/sections/proyectos/*', { eager: true, import: 'default' }));
 
 // Objetos alrededor de la foto (coordenadas del frame 4 de Figma)
 const objetos = [
@@ -51,22 +56,22 @@ export default function Proyectos() {
       <div className="stage">
         <div className="grp grp--caja">
           <P x={283} y={199} w={945} className="proyectos__foto">
-            <img src={asset('foto-proyectos.png')} alt="María José con los brazos abiertos" />
+            <img src={img['foto-proyectos.png']} alt="María José con los brazos abiertos" />
           </P>
           <P x={379.9} y={257.9} w={291} r={-8.26} className="proyectos__sticker">
             <h2>
-              <img src={asset('sticker-proyectos.png')} alt="Proyectos" />
+              <img src={img['sticker-proyectos.png']} alt="Proyectos" />
             </h2>
           </P>
           <P x={676.4} y={214.4} w={195.73} r={37.55} className="proyectos__corona">
-            <img src={asset('corona.png')} alt="" />
+            <img src={img['corona.png']} alt="" />
           </P>
           <P x={978.97} y={385} cx className="proyectos__toca">
             <Message text="Toca los objetos" emoji="👆🏽" />
           </P>
           <div className="objetos objetos--proyectos">
             {objetos.map((o) => (
-              <ObjectItem key={o.src} {...o} tone="cafe2" />
+              <ObjectItem key={o.src} {...o} src={img[o.src]} tone="cafe2" />
             ))}
           </div>
         </div>
@@ -83,7 +88,7 @@ export default function Proyectos() {
             </h2>
           </P>
           <P x={839.4} y={1375.2} w={309.11} h={79.4} r={-4.85} className="circulo circulo--azul">
-            <img src={asset('circulo-azul.svg')} alt="" />
+            <img src={img['circulo-azul.svg']} alt="" />
           </P>
         </div>
 
@@ -95,19 +100,19 @@ export default function Proyectos() {
             </p>
           </P>
           <P x={238.98} y={1539.98} w={197} h={65} r={2.98} className="circulo circulo--naranja">
-            <img src={asset('circulo-naranja.svg')} alt="" />
+            <img src={img['circulo-naranja.svg']} alt="" />
           </P>
 
           <P x={1021} y={1555} w={373.84} className="contacto">
             <a className="contacto__email" href="mailto:multimedia.mr16@gmail.com">
-              <img src={asset('icono-email.svg')} alt="" />
+              <img src={img['icono-email.svg']} alt="" />
               <span>multimedia.mr16@gmail.com</span>
             </a>
             <ul className="contacto__redes">
               {redes.map((r) => (
                 <li key={r.nombre}>
                   <a href={r.href} target="_blank" rel="noreferrer" aria-label={r.nombre} style={{ '--s': r.size }}>
-                    <img src={asset(r.icono)} alt="" />
+                    <img src={img[r.icono]} alt="" />
                   </a>
                 </li>
               ))}
@@ -116,10 +121,10 @@ export default function Proyectos() {
 
           <div className="grp grp--cara">
             <P x={448} y={1504} w={618} h={433} className="proyectos__cara">
-              <img src={asset('foto-contacto.png')} alt="María José sonriendo con un post-it en la frente" />
+              <img src={img['foto-contacto.png']} alt="María José sonriendo con un post-it en la frente" />
             </P>
             <P x={743.21} y={1730} w={100.04} className="proyectos__nota">
-              <img src={asset('nota-verde.png')} alt="" />
+              <img src={img['nota-verde.png']} alt="" />
             </P>
           </div>
         </div>

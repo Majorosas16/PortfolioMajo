@@ -1,0 +1,171 @@
+/* Sección 3 · Lo que aporto */
+
+.aporto__lo-que {
+  color: var(--crema);
+}
+
+.carpeta {
+  filter: drop-shadow(0 calc(var(--u) * 4.74) calc(var(--u) * 4.74) rgba(0, 0, 0, 0.3))
+    drop-shadow(0 calc(var(--u) * 7.11) calc(var(--u) * 7.11) rgba(0, 0, 0, 0.21))
+    drop-shadow(0 calc(var(--u) * 9.48) calc(var(--u) * 9.48) rgba(0, 0, 0, 0.1));
+}
+
+.carpeta__atras {
+  position: absolute;
+  left: calc(var(--u) * 263);
+  top: calc(var(--u) * 291);
+  width: calc(var(--u) * 556.86) !important;
+  height: calc(var(--u) * 468);
+}
+
+.carpeta__foto {
+  position: absolute;
+  left: calc(var(--u) * var(--fx));
+  top: calc(var(--u) * var(--fy));
+  width: calc(var(--u) * var(--bw));
+  height: calc(var(--u) * var(--bh));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carpeta__marco {
+  position: relative;
+  flex: none;
+  width: calc(var(--u) * var(--iw));
+  height: calc(var(--u) * var(--ih));
+  overflow: hidden;
+  border: calc(var(--u) * 3) solid var(--crema);
+  transform: rotate(var(--r));
+}
+
+.carpeta__marco.is-suave {
+  border-color: rgba(255, 252, 249, 0.62);
+}
+
+.carpeta__marco img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carpeta__marco img.is-crop {
+  position: absolute;
+  max-width: none;
+  object-fit: fill;
+}
+
+.carpeta__frente {
+  position: absolute;
+  left: calc(var(--u) * 263);
+  top: calc(var(--u) * 370.38);
+  width: calc(var(--u) * 556.86);
+  height: calc(var(--u) * 388.62);
+  border-radius: calc(var(--u) * 42.65);
+  background: linear-gradient(180deg, #73d7ff 0%, #6bcbf3 100%);
+  box-shadow: 0 calc(var(--u) * -9.48) calc(var(--u) * 37.91) rgba(0, 132, 205, 0.5),
+    inset 0 calc(var(--u) * 3.55) calc(var(--u) * 3.55) rgba(255, 255, 255, 0.2),
+    inset 0 calc(var(--u) * -18.96) calc(var(--u) * 75.83) rgba(12, 112, 168, 0.3);
+}
+
+.carpeta__frente::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--textura);
+  background-size: calc(var(--u) * 296.2) calc(var(--u) * 296.2);
+  mix-blend-mode: multiply;
+  opacity: 0.1;
+}
+
+.carpeta__tira {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: calc(var(--u) * 10.66);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 calc(var(--u) * 3.55) calc(var(--u) * 3.55) rgba(0, 132, 205, 0.1),
+    inset 0 calc(var(--u) * -3.55) calc(var(--u) * 3.55) rgba(0, 132, 205, 0.1);
+}
+
+.carpeta__tira--1 {
+  top: calc(var(--u) * 330.56);
+}
+
+.carpeta__tira--2 {
+  top: calc(var(--u) * 352.48);
+}
+
+.tags {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 39.52);
+}
+
+.tag {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--u) * 16.63);
+}
+
+.tag__label {
+  position: relative;
+  width: calc(var(--u) * var(--tw));
+  height: calc(var(--u) * 102.42);
+  display: grid;
+  place-items: center;
+}
+
+.tag__label img,
+.tag__icono img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tag__label span {
+  position: relative;
+  color: var(--cafe);
+  font-weight: 700;
+  font-size: calc(var(--u) * 30.64);
+  white-space: nowrap;
+}
+
+.tag__icono {
+  position: relative;
+  width: calc(var(--u) * 119.05);
+  height: calc(var(--u) * 98.04);
+  display: grid;
+  place-items: center;
+}
+
+.tag__icono span {
+  position: relative;
+  font-size: calc(var(--u) * 46);
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .aporto__lo-que {
+    font-size: 72px;
+    margin-bottom: -30px;
+  }
+
+  .aporto__titulo {
+    width: min(94%, 460px);
+  }
+
+  .carpeta {
+    --u: calc(min(100vw - 40px, 560px) / 1082);
+    width: calc(var(--u) * 1082);
+    height: calc(var(--u) * 787);
+  }
+
+  .tags {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px 20px;
+  }
+}
