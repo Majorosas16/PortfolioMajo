@@ -34,18 +34,24 @@ const TRIM = 1040;
 
 // Ajustes sobre las coordenadas de Figma:
 // - Columnas: el texto de la izquierda termina y la bio empieza a la misma distancia de la foto (95).
-// - LEFT_DY / BIO_DY centran en la foto (y = 1582) el texto de la izquierda («Hola! soy» → «de Cali», el
-//   sticker se mueve con él pero no cuenta para el centrado) y la bio, así quedan alineados entre sí.
+// - LEFT_DY centra en la foto (y = 1582) el texto de la izquierda («Hola! soy» → «de Cali», el
+//   sticker se mueve con él pero no cuenta para el centrado); la bio se centra en PHOTO_CY.
 // - GRAD_Y: texto de la graduación, centrado bajo las fotos.
 // - COLS_DY baja «Mi enfoque» / «Mi toolkit» para dejar aire tras las fotos y el texto de la graduación.
-const LEFT_DY = 5;
-const BIO_DY = 30;
+const LEFT_DY = -6;
+// Centro vertical de la foto: la bio se centra en él (cy), así queda alineada en cualquier idioma
+const PHOTO_CY = 1582;
 const GRAD_Y = 2075;
 const COLS_DY = 312;
 // «Mi enfoque» / «Mi toolkit»: los textos empiezan a la misma altura bajo su subtítulo (TEXT_Y, borde superior);
 // los dos textos miden lo mismo, así que los recuadros y sus cursores suben BOX_DY para quedar a 26 de ellos.
 const TEXT_Y = 2214;
 const BOX_DY = -18;
+// Centro de cada columna, simétricos respecto al centro de la sección (756): icono, subtítulo, texto y recuadro
+// se centran en él; cada cursor conserva su posición respecto a su recuadro.
+const APPROACH_X = 428;
+const TOOLKIT_X = 1084;
+const COL_TEXT_W = 500;
 
 // Tiempo que se ve el mensaje del sticker o del perrito al tocarlos
 const BUBBLE_MS = 2600;
@@ -139,12 +145,13 @@ export default function About() {
             <P x={177.61} y={1484.35 + LEFT_DY} w={328.68} className="about__majo">
               <img loading="lazy" decoding="async" src={img['majo-letters']} alt="MAJO" />
             </P>
-            <P x={12.9} y={1596.16 + LEFT_DY} w={470} fs={34.81} className="about__role">
+            <P x={98.9} y={1596.16 + LEFT_DY} w={384} fs={34.81} className="about__role">
               <p>
-                <Rich text={a.role} /> <small className="about__role-note">{a.roleNote}</small>
+                <Rich text={a.role} />
+                <small className="about__role-note">{a.roleNote}</small>
               </p>
             </P>
-            <P x={281.8} y={1690.7 + LEFT_DY} r={-0.53} className="about__city">
+            <P x={281.8} y={1712 + LEFT_DY} r={-0.53} className="about__city">
               <Pill size="lg">{a.from}</Pill>
             </P>
           </div>
@@ -164,7 +171,7 @@ export default function About() {
             </P>
           </div>
 
-          <P x={1027} y={1420 + BIO_DY} w={400} fs={32} className="about__bio">
+          <P x={1027} y={PHOTO_CY} w={400} fs={32} cy className="about__bio">
             <p>
               <Rich text={a.bio} />
             </p>
@@ -178,22 +185,22 @@ export default function About() {
 
           {/* Mi enfoque */}
           <div className="grp grp--col">
-            <P x={392} y={2006 + COLS_DY} w={67.82} className="about__reaction">
+            <P x={APPROACH_X - 67.82 / 2} y={2006 + COLS_DY} w={67.82} className="about__reaction">
               <img loading="lazy" decoding="async" src={img['reaction-approach']} alt="" />
             </P>
-            <P x={442.7} y={2138.68 + COLS_DY} fs={81.68} r={-0.97} cx cy className="hand about__subtitle">
+            <P x={APPROACH_X} y={2138.68 + COLS_DY} fs={81.68} r={-0.97} cx cy className="hand about__subtitle">
               <h3>{a.approach.title}</h3>
             </P>
-            <P x={445.5} y={TEXT_Y + COLS_DY} w={461} fs={29} cx className="about__text">
+            <P x={APPROACH_X} y={TEXT_Y + COLS_DY} w={COL_TEXT_W} fs={29} cx className="about__text">
               <p>
                 <Rich text={a.approach.text} />
               </p>
             </P>
-            <P x={453} y={2438.4 + COLS_DY + BOX_DY} w={446} h={127} r={-2.22} fs={32} cx className="selection selection--orange">
+            <P x={APPROACH_X} y={2438.4 + COLS_DY + BOX_DY} w={446} h={127} r={-2.22} fs={32} cx className="selection selection--orange">
               <p>{a.approach.highlight}</p>
               <SelectionFrame />
             </P>
-            <P x={579} y={2589 + COLS_DY + BOX_DY} className="cursor-tag cursor-tag--orange">
+            <P x={APPROACH_X + 126} y={2589 + COLS_DY + BOX_DY} className="cursor-tag cursor-tag--orange">
               <img loading="lazy" decoding="async" src={img['cursor-orange']} alt="" />
               <span>{a.approach.cursor}</span>
             </P>
@@ -206,22 +213,22 @@ export default function About() {
 
           {/* Mi toolkit */}
           <div className="grp grp--col">
-            <P x={1061} y={1996 + COLS_DY} w={69.01} className="about__reaction">
+            <P x={TOOLKIT_X - 69.01 / 2} y={1996 + COLS_DY} w={69.01} className="about__reaction">
               <img loading="lazy" decoding="async" src={img['reaction-toolkit']} alt="" />
             </P>
-            <P x={1094.57} y={2138.89 + COLS_DY} fs={81.68} r={-0.97} cx cy className="hand about__subtitle">
+            <P x={TOOLKIT_X} y={2138.89 + COLS_DY} fs={81.68} r={-0.97} cx cy className="hand about__subtitle">
               <h3>{a.toolkit.title}</h3>
             </P>
-            <P x={1102} y={TEXT_Y + COLS_DY} w={560} fs={29} cx className="about__text">
+            <P x={TOOLKIT_X} y={TEXT_Y + COLS_DY} w={COL_TEXT_W} fs={29} cx className="about__text">
               <p>
                 <Rich text={a.toolkit.text} />
               </p>
             </P>
-            <P x={1103.76} y={2438.4 + COLS_DY + BOX_DY} w={470} h={150} r={2.25} fs={32} cx className="selection selection--blue">
+            <P x={TOOLKIT_X} y={2438.4 + COLS_DY + BOX_DY} w={470} h={150} r={2.25} fs={32} cx className="selection selection--blue">
               <p>{a.toolkit.highlight}</p>
               <SelectionFrame />
             </P>
-            <P x={1207 + (470 - 350.87) / 2} y={2589 + 23 + COLS_DY + BOX_DY} className="cursor-tag cursor-tag--blue">
+            <P x={TOOLKIT_X + 163} y={2589 + 23 + COLS_DY + BOX_DY} className="cursor-tag cursor-tag--blue">
               <img loading="lazy" decoding="async" src={img['cursor-blue']} alt="" />
               <span>{a.toolkit.cursor}</span>
             </P>
