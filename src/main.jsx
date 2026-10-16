@@ -8,6 +8,8 @@ import './styles.css';
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (location.hash) history.replaceState(null, '', location.pathname + location.search);
 window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+// Estado inicial de la caja (Intro.jsx lo actualiza); así el header arranca sin navegación desde el primer cuadro
+document.documentElement.dataset.caja = 'cerrada';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

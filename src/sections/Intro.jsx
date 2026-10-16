@@ -82,6 +82,11 @@ export default function Intro() {
 
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
+  // El header lee el estado de la caja (con la caja cerrada oculta la navegación)
+  useEffect(() => {
+    document.documentElement.dataset.caja = estado;
+  }, [estado]);
+
   const later = (fn, ms) => timers.current.push(setTimeout(fn, ms));
 
   const terminar = () => {
@@ -175,7 +180,7 @@ export default function Intro() {
           y={431.7 - Y0}
           cx
           className="intro__msg intro__boton"
-          style={{ '--mx': 50, '--my': 92 }}
+          style={{ '--mx': 50, '--my': 97 }}
           onClick={abrir}
           disabled={estado !== 'cerrada'}
           aria-hidden={estado !== 'cerrada'}
