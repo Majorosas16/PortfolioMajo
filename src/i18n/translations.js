@@ -25,11 +25,19 @@ export const translations = {
       openBox: 'Abrir la caja',
       tap: 'Toca y mueve los objetos',
       objects: {
-        keys: { label: 'Diseño de producto', alt: 'Llaves antiguas' },
-        plant: { label: 'Prototipado y código', alt: 'Planta en matera de concreto' },
-        butterfly: { label: 'Diseño visual', alt: 'Mariposa azul' },
-        mirror: { label: 'Empatía', alt: 'Espejo de mano antiguo' },
-        headphones: { label: 'Colaboración', alt: 'Audífonos' },
+        keys: {
+          label: 'Diseño de producto',
+          alt: 'Llaves antiguas',
+          message: 'Conecto necesidades, interacción, tecnología e IA para crear productos digitales útiles.',
+        },
+        plant: {
+          label: 'Prototipado y código',
+          alt: 'Planta en matera de concreto',
+          message: 'No me quedo en cómo se ve. Exploro cómo puede funcionar.',
+        },
+        butterfly: { label: 'Diseño visual', alt: 'Mariposa azul', message: 'Doy forma, color, coherencia y carácter a las ideas.' },
+        mirror: { label: 'Empatía', alt: 'Espejo de mano antiguo', message: 'Antes de diseñar para alguien, intento entender su mundo.' },
+        headphones: { label: 'Colaboración', alt: 'Audífonos', message: 'Las mejores ideas también saben construirse en equipo.' },
       },
     },
     about: {
@@ -107,11 +115,15 @@ export const translations = {
       openBox: 'Open the box',
       tap: 'Tap and drag the objects',
       objects: {
-        keys: { label: 'Product design', alt: 'Antique keys' },
-        plant: { label: 'Prototyping & code', alt: 'Plant in a concrete pot' },
-        butterfly: { label: 'Visual design', alt: 'Blue butterfly' },
-        mirror: { label: 'Empathy', alt: 'Antique hand mirror' },
-        headphones: { label: 'Collaboration', alt: 'Headphones' },
+        keys: {
+          label: 'Product design',
+          alt: 'Antique keys',
+          message: 'I connect needs, interaction, technology and AI to build useful digital products.',
+        },
+        plant: { label: 'Prototyping & code', alt: 'Plant in a concrete pot', message: "I don't stop at how it looks. I explore how it can work." },
+        butterfly: { label: 'Visual design', alt: 'Blue butterfly', message: 'I give shape, color, coherence and character to ideas.' },
+        mirror: { label: 'Empathy', alt: 'Antique hand mirror', message: 'Before designing for someone, I try to understand their world.' },
+        headphones: { label: 'Collaboration', alt: 'Headphones', message: 'The best ideas are also built as a team.' },
       },
     },
     about: {

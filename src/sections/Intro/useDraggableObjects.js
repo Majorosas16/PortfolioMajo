@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 // Distancia mínima (px) para que el gesto cuente como arrastre y no como clic
 const THRESHOLD = 6;
@@ -23,7 +23,11 @@ const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 // El desplazamiento se guarda en --dx / --dy (ver Intro.css). Solo se encarga del arrastre:
 // el clic de cada objeto sigue siendo cosa de ObjectItem (onClick). Si hubo arrastre,
 // se descarta el clic que el navegador dispara al soltar.
-export default function useDraggableObjects(sectionRef, enabled) {
+// onMove (opcional): se llama en cada movimiento del arrastre (Intro lo usa para que el mensaje siga al objeto).
+export default function useDraggableObjects(sectionRef, enabled, onMove) {
+  const onMoveRef = useRef(onMove);
+  onMoveRef.current = onMove;
+
   useEffect(() => {
     const section = sectionRef.current;
     if (!enabled || !section) return undefined;
@@ -72,6 +76,7 @@ export default function useDraggableObjects(sectionRef, enabled) {
       e.preventDefault();
       drag.el.style.setProperty('--dx', `${drag.dx + clamp(mx, drag.minX, drag.maxX)}px`);
       drag.el.style.setProperty('--dy', `${drag.dy + clamp(my, drag.minY, drag.maxY)}px`);
+      onMoveRef.current?.(drag.el);
     };
 
     // Descarta el clic que llega justo después de soltar un objeto arrastrado
