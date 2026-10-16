@@ -36,7 +36,7 @@
 }
 
 
-.about__dog img {
+.about__dog .about__tap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -69,7 +69,7 @@
 /* Sticker «Sobre mí»: se pega una sola vez al aparecer la sección. Llega levantado e inclinado (con sombra
    de estar en el aire), apoya primero el borde inferior izquierdo y se aplana con un pequeño rebote, como
    cuando se presiona un sticker. Se anima el img para no pisar el giro del contenedor (.abs). */
-.about.reveal-ready .about__sticker.is-visible img {
+.about.reveal-ready .about__sticker.is-visible .about__tap img {
   transform-origin: 20% 85%;
   animation: sticker-stick 1.1s cubic-bezier(0.25, 0.8, 0.3, 1) 0.15s both;
 }
@@ -162,11 +162,17 @@
 .about__bubble .msg {
   opacity: 0;
   transform-origin: 0 100%;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.35s ease;
 }
 
+/* is-on: visible (si vuelve a activarse mientras se desvanece, recupera la opacidad sin parpadeo);
+   is-pop: entra con la animación msg-pop, solo cuando aparece desde oculto */
 .about__bubble.is-on .msg {
   opacity: 1;
+  transition-duration: 0.15s;
+}
+
+.about__bubble.is-pop .msg {
   animation: msg-pop 0.45s cubic-bezier(0.3, 0.7, 0.4, 1) backwards;
 }
 
@@ -327,7 +333,7 @@
 
   /* El perrito está pegado al borde derecho: el mensaje va encima de su cara */
   .about__bubble--dog {
-    left: 8%;
+    left: calc(8% - 16px);
     top: auto;
     bottom: 88%;
     translate: 0 0;
@@ -386,13 +392,13 @@
     transition-duration: 0.2s;
   }
 
-  .about__dog img,
+  .about__dog .about__tap img,
   .about__note img,
-  .about.reveal-ready .about__sticker.is-visible img {
+  .about.reveal-ready .about__sticker.is-visible .about__tap img {
     animation: none;
   }
 
-  .about__bubble.is-on .msg {
+  .about__bubble.is-pop .msg {
     animation: none;
   }
 }
