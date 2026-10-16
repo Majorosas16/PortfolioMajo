@@ -1,0 +1,184 @@
+/* Menú del celular: panel a pantalla completa (se abre con el botón ☰ del header, ver Header.jsx) */
+
+.menu {
+  /* Mismo margen que el header en celular, así el nombre y el botón cerrar quedan donde estaban */
+  --hm: clamp(20px, 5vw, 28px);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--hm) + env(safe-area-inset-top)) calc(var(--hm) + env(safe-area-inset-right))
+    calc(var(--hm) + env(safe-area-inset-bottom)) calc(var(--hm) + env(safe-area-inset-left));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background-color: var(--cream);
+  color: var(--brown);
+  animation: menu-enter 0.25s ease both;
+}
+
+@keyframes menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+.menu__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.menu .menu__brand {
+  gap: 2px;
+  animation: none;
+}
+
+.menu__close {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 1.2px solid var(--brown-border);
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* X de dos líneas */
+.menu__close-icon {
+  position: relative;
+  width: 18px;
+  height: 18px;
+}
+
+.menu__close-icon::before,
+.menu__close-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.8px;
+  border-radius: 2px;
+  background-color: currentColor;
+}
+
+.menu__close-icon::before {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.menu__close-icon::after {
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+/* Enlaces: las mismas píldoras del header, en tamaño amplio */
+.menu__nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 14px;
+  padding: 40px 0;
+}
+
+.menu__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 0 26px;
+  border: 1.5px solid var(--brown-border);
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: clamp(22px, 7vw, 30px);
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.menu__close:hover,
+.menu__link:hover,
+.menu__link:focus-visible {
+  background-color: var(--brown);
+  color: var(--cream);
+}
+
+/* Pie: idioma y redes */
+.menu__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(67, 47, 46, 0.12);
+}
+
+.menu .lang-switch {
+  height: 44px;
+}
+
+.menu .lang-switch__option {
+  min-width: 44px;
+  font-size: 15px;
+}
+
+.menu__socials {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Área táctil de 48px con el ícono de 32px */
+.menu__socials a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.menu__socials a:hover {
+  transform: translateY(-3px);
+}
+
+.menu__socials img {
+  width: 32px;
+  height: 32px;
+}
+
+.menu__close:focus-visible,
+.menu__link:focus-visible,
+.menu__socials a:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+
+/* El menú es solo para celular */
+@media (min-width: 769px) {
+  .menu {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu {
+    animation: none;
+  }
+
+  .menu__socials a {
+    transition: none;
+  }
+}

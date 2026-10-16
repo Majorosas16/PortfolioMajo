@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal, flushSync } from 'react-dom';
 import { useLanguage } from '../i18n/LanguageContext.jsx';
 import LanguageSwitch from './LanguageSwitch.jsx';
+import { socials } from './socials.js';
 import './Header.css';
+import './MobileMenu.css';
 
 // Secciones del menú; el texto de cada enlace está en translations.js (header.links)
 const links = [
@@ -20,6 +23,8 @@ const goToSection = (e) => {
   target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
 };
 
+const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 // Encabezado fijo. Cambia a texto claro cuando pasa sobre la sección oscura ("Lo que aporto")
 // y se vuelve discreto sobre la caja cerrada del inicio.
 export default function Header() {
@@ -27,10 +32,12 @@ export default function Header() {
   const [dark, setDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [atIntro, setAtIntro] = useState(true);
-  // Menú hamburguesa (solo en celular; en escritorio el botón no se muestra)
+  // Menú hamburguesa a pantalla completa (solo en celular; en escritorio el botón no se muestra)
   const [menuOpen, setMenuOpen] = useState(false);
   const headerRef = useRef(null);
   const toggleRef = useRef(null);
+  const menuRef = useRef(null);
+  const closeRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -58,67 +65,132 @@ export default function Header() {
     };
   }, []);
 
-  // Con el menú abierto: Escape lo cierra (y devuelve el foco al botón), igual que tocar fuera
-  // del encabezado o pasar a escritorio
-  useEffect(() => {
+  const closeMenu = () => {
+    // flushSync: el scroll de la página se libera antes de que un enlace la desplace
+    flushSync(() => setMenuOpen(false));
+    toggleRef.current?.focus({ preventScroll: true });
+  };
+
+  // Con el menú abierto: el foco entra al panel y no sale de él, el resto de la página queda
+  // inactivo (inert) y sin scroll. Escape o pasar a escritorio lo cierran.
+  useLayoutEffect(() => {
     if (!menuOpen) return undefined;
+    const outside = [headerRef.current, document.querySelector('main')].filter(Boolean);
+    outside.forEach((el) => (el.inert = true));
+    const root = document.documentElement;
+    const prevOverflow = root.style.overflow;
+    root.style.overflow = 'hidden';
+    closeRef.current?.focus();
+
     const onKey = (e) => {
-      if (e.key !== 'Escape') return;
-      setMenuOpen(false);
-      toggleRef.current?.focus();
-    };
-    const onPointer = (e) => {
-      if (!headerRef.current?.contains(e.target)) setMenuOpen(false);
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeMenu();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const items = menuRef.current?.querySelectorAll(FOCUSABLE);
+      if (!items?.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     const desktop = window.matchMedia('(min-width: 769px)');
     const onMedia = () => desktop.matches && setMenuOpen(false);
     document.addEventListener('keydown', onKey);
-    document.addEventListener('pointerdown', onPointer);
     desktop.addEventListener('change', onMedia);
     return () => {
+      outside.forEach((el) => (el.inert = false));
+      root.style.overflow = prevOverflow;
       document.removeEventListener('keydown', onKey);
-      document.removeEventListener('pointerdown', onPointer);
       desktop.removeEventListener('change', onMedia);
     };
   }, [menuOpen]);
 
-  const onLinkClick = (e) => {
-    setMenuOpen(false);
+  const onMenuLinkClick = (e) => {
+    closeMenu();
     goToSection(e);
   };
 
   return (
-    <header
-      ref={headerRef}
-      className={`header ${dark ? 'header--dark' : ''} ${scrolled ? 'header--scrolled' : ''} ${atIntro ? 'header--intro' : ''} ${menuOpen ? 'header--menu-open' : ''}`}
-    >
-      <div className="header__inner">
-        <a href="#intro" className="header__brand" onClick={goToSection}>
-          <span className="header__role">{t.header.role}</span>
-          <span className="header__name">María José Rosas Cuellar</span>
-        </a>
-        <div className="header__actions">
-          <button
-            ref={toggleRef}
-            type="button"
-            className="header__toggle"
-            aria-expanded={menuOpen}
-            aria-controls="header-nav"
-            aria-label={menuOpen ? t.header.menuClose : t.header.menuOpen}
-            onClick={() => setMenuOpen((o) => !o)}
-          >
-            <span className="header__toggle-icon" aria-hidden="true" />
-          </button>
-          <nav id="header-nav" className="header__nav" aria-label={t.header.nav}>
-            {links.map((l) => (
-              <a key={l.href} href={l.href} className="header__link" onClick={onLinkClick}>
-                {t.header.links[l.key]}
-              </a>
-            ))}
-          </nav>
-          <LanguageSwitch />
+    <>
+      <header
+        ref={headerRef}
+        className={`header ${dark ? 'header--dark' : ''} ${scrolled ? 'header--scrolled' : ''} ${atIntro ? 'header--intro' : ''}`}
+      >
+        <div className="header__inner">
+          <a href="#intro" className="header__brand" onClick={goToSection}>
+            <span className="header__role">{t.header.role}</span>
+            <span className="header__name">María José Rosas Cuellar</span>
+          </a>
+          <div className="header__actions">
+            <button
+              ref={toggleRef}
+              type="button"
+              className="header__toggle"
+              aria-haspopup="dialog"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+              aria-label={t.header.menuOpen}
+              onClick={() => setMenuOpen(true)}
+            >
+              <span className="header__toggle-icon" aria-hidden="true" />
+            </button>
+            <nav className="header__nav" aria-label={t.header.nav}>
+              {links.map((l) => (
+                <a key={l.href} href={l.href} className="header__link" onClick={goToSection}>
+                  {t.header.links[l.key]}
+                </a>
+              ))}
+            </nav>
+            <LanguageSwitch />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Fuera del header: su backdrop-filter haría que el panel fijo no cubriera toda la pantalla */}
+      {menuOpen &&
+        createPortal(
+          <div id="mobile-menu" className="menu" role="dialog" aria-modal="true" aria-label={t.header.menu} ref={menuRef}>
+            <div className="menu__top">
+              <div className="header__brand menu__brand">
+                <span className="header__role">{t.header.role}</span>
+                <span className="header__name">María José Rosas Cuellar</span>
+              </div>
+              <button ref={closeRef} type="button" className="menu__close" aria-label={t.header.menuClose} onClick={closeMenu}>
+                <span className="menu__close-icon" aria-hidden="true" />
+              </button>
+            </div>
+
+            <nav className="menu__nav" aria-label={t.header.nav}>
+              {links.map((l) => (
+                <a key={l.href} href={l.href} className="menu__link" onClick={onMenuLinkClick}>
+                  {t.header.links[l.key]}
+                </a>
+              ))}
+            </nav>
+
+            <div className="menu__footer">
+              <LanguageSwitch />
+              <ul className="menu__socials" aria-label={t.header.socials}>
+                {socials.map((s) => (
+                  <li key={s.name}>
+                    <a href={s.href} target="_blank" rel="noreferrer" aria-label={s.name}>
+                      <img src={s.icon} alt="" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
