@@ -411,9 +411,10 @@
 }
 
 /* ---------- Detalle de la foto seleccionada (Figma 183:2691 + 183:2671) ----------
-   .folder-detail es la esquina inferior de la caja del lado de la cola; el título, la explicación y el mensaje
-   quedan encima. left/top y data-side los calcula place() en Folder.jsx: a un lado de las fotos en escritorio
-   (left = la caja termina en el punto, con la cola volteada hacia las fotos), encima de la foto en celular (top). */
+   Un solo bloque, siempre en este orden: título, burbuja azul y explicación (con ícono de imagen). .folder-detail es
+   la esquina inferior del bloque; left/top y data-align los calcula place() en Folder.jsx. Todo el bloque comparte
+   una alineación: start (a la derecha de la foto o encima, en celular) o end (a la izquierda de la foto, alineado
+   hacia ella). Al cambiar de lado cambia todo junto. */
 
 .folder-detail {
   position: absolute;
@@ -433,12 +434,16 @@
   position: absolute;
   left: 0;
   bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   width: max-content;
+  text-align: left;
   transform-origin: 0.46em 100%;
   animation: folder-detail-pop 0.45s cubic-bezier(0.3, 0.7, 0.4, 1) both;
 }
 
-/* Flotación sutil del título y el mensaje (translate, aparte de la animación de entrada de la caja) */
+/* Flotación sutil del bloque (translate, aparte de la animación de entrada) */
 .folder-detail__box > * {
   animation: folder-detail-float 3.2s ease-in-out 0.45s infinite alternate;
 }
@@ -449,8 +454,11 @@
   }
 }
 
+/* Título y explicación con la misma sangría que el texto de la burbuja (0.578em = 9.6 del título en Figma ≈ 13 del
+   relleno de la burbuja), del lado de la alineación */
 .folder-detail__title {
-  margin: 0 0 0.332em 0.498em;
+  margin: 0 0 0.286em;
+  padding-inline: 0.498em;
   color: #fff;
   font-family: var(--font-head);
   font-weight: 700;
@@ -459,16 +467,28 @@
   white-space: nowrap;
 }
 
-/* Explicación de la foto: más pequeña y en Extra Light, debajo del título */
+/* Explicación de la foto: debajo de la burbuja, más pequeña y en Extra Light, con un ícono de imagen al inicio */
 .folder-detail__caption {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45em;
   max-width: 15.5em;
-  margin: 0 0 0.6em 0.578em;
+  margin: 0.35em 0 0;
+  padding-inline: 0.741em;
   color: rgba(255, 255, 255, 0.82);
   font-family: var(--font-text);
   font-weight: 200;
   font-size: 0.78em;
   line-height: 1.3;
   text-wrap: pretty;
+}
+
+.folder-detail__icon {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  margin-top: 0.08em;
+  opacity: 0.9;
 }
 
 .folder-detail .msg {
@@ -511,37 +531,39 @@
   }
 }
 
-/* A la izquierda de la foto: la cola (volteada) queda abajo a la derecha, hacia la foto, y el texto se alinea a ella */
-.folder-detail[data-side='left'] .folder-detail__box {
-  transform-origin: calc(100% - 0.46em) 100%;
+/* Alineado a la derecha (el bloque está a la izquierda de la foto): todo el bloque hacia la foto, la cola volteada */
+.folder-detail[data-align='end'] .folder-detail__box {
+  align-items: flex-end;
   text-align: right;
+  transform-origin: calc(100% - 0.46em) 100%;
 }
 
-.folder-detail[data-side='left'] .folder-detail__title,
-.folder-detail[data-side='left'] .folder-detail__caption {
-  margin-left: auto;
-  margin-right: 0.578em;
-}
-
-.folder-detail[data-side='left'] .folder-detail__title {
-  margin-right: 0.498em;
-}
-
-.folder-detail[data-side='left'] .msg {
+.folder-detail[data-align='end'] .msg {
   align-items: flex-end;
 }
 
-.folder-detail[data-side='left'] .msg__bubble {
-  text-align: left;
+.folder-detail[data-align='end'] .msg::after {
+  transform: scaleX(-1);
 }
 
-.folder-detail[data-side='left'] .msg::after {
-  transform: scaleX(-1);
+.folder-detail[data-align='end'] .folder-detail__caption {
+  justify-content: flex-end;
+}
+
+/* Tablet estrecha: bloque un poco más angosto para que quepa al lado de las fotos, como en pantallas grandes */
+@media (min-width: 769px) and (max-width: 900px) {
+  .folder-detail .msg--blue .msg__bubble {
+    max-width: 11.5em;
+  }
+
+  .folder-detail__caption {
+    max-width: 14.5em;
+  }
 }
 
 /* ---------- Celular ----------
    La escena se recorta a la parte con contenido (x 176–866) para que las fotos se vean más grandes.
-   Cerrada: y 180–780 (la invitación y la carpeta, sin hueco arriba). Abierta: y −200–780, la carpeta baja
+   Cerrada: y 180–780 (la invitación y la carpeta, sin hueco arriba). Abierta: y −220–780, la carpeta baja
    para dejar sitio a las fotos y al detalle de la seleccionada. */
 @media (max-width: 768px) {
   .folder {
@@ -558,11 +580,11 @@
   }
 
   .folder:has([data-state='open']) {
-    height: calc(var(--u) * 980);
+    height: calc(var(--u) * 1000);
   }
 
   .folder__inner[data-state='open'] {
-    top: calc(var(--u) * 200);
+    top: calc(var(--u) * 220);
   }
 
   /* La invitación no baja de ~15px de texto */
