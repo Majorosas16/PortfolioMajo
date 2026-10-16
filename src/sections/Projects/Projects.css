@@ -1,110 +1,112 @@
 /* Sección 4 · Proyectos y contacto */
 
-.proyectos__fin {
+.projects__end {
   font-weight: 200;
   line-height: 1.2;
   text-align: center;
 }
 
-.proyectos__cta {
+.projects__cta {
   line-height: 1.2;
 }
 
-.circulo img {
+/* Círculo dibujado a mano alrededor de la palabra marcada con [[…]] (translations.js).
+   Va pegado a la palabra, así la sigue en cualquier idioma. Los márgenes (en em del texto)
+   reproducen la posición del diseño de Figma alrededor de "encantaría" / "increíble?". */
+.circled {
+  position: relative;
+}
+
+.circled::after {
+  content: '';
   position: absolute;
-  max-width: none;
+  inset: -0.33494em -0.42951em -0.30523em -0.43334em;
+  background: var(--ring-orange) center / 100% 100% no-repeat;
+  transform: rotate(2.98deg);
+  pointer-events: none;
 }
 
-.circulo--azul img {
-  left: -0.55%;
-  top: -2.14%;
-  width: 101.1% !important;
-  height: 104.28%;
+.circled--blue::after {
+  inset: 0.01579em -0.32042em 0.04322em -0.24633em;
+  background-image: var(--ring-blue);
+  transform: rotate(-4.85deg);
 }
 
-.circulo--naranja img {
-  left: -0.86%;
-  top: -2.62%;
-  width: 101.72% !important;
-  height: 105.24%;
-}
-
-.proyectos__invita {
+.projects__invite {
   font-weight: 300;
   line-height: 1.423;
 }
 
 /* El texto y los íconos quedan por encima de la foto de cierre */
-.proyectos__invita,
-.contacto,
-.circulo {
+.projects__invite,
+.contact {
   z-index: 2;
 }
 
-.proyectos__cara img {
+.projects__face img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: bottom;
 }
 
-.contacto {
+.contact {
   display: flex;
   flex-direction: column;
   gap: calc(var(--u) * 22);
 }
 
-.contacto__email {
+.contact__email {
   display: flex;
   flex-direction: column;
   gap: calc(var(--u) * 5.3);
   font-size: calc(var(--u) * 27.21);
 }
 
-.contacto__email img {
+.contact__email img {
   width: calc(var(--u) * 48.14);
   height: calc(var(--u) * 40.44);
 }
 
-.contacto__email:hover span,
-.contacto__email:focus-visible span {
+.contact__email:hover span,
+.contact__email:focus-visible span {
   text-decoration: underline;
 }
 
-.contacto__redes {
+.contact__socials {
   display: flex;
   align-items: center;
   gap: calc(var(--u) * 26.23);
 }
 
-.contacto__redes a {
+.contact__socials a {
   display: block;
   width: calc(var(--u) * var(--s));
   height: calc(var(--u) * var(--s));
   transition: transform 0.2s ease;
 }
 
-.contacto__redes a:hover,
-.contacto__redes a:focus-visible {
+.contact__socials a:hover,
+.contact__socials a:focus-visible {
   transform: translateY(-3px);
 }
 
-.contacto__redes img {
+.contact__socials img {
   width: 100%;
   height: 100%;
 }
 
 @media (max-width: 768px) {
-  .proyectos__foto {
+  .projects__photo {
     width: 100%;
     max-width: 560px;
   }
 
-  .grp--caja {
+  .grp--box {
     gap: 24px;
   }
 
-  .grp--caja .proyectos__sticker {
+  .grp--box .projects__sticker {
     position: absolute;
     left: 0;
     top: 0;
@@ -112,7 +114,7 @@
     max-width: 220px;
   }
 
-  .grp--caja .proyectos__corona {
+  .grp--box .projects__crown {
     position: absolute;
     left: 44%;
     top: -18px;
@@ -120,82 +122,82 @@
     max-width: 110px;
   }
 
-  .proyectos__fin {
+  .projects__end {
     font-size: 21px;
     margin-top: 16px;
   }
 
-  .proyectos__cta {
+  .projects__cta {
     font-size: 54px;
     white-space: normal;
   }
 
-  .circulo {
+  .circled::after {
     display: none;
   }
 
-  .encerrado {
+  .circled {
     display: inline-block;
     padding: 0 0.12em;
-    border: 2px solid var(--naranja);
+    border: 2px solid var(--orange);
     border-radius: 50%;
     transform: rotate(3deg);
   }
 
-  .encerrado--azul {
-    border-color: var(--azul);
+  .circled--blue {
+    border-color: var(--blue);
     transform: rotate(-5deg);
   }
 
-  .grp--contacto {
+  .grp--contact {
     gap: 28px;
   }
 
-  .proyectos__invita {
+  .projects__invite {
     font-size: 23px;
     text-align: center;
     max-width: 360px;
   }
 
-  .contacto {
+  .contact {
     align-items: center;
     gap: 18px;
   }
 
-  .contacto__email {
+  .contact__email {
     align-items: center;
     font-size: 18px;
   }
 
-  .contacto__email img {
+  .contact__email img {
     width: 40px;
     height: 34px;
   }
 
-  .contacto__redes {
+  .contact__socials {
     gap: 22px;
   }
 
-  .contacto__redes a {
+  .contact__socials a {
     width: 46px;
     height: 46px;
   }
 
-  .proyectos .stage {
+  .projects .stage {
     padding-bottom: 0;
   }
 
-  .grp--cara {
+  .grp--face {
     width: min(100%, 520px);
     margin-top: 8px;
   }
 
-  .proyectos__cara {
+  .projects__face {
     width: 100%;
     aspect-ratio: 618 / 433;
   }
 
-  .grp--cara .proyectos__nota {
+  .grp--face .projects__note {
     position: absolute;
     left: 48%;
     top: 52%;

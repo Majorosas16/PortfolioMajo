@@ -4,10 +4,10 @@ Landing page construida en **React + Vite** a partir de los 4 frames "WEB" del a
 
 | Sección | Archivo | Frame de Figma |
 |---|---|---|
-| Inicio — "¿Abrimos la caja?": la caja se abre y salen los objetos | `src/sections/Intro.jsx` | 121:2271 + parte superior de 130:4479 + "Boxes" 162:2418 |
-| Sobre mí, Mi enfoque, Mi toolkit | `src/sections/SobreMi.jsx` | 130:4479 |
-| Lo que aporto | `src/sections/Aporto.jsx` | 146:5632 |
-| Proyectos y Hablemos | `src/sections/Proyectos.jsx` | 149:424 |
+| Inicio — "¿Abrimos la caja?": la caja se abre y salen los objetos | `src/sections/Intro/Intro.jsx` | 121:2271 + parte superior de 130:4479 + "Boxes" 162:2418 |
+| Sobre mí, Mi enfoque, Mi toolkit | `src/sections/About/About.jsx` | 130:4479 |
+| Lo que aporto | `src/sections/WhatIBring/WhatIBring.jsx` | 146:5632 |
+| Proyectos y Hablemos | `src/sections/Projects/Projects.jsx` | 149:424 |
 
 ## 1. Abrir en Visual Studio Code
 
@@ -28,25 +28,40 @@ Las imágenes viven en `src/assets/`, una carpeta por sección, y se importan de
 
 ```
 src/assets/
-  imagenes.js             helper porNombre() para usar import.meta.glob
+  images.js               helper byName() para usar import.meta.glob
   shared/                 lo que usan varias secciones: burbujas de chat y el papel del fondo
-  sections/inicio/        caja (4 estados) y los 5 objetos
-  sections/sobre-mi/      sticker, MAJO, foto, nota, perro, reacciones, cursores
-  sections/lo-que-aporto/ título, carpeta, fotos de proyectos, etiquetas
-  sections/proyectos/     foto, sticker, corona, objetos, foto de contacto, íconos de redes
+  sections/intro/         caja (4 estados) y los 5 objetos
+  sections/about/         sticker, MAJO, foto, nota, perro, reacciones, cursores
+  sections/what-i-bring/  título, carpeta, fotos de proyectos, etiquetas
+  sections/projects/      foto, sticker, corona, objetos, foto de contacto, íconos de redes
 ```
 
-Para usar una imagen en una sección: `img['nombre.png']` (cada sección define `img` con su carpeta). Si añades una imagen nueva, ponla en la carpeta de su sección (o en `shared/` si la usan varias); no la dupliques.
+Los nombres de archivos y carpetas están en inglés. Para usar una imagen en una sección: `img['box-closed.png']` (cada sección define `img` con su carpeta). Si añades una imagen nueva, ponla en la carpeta de su sección (o en `shared/` si la usan varias); no la dupliques.
 
 `npm run assets` descarga las imágenes con enlaces temporales de Figma (**vencen alrededor del 22 de octubre de 2026**) a la ruta indicada en `scripts/assets.json`; si el archivo ya existe, no lo toca.
 
-Las imágenes de la caja (`caja-cerrada`, `caja-abriendo-1`, `caja-abriendo-2`, `caja-abierta`) y `majo-letras`, `nota-naranja`, `nota-verde`, `reaccion-enfoque`, `reaccion-toolkit`, `foto-proyectos`, `foto-contacto` y `titulo-aporto` ya están a 3x y con fondo transparente. **No las vuelvas a descargar con `npm run assets -- --forzar`**: sus enlaces apuntan a la exportación antigua (1x y con fondo blanco). `shared/fondo-papel.png` es el original del que se generó `fondo-papel-continuo.jpg` (el que usa la web).
+Las imágenes de la caja (`box-closed`, `box-opening-1`, `box-opening-2`, `box-open`) y `majo-letters`, `note-orange`, `note-green`, `reaction-approach`, `reaction-toolkit`, `photo-projects`, `photo-contact` y `title-what-i-bring` ya están a 3x y con fondo transparente. **No las vuelvas a descargar con `npm run assets -- --forzar`**: sus enlaces apuntan a la exportación antigua (1x y con fondo blanco). `shared/paper-background-original.png` es el original del que se generó `paper-background-seamless.jpg` (el que usa la web).
 
 Si algún enlace venció, exporta ese elemento desde Figma (panel derecho → *Export* → PNG o SVG) con **exactamente el mismo nombre** y guárdalo en la ruta que indica `scripts/assets.json` dentro de `src/assets/`.
 
 ### Estilos
 
-`src/styles.css` solo tiene lo compartido (variables, reset, base y el lienzo de las secciones). Cada componente y sección tiene su propio CSS al lado de su `.jsx` (`Header.css`, `Message.css`, `Intro.css`, `SobreMi.css`, etc.) y lo importa él mismo.
+`src/styles.css` solo tiene lo compartido (variables, reset, base y el lienzo de las secciones). Cada componente y sección tiene su propio CSS al lado de su `.jsx` y lo importa él mismo. Cada sección vive en su carpeta: `src/sections/Intro/`, `About/`, `WhatIBring/` y `Projects/` (cada una con su `.jsx` y su `.css`); los componentes compartidos están en `src/components/`.
+
+### Idiomas (Español / English)
+
+El selector **ES | EN** del header cambia todos los textos. Empieza en español y recuerda la elección del visitante.
+
+- **Textos:** todos están en `src/i18n/translations.js`, en dos ramas (`es` y `en`) con las mismas claves. Para cambiar un texto, edítalo ahí; no hace falta tocar los componentes. Marcas de formato: `**negrita**`, `[[palabra]]` (palabra rodeada por el círculo dibujado a mano; `[[blue:palabra]]` para el azul) y `\n` (salto de línea).
+- **Imágenes con texto:** están registradas en `src/i18n/images.js`. Para añadir la versión inglesa, guarda el archivo con el nombre indicado en la misma carpeta que la original; mientras no exista se muestra la versión en español:
+
+  | Imagen original | Versión inglesa (pendiente) |
+  |---|---|
+  | `src/assets/sections/about/sticker-about-me.png` | `src/assets/sections/about/sticker-about-me.en.png` |
+  | `src/assets/sections/what-i-bring/title-what-i-bring.png` | `src/assets/sections/what-i-bring/title-what-i-bring.en.png` |
+  | `src/assets/sections/projects/sticker-projects.png` | `src/assets/sections/projects/sticker-projects.en.png` |
+
+- El selector y el contexto de idioma están en `src/components/LanguageSwitch.jsx` y `src/i18n/LanguageContext.jsx` (`useLanguage()` devuelve `{ lang, setLang, t }`).
 
 ## 2. Subir a GitHub
 
@@ -72,8 +87,8 @@ El proyecto ya incluye `.github/workflows/deploy.yml`, que publica la web autom�
 
 ## Pendientes por completar
 
-- **Enlaces de redes** en `src/sections/Proyectos.jsx` (arreglo `redes`): WhatsApp, LinkedIn y GitHub tienen enlaces de ejemplo. Behance ya apunta a `behance.net/marajrosasc` y el correo a `multimedia.mr16@gmail.com`.
-- **Animaciones**: la caja del inicio entra, se abre al hacer clic (estados `cerrada → abriendo → abierta` en `Intro.jsx`, con CSS) y los objetos flotan; "Sobre mí" aparece con un fundido al hacer scroll. Faltan otras (fotos que salen de la carpeta, etc.).
+- **Enlaces de redes** en `src/sections/Projects/Projects.jsx` (arreglo `socials`): WhatsApp, LinkedIn y GitHub tienen enlaces de ejemplo. Behance ya apunta a `behance.net/marajrosasc` y el correo a `multimedia.mr16@gmail.com`.
+- **Animaciones**: la caja del inicio entra, se abre al hacer clic (estados `cerrada → abriendo → abierta` en `Intro/Intro.jsx`, con CSS) y los objetos flotan; "Sobre mí" aparece con un fundido al hacer scroll. Faltan otras (fotos que salen de la carpeta, etc.).
 - **Acción de los objetos**: "Toca los objetos" aún no hace nada al tocarlos; `ObjectItem` acepta un `onClick` para conectarlo más adelante.
 
 ## Cómo está construido

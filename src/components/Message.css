@@ -18,7 +18,7 @@
 .msg__bubble {
   position: relative;
   background: #e2e2e3;
-  color: var(--cafe);
+  color: var(--brown);
   padding: calc(var(--m) * 14.16) calc(var(--m) * 20.46);
   margin-right: calc(var(--m) * -29.9);
   border-radius: calc(var(--m) * 20);
@@ -74,11 +74,11 @@
 }
 
 /* Variante oscura (inicio) · medidas del componente "Message" de Figma (123:4429) */
-.msg--oscura {
+.msg--dark {
   gap: 0;
 }
 
-.msg--oscura .msg__meta--top {
+.msg--dark .msg__meta--top {
   padding: 0 calc(var(--u) * 28.38);
   margin-bottom: calc(var(--u) * 14.19);
   color: #88888e;
@@ -87,11 +87,11 @@
   line-height: 1;
 }
 
-.msg--oscura .msg__row {
+.msg--dark .msg__row {
   margin-bottom: calc(var(--u) * -15.96);
 }
 
-.msg--oscura .msg__bubble {
+.msg--dark .msg__bubble {
   background: #262629;
   color: #fff;
   padding: calc(var(--u) * 15.96) calc(var(--u) * 23.06);
@@ -100,39 +100,39 @@
   font-size: calc(var(--u) * 26.61);
 }
 
-.msg--oscura .msg__reaction {
+.msg--dark .msg__reaction {
   width: calc(var(--u) * 58.21);
 }
 
-.msg--oscura .msg__reaction-bg,
-.msg--oscura .msg__emoji {
+.msg--dark .msg__reaction-bg,
+.msg--dark .msg__emoji {
   top: calc(var(--u) * -33.7);
   width: calc(var(--u) * 54.13);
 }
 
-.msg--oscura .msg__reaction-bg {
+.msg--dark .msg__reaction-bg {
   height: calc(var(--u) * 59.23);
 }
 
-.msg--oscura .msg__emoji {
+.msg--dark .msg__emoji {
   height: calc(var(--u) * 54.13);
   font-size: calc(var(--u) * 29);
 }
 
-.msg--oscura .msg__reaction-dot {
+.msg--dark .msg__reaction-dot {
   left: calc(var(--u) * 54);
   top: calc(var(--u) * 22);
   width: calc(var(--u) * 10.2);
   height: calc(var(--u) * 10.2);
 }
 
-.msg--oscura .msg__tail {
+.msg--dark .msg__tail {
   width: calc(var(--u) * 33.7);
   height: calc(var(--u) * 24.83);
   margin-left: calc(var(--u) * 8.87);
 }
 
-.msg--oscura .msg__meta--bottom {
+.msg--dark .msg__meta--bottom {
   display: flex;
   align-items: baseline;
   gap: calc(var(--u) * 5.32);
@@ -143,7 +143,7 @@
   line-height: 1.2;
 }
 
-.msg--oscura .msg__meta--bottom strong {
+.msg--dark .msg__meta--bottom strong {
   font-family: -apple-system, 'SF Pro Display', var(--font-text);
   font-weight: 600;
   font-size: calc(var(--u) * 17.74);

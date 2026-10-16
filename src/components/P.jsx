@@ -3,7 +3,7 @@ import './P.css';
 
 // P = "Posicionado". Ubica un elemento con las coordenadas del frame de Figma (en px de un lienzo de 1512 de ancho).
 // En escritorio/tablet las coordenadas se escalan con la variable CSS --u.
-// En celular (≤ 768px) se ignoran y el elemento fluye en columna (ver styles.css).
+// En celular (≤ 768px) se ignoran y el elemento fluye en columna (ver P.css).
 //
 // x, y   → posición (esquina superior izquierda, o centro si cx / cy)
 // w, h   → ancho / alto
