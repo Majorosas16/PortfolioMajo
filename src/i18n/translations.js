@@ -146,13 +146,8 @@ export const translations = {
       // Modal de proyectos (ProjectsModal.jsx). Las categorías son los objetos (projects.js define sus etiquetas)
       modal: {
         title: '{category}',
-        filtersButton: 'Filtros',
-        filtersLabel: 'Filtrar por etiqueta',
-        clear: 'Limpiar filtros',
         count: '{n} proyectos',
         countOne: '1 proyecto',
-        countFiltered: '{n} de {total} proyectos',
-        noResults: 'Ningún proyecto tiene todas esas etiquetas.',
         close: 'Cerrar',
         contribution: 'Mi aporte:',
         tools: 'Herramientas:',
@@ -447,13 +442,8 @@ export const translations = {
       faceAlt: 'María José smiling with a sticky note on her forehead',
       modal: {
         title: '{category} Projects',
-        filtersButton: 'Filters',
-        filtersLabel: 'Filter by tag',
-        clear: 'Clear filters',
         count: '{n} projects',
         countOne: '1 project',
-        countFiltered: '{n} of {total} projects',
-        noResults: 'No project has all of those tags.',
         close: 'Close',
         contribution: 'My contribution:',
         tools: 'Tools:',

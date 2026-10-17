@@ -1,5 +1,5 @@
-/* Modal de proyectos (ProjectsModal.jsx) · Figma 190:2799: carpeta de anillos con el bolsillo de la categoría y los
-   filtros arriba, y la lista de proyectos (tarjetas de libreta) debajo. */
+/* Modal de proyectos (ProjectsModal.jsx) · Figma 190:2799: carpeta de anillos con el bolsillo de la categoría, el
+   título y el número de proyectos arriba, y la lista de proyectos (tarjetas de libreta) debajo. */
 
 .pmodal {
   position: fixed;
@@ -87,8 +87,8 @@
   --u: calc(100cqw / 1422);
 }
 
-/* Cerrar: una X a lápiz al final de la cabecera, color grafito, centrada con el título y los filtros (baja lo mismo
-   que ellos, --head-pt). Al pasar el ratón se oscurece y gira un poco. */
+/* Cerrar: una X a lápiz al final de la cabecera, color grafito, centrada con el título y el número de proyectos
+   (baja lo mismo que ellos, --head-pt). Al pasar el ratón se oscurece y gira un poco. */
 .pmodal__close {
   flex: none;
   align-self: center;
@@ -124,15 +124,15 @@
 
 /* ---------- Cabecera (Figma 194:5885) ----------
    El bolsillo de cuero (330 × 347, a 114 del borde de la hoja y asomando 11 por encima) con el ícono de la categoría;
-   a su derecha, a la misma altura, el título de la categoría y debajo los filtros y el número de proyectos (o el
-   botón para volver del detalle). */
+   a su derecha, a la misma altura, el título de la categoría y debajo el número de proyectos (o el botón para volver
+   del detalle). */
 
 .pmodal__head {
   flex: none;
   display: flex;
   align-items: center;
   gap: 12px calc(44 * var(--u));
-  /* Cuánto bajan el título, los filtros y la X respecto al centro del bolsillo */
+  /* Cuánto bajan el título, el número de proyectos y la X respecto al centro del bolsillo */
   --head-pt: max(10px, calc(40 * var(--u)));
   /* A la derecha, el trazo de la X queda a la misma distancia del borde del papel (donde empiezan los anillos, a 1476
      unidades) que el bolsillo del borde izquierdo (114); 12px = lo que el trazo queda dentro de su botón. Abajo, aire
@@ -168,10 +168,6 @@
   line-height: 1.15;
 }
 
-.pmodal__heading .pmodal__toolbar {
-  align-self: stretch;
-}
-
 /* El ícono, centrado en la parte redonda del bolsillo (bajo la costura de arriba). Todos ocupan la misma superficie
    (la de un cuadrado del 50 % del bolsillo), sea cual sea su proporción (--a = ancho / alto, ProjectsModal.jsx);
    los muy altos o muy anchos se limitan para no salirse del bolsillo. */
@@ -189,154 +185,13 @@
   filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
 }
 
-/* ---------- Filtros por etiqueta (espacio blanco sobre los proyectos) ----------
-   Botón «Filtros» con el número de proyectos al lado; al abrirlo aparecen las etiquetas de esta categoría, cada una
-   con su color (contorno; rellena cuando está elegida) y cuántos proyectos quedarían. */
-
-.pmodal__toolbar {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 12px;
-}
-
-.pmodal__filters-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 32px;
-  margin: 0;
-  padding: 0 13px 0 11px;
-  border: 1.5px solid var(--brown);
-  border-radius: 38px;
-  background: transparent;
-  color: var(--brown);
-  font-family: var(--font-head);
-  font-weight: 500;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.pmodal__filters-btn svg {
-  width: 15px;
-  height: 15px;
-}
-
-.pmodal__filters-btn:hover,
-.pmodal__filters-btn.is-open {
-  background: var(--brown);
-  color: #fffcf9;
-}
-
-.pmodal__filters-count {
-  display: inline-grid;
-  place-items: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: 10px;
-  background: var(--orange);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-}
-
+/* Número de proyectos de la categoría, bajo el título */
 .pmodal__count {
   margin: 0;
   font-family: var(--font-head);
   font-weight: 300;
   font-size: 14px;
   opacity: 0.75;
-}
-
-.pmodal__clear {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--brown);
-  font-family: var(--font-head);
-  font-weight: 500;
-  font-size: 15px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
-
-.pmodal__filters-btn:focus-visible,
-.pmodal__clear:focus-visible {
-  outline: 2px solid var(--orange);
-  outline-offset: 3px;
-}
-
-.pmodal__panel {
-  flex: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 16px 28px 0 calc(114 * var(--u));
-  padding: 16px;
-  border-radius: 18px;
-  background: rgba(67, 47, 46, 0.05);
-  animation: pmodal-panel 0.2s ease both;
-}
-
-.pmodal__panel[hidden] {
-  display: none;
-}
-
-@keyframes pmodal-panel {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-}
-
-.pmodal__tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 32px;
-  margin: 0;
-  padding: 0 12px 0 15px;
-  border: 1.5px solid var(--c);
-  border-radius: 38px;
-  background: #fffcf9;
-  color: var(--c);
-  font-family: var(--font-head);
-  font-weight: 400;
-  font-size: 15.9px;
-  line-height: 1;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
-}
-
-.pmodal__tag-n {
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-.pmodal__tag:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--c) 10%, #fffcf9);
-}
-
-.pmodal__tag.is-active {
-  background: var(--c);
-  color: #fff;
-}
-
-.pmodal__tag:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-.pmodal__tag:focus-visible {
-  outline: 2px solid var(--c);
-  outline-offset: 3px;
 }
 
 /* ---------- Lista de proyectos (se desplaza dentro de la ventana) ---------- */
@@ -351,22 +206,6 @@
 
 .pmodal__list {
   padding: 20px 0 56px;
-}
-
-.pmodal__empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 48px 40px;
-  text-align: center;
-  font-family: var(--font-head);
-  font-weight: 200;
-  font-size: 20px;
-}
-
-.pmodal__empty p {
-  margin: 0;
 }
 
 /* Tarjetas con forma de libreta blanca (Figma 194:5911): 556 × 795, dos por fila alineadas con el bolsillo.
@@ -950,7 +789,7 @@
     height: 26px;
   }
 
-  /* Bolsillo más pequeño, junto al borde de arriba de la hoja; los filtros dejan sitio al botón de cerrar */
+  /* Bolsillo más pequeño, junto al borde de arriba de la hoja */
   /* El trazo de la X a 14px del borde derecho del papel (que llega 4px más allá de la hoja), como el bolsillo del
      izquierdo; el trazo queda 11px dentro de su botón */
   .pmodal__head {
@@ -964,11 +803,6 @@
     margin-top: 0;
   }
 
-  .pmodal__toolbar {
-    gap: 6px 10px;
-  }
-
-  .pmodal__filters-btn,
   .pdetail__back {
     height: 30px;
     font-size: 13px;
@@ -977,20 +811,6 @@
 
   .pmodal__count {
     font-size: 13px;
-  }
-
-  .pmodal__panel {
-    gap: 8px;
-    margin: 12px 14px 0;
-    padding: 12px;
-    max-height: 40vh;
-    overflow-y: auto;
-  }
-
-  .pmodal__tag {
-    height: 30px;
-    padding: 0 10px 0 12px;
-    font-size: 14px;
   }
 
   .pmodal__list {
@@ -1033,7 +853,7 @@
     font-size: 13px;
   }
 
-  /* El título y los filtros arrancan arriba, junto al borde del bolsillo */
+  /* El título y el número de proyectos arrancan arriba, junto al borde del bolsillo */
   .pmodal__head {
     align-items: flex-start;
   }
@@ -1106,7 +926,7 @@
   }
 }
 
-/* Celulares pequeños (≤ 360 px): bolsillo y botón «Filtros» más compactos, para que quepan junto al botón de cerrar */
+/* Celulares pequeños (≤ 360 px): bolsillo y botón de volver más compactos, para que quepan junto al botón de cerrar */
 @media (max-width: 360px) {
   .pmodal__head {
     gap: 8px;
@@ -1117,7 +937,6 @@
     width: 58px;
   }
 
-  .pmodal__filters-btn,
   .pdetail__back {
     height: 28px;
     gap: 5px;
@@ -1127,10 +946,6 @@
 
   .pmodal__count {
     font-size: 12px;
-  }
-
-  .pmodal__panel {
-    margin: 10px 10px 0;
   }
 
   .pcards {
@@ -1146,7 +961,6 @@
 @media (prefers-reduced-motion: reduce) {
   .pmodal,
   .pmodal__window,
-  .pmodal__panel,
   .pmodal.is-closing,
   .pmodal.is-closing .pmodal__window {
     animation: none;
