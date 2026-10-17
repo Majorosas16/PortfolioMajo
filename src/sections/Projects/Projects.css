@@ -277,7 +277,19 @@
   }
 
   .objects--projects .obj__media {
-    height: 76px;
+    height: 84px;
+  }
+
+  /* El peón y la taza tienen mucho aire alrededor en su imagen: se agrandan dentro de su espacio (todas las etiquetas
+     de la fila quedan a la misma altura) */
+  .objects--projects .obj:nth-child(4) .obj__media img {
+    scale: 1.35;
+    transform-origin: 50% 100%;
+  }
+
+  .objects--projects .obj:nth-child(6) .obj__media img {
+    scale: 1.2;
+    transform-origin: 50% 100%;
   }
 
   /* Etiquetas de ~12px para que quepan en tres columnas (también «DS & Branding», «Graphic design») */
@@ -294,24 +306,34 @@
     max-width: 560px;
   }
 
+  /* --pw: ancho de la foto (100% de la columna, máx. 560px, centrada); la corona y el sticker se colocan respecto a
+     ella (cqw = ancho de .grp--box) */
   .grp--box {
     gap: 24px;
+    container-type: inline-size;
+  }
+
+  .grp--box .projects__sticker,
+  .grp--box .projects__crown {
+    --pw: min(100cqw, 560px);
+    --pl: calc((100cqw - var(--pw)) / 2);
+    position: absolute;
   }
 
   .grp--box .projects__sticker {
-    position: absolute;
-    left: 0;
+    left: var(--pl);
     top: 0;
-    width: 40%;
-    max-width: 220px;
+    width: calc(var(--pw) * 0.3);
+    max-width: none;
   }
 
+  /* Corona sobre la cabeza: centro de la cabeza en x 47.9 % de la foto, su parte de arriba en y 14.2 % del alto
+     (= 13.3 % del ancho, la foto es 945 × 887) */
   .grp--box .projects__crown {
-    position: absolute;
-    left: 44%;
-    top: -18px;
-    width: 18%;
-    max-width: 110px;
+    left: calc(var(--pl) + var(--pw) * 0.379);
+    top: calc(var(--pw) * 0.03);
+    width: calc(var(--pw) * 0.2);
+    max-width: none;
   }
 
   .projects__end {
@@ -400,16 +422,16 @@
 @media (max-width: 768px) {
   /* Mensaje del café: texto de ~14px y sin salirse por la derecha */
   .projects__coffee {
-    left: 52%;
-    top: 6%;
+    left: 55%;
+    top: 9%;
   }
 
   .projects__coffee .msg {
-    --u: 0.72px;
+    --u: 0.62px;
   }
 
   .projects__coffee .msg--blue .msg__bubble {
-    max-width: min(230px, 44vw);
+    max-width: min(190px, 40vw);
   }
 
   /* Más aire antes de «¡Esto no termina aquí!» */
