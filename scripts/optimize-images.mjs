@@ -42,8 +42,8 @@ const galeria = {
 // con el nombre del proyecto (p. ej. «Plate path», «King Wash-Track»): se reconoce el proyecto cuyo id de projects.js
 // aparece en ese nombre escrito en minúsculas y sin espacios ni símbolos (platepath, kingwash). Se guardan en src/assets/sections/projects/work/<id>/ con el mismo nombre de archivo, en el orden
 // alfabético del carrusel: cover (la portada, primera), img1, img2…, record.
-// - Imágenes: WebP de alta calidad (90), conservando el perfil de color; como mucho 1680 de ancho y 2100 de alto
-//   (6× lo que ocupan en el carrusel). Nunca se amplían.
+// - Imágenes (.png, .jpg, .heic): WebP de alta calidad (90), conservando el perfil de color; como mucho 1680 de ancho y
+//   2100 de alto (6× lo que ocupan en el carrusel). Nunca se amplían. Las HEIC se pasan antes a TIFF con `sips` (macOS).
 // - Videos (.mov, .mp4): MP4 H.264 para la web con ffmpeg (alta calidad, CRF 22, inicio rápido), como mucho 1080
 //   de alto, más su portada <nombre>.poster.webp (el primer fotograma). Sin ffmpeg se omiten con un aviso.
 const trabajos = {
@@ -176,6 +176,7 @@ const hayFfmpeg = (() => {
     return false;
   }
 })();
+const tmpTrabajos = await mkdtemp(join(tmpdir(), 'trabajos-'));
 const idsProyectos = [
   ...(await readFile(join(raiz, 'src', 'sections', 'Projects', 'projects.js'), 'utf8')).matchAll(/\bid: '([a-z0-9]+)'/g),
 ].map((m) => m[1]);
@@ -192,7 +193,7 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
     const archivo = join(dirTrabajos, carpeta.name, nombre);
     const base = basename(nombre, extname(nombre)).toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const esVideo = /\.(mov|mp4|m4v)$/i.test(nombre);
-    if (!esVideo && !/\.(png|jpe?g)$/i.test(nombre)) continue;
+    if (!esVideo && !/\.(png|jpe?g|hei[cf])$/i.test(nombre)) continue;
     const salida = join(dirDestino, `${base}.${esVideo ? 'mp4' : 'webp'}`);
     if (!forzar && existsSync(salida) && (await stat(salida)).mtimeMs >= (await stat(archivo)).mtimeMs) continue;
     await mkdir(dirDestino, { recursive: true });
@@ -200,7 +201,17 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
     const rel = `${carpeta.name}/${nombre}`;
 
     if (!esVideo) {
-      const info = await sharp(archivo)
+      let entrada = archivo;
+      if (/\.hei[cf]$/i.test(nombre)) {
+        entrada = join(tmpTrabajos, `${id}-${base}.tiff`);
+        try {
+          execFileSync('sips', ['-s', 'format', 'tiff', archivo, '--out', entrada], { stdio: 'ignore' });
+        } catch {
+          console.log(`!  ${rel}: para convertir HEIC hace falta macOS (sips). Se omite.`);
+          continue;
+        }
+      }
+      const info = await sharp(entrada)
         .rotate()
         .resize({ width: trabajos.maxAncho, height: trabajos.maxAlto, fit: 'inside', withoutEnlargement: true, kernel: 'lanczos3' })
         .keepIccProfile()
@@ -230,6 +241,8 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
     console.log(`✓  ${rel}  → work/${id}/${base}.mp4  ${(pesoAntes / 1048576).toFixed(1)} MB → ${((await stat(salida)).size / 1048576).toFixed(1)} MB (+ portada)`);
   }
 }
+
+await rm(tmpTrabajos, { recursive: true, force: true });
 
 if (hechas) console.log(`\n${hechas} imágenes generadas en src/assets/: ${(antes / 1048576).toFixed(1)} MB → ${(despues / 1048576).toFixed(1)} MB`);
 if (fotos) console.log(`${fotos} fotos del carrusel generadas en src/assets/${galeria.destino}/`);
