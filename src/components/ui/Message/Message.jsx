@@ -1,8 +1,8 @@
-import { byName } from '../assets/images.js';
+import { byName } from '../../../assets/images.js';
 import './Message.css';
 
 // Burbujas compartidas por las secciones (src/assets/shared/)
-const img = byName(import.meta.glob('../assets/shared/bubble-*.svg', { eager: true, import: 'default' }));
+const img = byName(import.meta.glob('../../../assets/shared/bubble-*.svg', { eager: true, import: 'default' }));
 
 // Burbuja de chat (estilo iMessage) con reacción en emoji.
 // variant "dark": la del inicio ("¿Abrimos la caja?")

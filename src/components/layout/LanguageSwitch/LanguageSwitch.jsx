@@ -1,5 +1,5 @@
-import { useLanguage } from '../i18n/LanguageContext.jsx';
-import { languages } from '../i18n/translations.js';
+import { useLanguage } from '../../../i18n/LanguageContext.jsx';
+import { languages } from '../../../i18n/translations.js';
 import './LanguageSwitch.css';
 
 // Selector Español / English del header. Botones nativos (Tab, Enter, Espacio);

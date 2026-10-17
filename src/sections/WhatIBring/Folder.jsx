@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import Message from '../../components/Message.jsx';
-import useDraggableObjects from '../../components/useDraggableObjects.js';
+import Message from '../../components/ui/Message/Message.jsx';
+import useDraggableObjects from '../../components/hooks/useDraggableObjects.js';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 
 // Carpeta de «Lo que aporto».

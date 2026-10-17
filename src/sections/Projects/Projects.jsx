@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import P from '../../components/P.jsx';
+import P from '../../components/ui/P/P.jsx';
 import { byName } from '../../assets/images.js';
-import Message from '../../components/Message.jsx';
-import ObjectItem from '../../components/ObjectItem.jsx';
-import { socials } from '../../components/socials.js';
+import Message from '../../components/ui/Message/Message.jsx';
+import ObjectItem from '../../components/ui/ObjectItem/ObjectItem.jsx';
+import { socials } from '../../components/utils/socials.js';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import { localizedSrc } from '../../i18n/images.js';
 import Rich from '../../i18n/Rich.jsx';
-import useDraggableObjects from '../../components/useDraggableObjects.js';
+import useDraggableObjects from '../../components/hooks/useDraggableObjects.js';
 import ProjectsModal from './ProjectsModal.jsx';
 import './Projects.css';
 

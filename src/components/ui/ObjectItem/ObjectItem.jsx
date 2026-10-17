@@ -1,4 +1,4 @@
-import Pill from './Pill.jsx';
+import Pill from '../Pill/Pill.jsx';
 import './ObjectItem.css';
 
 // Objeto flotante + su etiqueta.

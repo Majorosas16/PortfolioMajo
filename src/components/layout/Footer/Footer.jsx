@@ -1,5 +1,5 @@
-import { useLanguage } from '../i18n/LanguageContext.jsx';
-import { goToSection } from './goToSection.js';
+import { useLanguage } from '../../../i18n/LanguageContext.jsx';
+import { goToSection } from '../../utils/goToSection.js';
 import './Footer.css';
 
 // Pie de página discreto: volver al inicio, crédito con el año actual y el correo de contacto

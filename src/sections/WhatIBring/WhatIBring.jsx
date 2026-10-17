@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import P from '../../components/P.jsx';
+import P from '../../components/ui/P/P.jsx';
 import { byName } from '../../assets/images.js';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import { localizedSrc } from '../../i18n/images.js';
