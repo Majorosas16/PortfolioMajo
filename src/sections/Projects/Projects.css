@@ -147,6 +147,78 @@
   }
 }
 
+/* Mensaje del café (Figma 190:2801, x 832 y 320 sobre la foto de 283, 199): junto a la cara, con la cola hacia
+   ella. Aparece con un pequeño salto al acercar la taza y se desvanece solo (Projects.jsx). */
+.projects__coffee {
+  position: absolute;
+  z-index: 4;
+  left: 58.1%;
+  top: 13.6%;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.45s ease,
+    visibility 0s linear 0.45s;
+}
+
+.projects__coffee.is-on {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease;
+}
+
+.projects__coffee .msg {
+  transform-origin: 8% 100%;
+}
+
+/* Dos líneas, como en Figma */
+.projects__coffee .msg--blue .msg__bubble {
+  max-width: calc(var(--u) * 310);
+  text-wrap: balance;
+}
+
+.projects__coffee.is-on .msg {
+  animation: coffee-pop 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+@keyframes coffee-pop {
+  from {
+    transform: translateY(calc(var(--u) * 10)) scale(0.6);
+  }
+}
+
+/* Foto grande: aparece con un fundido (y sube un poco) al llegar a la sección */
+.projects__photo img {
+  opacity: 0;
+}
+
+.projects.is-seen .projects__photo img {
+  opacity: 1;
+  animation: projects-photo-in 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes projects-photo-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--u) * 24));
+  }
+}
+
+/* «Toca y mueve los objetos»: aparece después de la foto, el sticker y la corona */
+.projects__tap {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.5s ease 1.9s,
+    visibility 0s linear 1.9s;
+}
+
+.projects.is-seen .projects__tap {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Sticker «Proyectos»: se pega una sola vez al aparecer la sección, como el de «Sobre mí» (sticker-stick en
    styles.css). Se anima la imagen para no pisar el giro del contenedor (.abs). */
 .projects__sticker img {
@@ -156,7 +228,7 @@
 
 .projects.is-seen .projects__sticker img {
   opacity: 1;
-  animation: sticker-stick 1.1s cubic-bezier(0.25, 0.8, 0.3, 1) 0.15s both;
+  animation: sticker-stick 1.1s cubic-bezier(0.25, 0.8, 0.3, 1) 0.5s both;
 }
 
 /* Corona: aparece sobre la cabeza (baja un poco y se asienta con un rebote) y luego flota, con otro ritmo que los
@@ -168,8 +240,8 @@
 .projects.is-seen .projects__crown img {
   opacity: 1;
   animation:
-    crown-in 0.8s cubic-bezier(0.3, 1.4, 0.5, 1) 0.6s both,
-    crown-float 3.8s ease-in-out 1.4s infinite alternate;
+    crown-in 0.8s cubic-bezier(0.3, 1.4, 0.5, 1) 1s both,
+    crown-float 3.8s ease-in-out 1.8s infinite alternate;
 }
 
 @keyframes crown-in {
@@ -326,6 +398,20 @@
 }
 
 @media (max-width: 768px) {
+  /* Mensaje del café: texto de ~14px y sin salirse por la derecha */
+  .projects__coffee {
+    left: 52%;
+    top: 6%;
+  }
+
+  .projects__coffee .msg {
+    --u: 0.72px;
+  }
+
+  .projects__coffee .msg--blue .msg__bubble {
+    max-width: min(230px, 44vw);
+  }
+
   /* Más aire antes de «¡Esto no termina aquí!» */
   .grp--closing {
     margin-top: 36px;
@@ -334,13 +420,23 @@
 
 @media (prefers-reduced-motion: reduce) {
   .objects--projects .obj,
+  .projects.is-seen .projects__photo img,
   .projects.is-seen .projects__sticker img,
   .projects.is-seen .projects__crown img {
     animation: none;
   }
 
+  .projects__photo img,
   .projects__sticker img,
   .projects__crown img {
     opacity: 1;
+  }
+
+  .projects__tap {
+    transition: none;
+  }
+
+  .projects__coffee.is-on .msg {
+    animation: none;
   }
 }
