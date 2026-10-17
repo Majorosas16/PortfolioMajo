@@ -165,6 +165,7 @@ export const translations = {
         prev: 'Anterior',
         open: 'Ver detalles de {project}',
         back: 'Volver a {category}',
+        newProject: 'Proyecto nuevo',
         goTo: 'Ver {n} de {total}',
       },
       tags: {
@@ -205,7 +206,7 @@ export const translations = {
           contribution:
             'Fui Product Owner y desarrollé la app. Apliqué lo aprendido en Flutter en ShotPlay para adelantar el despliegue y ponerla a funcionar en iPhone mediante el simulador de iOS. Integré herramientas de IA para acelerar el diseño y la programación.',
         },
-        zapeo: {
+        zaveo: {
           description:
             'App de finanzas personales que ayuda a organizar el dinero y entender los gastos con una experiencia sencilla y cercana para quienes no tienen hábitos financieros formales.',
           contribution:
@@ -463,6 +464,7 @@ export const translations = {
         prev: 'Previous',
         open: 'View details of {project}',
         back: 'Back to {category}',
+        newProject: 'New project',
         goTo: 'View {n} of {total}',
       },
       tags: {
@@ -502,7 +504,7 @@ export const translations = {
           contribution:
             'I was the Product Owner and developed the app. I applied what I learned about Flutter in ShotPlay to speed up deployment and get it running on iPhone through the iOS simulator. I integrated AI tools to accelerate design and coding.',
         },
-        zapeo: {
+        zaveo: {
           description:
             'Personal finance app that helps people organize their money and understand their spending with a simple, friendly experience for those without formal financial habits.',
           contribution:
