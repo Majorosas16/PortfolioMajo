@@ -40,8 +40,11 @@ const galeria = {
 
 // Fotos y videos de cada proyecto (carrusel del modal de Proyectos y portada de su tarjeta). Una carpeta por proyecto
 // con el nombre del proyecto (p. ej. «Plate path», «King Wash-Track»): se reconoce el proyecto cuyo id de projects.js
-// aparece en ese nombre escrito en minúsculas y sin espacios ni símbolos (platepath, kingwash). Se guardan en src/assets/sections/projects/work/<id>/ con el mismo nombre de archivo, en el orden
-// alfabético del carrusel: cover (la portada, primera), img1, img2…, record.
+// aparece en ese nombre escrito en minúsculas y sin espacios ni símbolos (platepath, kingwash). Se guardan en
+// src/assets/sections/projects/work/<id>/ con el mismo nombre de archivo. Orden del carrusel: cover (la portada)
+// siempre primera y el resto alfabético; para fijarlo se numeran (01-hand, 02-record…). Si el nombre termina en -fill
+// (05-folder-fill), la foto llena todo el marco del carrusel (recortada, sin el fondo desenfocado). Lo que ya no tiene
+// original en la carpeta se borra de work/<id>/.
 // - Imágenes (.png, .jpg, .heic): WebP de alta calidad (90), conservando el perfil de color; como mucho 1680 de ancho y
 //   2100 de alto (6× lo que ocupan en el carrusel). Nunca se amplían. Las HEIC se pasan antes a TIFF con `sips` (macOS).
 // - Videos (.mov, .mp4): MP4 H.264 para la web con ffmpeg (alta calidad, CRF 22, inicio rápido), como mucho 1080
@@ -189,12 +192,15 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
     continue;
   }
   const dirDestino = join(destino, trabajos.destino, id);
+  const generados = new Set();
   for (const nombre of (await readdir(join(dirTrabajos, carpeta.name))).sort()) {
     const archivo = join(dirTrabajos, carpeta.name, nombre);
     const base = basename(nombre, extname(nombre)).toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const esVideo = /\.(mov|mp4|m4v)$/i.test(nombre);
     if (!esVideo && !/\.(png|jpe?g|hei[cf])$/i.test(nombre)) continue;
     const salida = join(dirDestino, `${base}.${esVideo ? 'mp4' : 'webp'}`);
+    generados.add(basename(salida));
+    if (esVideo) generados.add(`${base}.poster.webp`);
     if (!forzar && existsSync(salida) && (await stat(salida)).mtimeMs >= (await stat(archivo)).mtimeMs) continue;
     await mkdir(dirDestino, { recursive: true });
     const pesoAntes = (await stat(archivo)).size;
@@ -239,6 +245,12 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
     await rm(poster);
     medios++;
     console.log(`✓  ${rel}  → work/${id}/${base}.mp4  ${(pesoAntes / 1048576).toFixed(1)} MB → ${((await stat(salida)).size / 1048576).toFixed(1)} MB (+ portada)`);
+  }
+  // Archivos de la web cuyo original se borró o se renombró
+  for (const viejo of existsSync(dirDestino) ? await readdir(dirDestino) : []) {
+    if (generados.has(viejo)) continue;
+    await rm(join(dirDestino, viejo));
+    console.log(`-  work/${id}/${viejo}  (ya no está en ${carpeta.name}/)`);
   }
 }
 
