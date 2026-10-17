@@ -3,6 +3,7 @@
 //   así se ve igual de nítida en pantallas de alta densidad sin descargar píxeles que nadie puede ver.
 // - Guarda en WebP casi sin pérdida (nearLossless): ningún píxel cambia más de unos pocos niveles; a la vista es idéntica.
 // - Si el WebP no pesa menos que el original, se usa el original tal cual (mismo nombre y extensión).
+// - Fotos y videos de los proyectos (design-originals/sections/projects/Images each project/<Proyecto>/): ver «trabajos».
 // Uso: npm run images            (solo las que faltan o cuyo original cambió)
 //      npm run images -- --forzar (todas)
 import sharp from 'sharp';
@@ -37,6 +38,22 @@ const galeria = {
   proporcion: 16 / 9,
 };
 
+// Fotos y videos de cada proyecto (carrusel del modal de Proyectos y portada de su tarjeta). Una carpeta por proyecto
+// con el nombre del proyecto (p. ej. «Plate path», «King Wash-Track»): se reconoce el proyecto cuyo id de projects.js
+// aparece en ese nombre escrito en minúsculas y sin espacios ni símbolos (platepath, kingwash). Se guardan en src/assets/sections/projects/work/<id>/ con el mismo nombre de archivo, en el orden
+// alfabético del carrusel: cover (la portada, primera), img1, img2…, record.
+// - Imágenes: WebP de alta calidad (90), conservando el perfil de color; como mucho 1680 de ancho y 2100 de alto
+//   (6× lo que ocupan en el carrusel). Nunca se amplían.
+// - Videos (.mov, .mp4): MP4 H.264 para la web con ffmpeg (alta calidad, CRF 22, inicio rápido), como mucho 1080
+//   de alto, más su portada <nombre>.poster.webp (el primer fotograma). Sin ffmpeg se omiten con un aviso.
+const trabajos = {
+  origen: 'sections/projects/Images each project',
+  destino: 'sections/projects/work',
+  maxAncho: 1680,
+  maxAlto: 2100,
+  videoAlto: 1080,
+};
+
 // Al reducir, el alto se redondea y la proporción puede cambiar en la 4.ª cifra decimal; en móvil (alto automático)
 // eso movería unas centésimas de píxel todo lo que va debajo. Se busca, desde el ancho pedido hacia arriba,
 // el ancho cuyo alto sea casi entero, para que la proporción quede igual que la del original.
@@ -56,7 +73,7 @@ const recorrer = async (dir) =>
   (await Promise.all((await readdir(dir, { withFileTypes: true })).map((e) => {
     const p = join(dir, e.name);
     const rel = relative(origen, p).split('\\').join('/');
-    if (rel === galeria.origen || galeria.extra.includes(rel)) return [];
+    if (rel === galeria.origen || galeria.extra.includes(rel) || rel === trabajos.origen) return [];
     return e.isDirectory() ? recorrer(p) : /\.(png|jpe?g)$/i.test(e.name) ? [p] : [];
   }))).flat();
 
@@ -148,6 +165,73 @@ for (const archivo of archivosGaleria) {
 }
 await rm(tmp, { recursive: true, force: true });
 
+// Fotos y videos de los proyectos (ver «trabajos» arriba)
+const dirTrabajos = join(origen, trabajos.origen);
+let medios = 0;
+const hayFfmpeg = (() => {
+  try {
+    execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+})();
+const idsProyectos = [
+  ...(await readFile(join(raiz, 'src', 'sections', 'Projects', 'projects.js'), 'utf8')).matchAll(/\bid: '([a-z0-9]+)'/g),
+].map((m) => m[1]);
+for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { withFileTypes: true }) : []) {
+  if (!carpeta.isDirectory()) continue;
+  const nombreLimpio = carpeta.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const id = idsProyectos.filter((i) => nombreLimpio.includes(i)).sort((a, b) => b.length - a.length)[0];
+  if (!id) {
+    console.log(`!  ${trabajos.origen}/${carpeta.name}: no corresponde a ningún proyecto de projects.js. Se omite.`);
+    continue;
+  }
+  const dirDestino = join(destino, trabajos.destino, id);
+  for (const nombre of (await readdir(join(dirTrabajos, carpeta.name))).sort()) {
+    const archivo = join(dirTrabajos, carpeta.name, nombre);
+    const base = basename(nombre, extname(nombre)).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const esVideo = /\.(mov|mp4|m4v)$/i.test(nombre);
+    if (!esVideo && !/\.(png|jpe?g)$/i.test(nombre)) continue;
+    const salida = join(dirDestino, `${base}.${esVideo ? 'mp4' : 'webp'}`);
+    if (!forzar && existsSync(salida) && (await stat(salida)).mtimeMs >= (await stat(archivo)).mtimeMs) continue;
+    await mkdir(dirDestino, { recursive: true });
+    const pesoAntes = (await stat(archivo)).size;
+    const rel = `${carpeta.name}/${nombre}`;
+
+    if (!esVideo) {
+      const info = await sharp(archivo)
+        .rotate()
+        .resize({ width: trabajos.maxAncho, height: trabajos.maxAlto, fit: 'inside', withoutEnlargement: true, kernel: 'lanczos3' })
+        .keepIccProfile()
+        .webp({ quality: 90, smartSubsample: true, effort: 6 })
+        .toFile(salida);
+      medios++;
+      console.log(`✓  ${rel}  → work/${id}/${base}.webp  ${info.width}×${info.height}  ${(pesoAntes / 1024).toFixed(0)} KB → ${(info.size / 1024).toFixed(0)} KB`);
+      continue;
+    }
+
+    if (!hayFfmpeg) {
+      console.log(`!  ${rel}: para convertir videos hace falta ffmpeg (brew install ffmpeg). Se omite.`);
+      continue;
+    }
+    // Alto como mucho videoAlto (sin ampliar) y medidas pares, que H.264 exige
+    const escala = `scale=-2:'min(${trabajos.videoAlto},ih)':flags=lanczos`;
+    execFileSync('ffmpeg', [
+      '-y', '-loglevel', 'error', '-i', archivo,
+      '-vf', `${escala},format=yuv420p`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '22', '-profile:v', 'high',
+      '-movflags', '+faststart', '-an', salida,
+    ]);
+    const poster = join(dirDestino, `${base}.poster.png`);
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', archivo, '-vf', escala, '-frames:v', '1', poster]);
+    await sharp(poster).webp({ quality: 90, smartSubsample: true, effort: 6 }).toFile(join(dirDestino, `${base}.poster.webp`));
+    await rm(poster);
+    medios++;
+    console.log(`✓  ${rel}  → work/${id}/${base}.mp4  ${(pesoAntes / 1048576).toFixed(1)} MB → ${((await stat(salida)).size / 1048576).toFixed(1)} MB (+ portada)`);
+  }
+}
+
 if (hechas) console.log(`\n${hechas} imágenes generadas en src/assets/: ${(antes / 1048576).toFixed(1)} MB → ${(despues / 1048576).toFixed(1)} MB`);
 if (fotos) console.log(`${fotos} fotos del carrusel generadas en src/assets/${galeria.destino}/`);
-if (!hechas && !fotos) console.log('Todas las imágenes ya estaban al día (usa --forzar para regenerarlas).');
+if (medios) console.log(`${medios} fotos y videos de proyectos generados en src/assets/${trabajos.destino}/`);
+if (!hechas && !fotos && !medios) console.log('Todas las imágenes ya estaban al día (usa --forzar para regenerarlas).');
