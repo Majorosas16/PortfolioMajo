@@ -676,6 +676,11 @@
   -webkit-user-drag: none;
 }
 
+/* Foto que llena todo el marco (recortada), sin fondo desenfocado */
+.media__item--fill {
+  object-fit: cover;
+}
+
 /* Fondo de cada foto/video: la misma imagen ampliada, desenfocada y algo oscurecida */
 .media__backdrop {
   position: absolute;

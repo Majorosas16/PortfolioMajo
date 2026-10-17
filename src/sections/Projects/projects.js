@@ -1,11 +1,12 @@
 // Proyectos del portafolio y categorías del modal de «Proyectos».
 // Los textos (descripción, aporte, nombres de etiquetas y de categorías) están en translations.js (projects.*).
 //
-// Fotos y videos de un proyecto: guárdalos en src/assets/sections/projects/work/<id del proyecto>/ y quedan en su
-// carrusel en orden alfabético (p. ej. 01.webp, 02.webp, 03.mp4). Las imágenes van en .webp/.jpg/.png y los videos
-// en .mp4/.webm. Para un video puedes añadir su portada con el mismo nombre y .poster.webp (03.poster.webp).
-// Enlace a Behance: la dirección en «behance» del proyecto; aparece en su detalle como «Ver proyecto en Behance» con el
-// ícono. Sin Behance: Arka, Sistema de diseño AI-ready, Sandunguera, MILL5 Colombia y We Study World.
+// Fotos y videos de un proyecto: los originales van en design-originals/sections/projects/Images each project/<Proyecto>/
+// y `npm run images` los deja en src/assets/sections/projects/work/<id del proyecto>/ (ver optimize-images.mjs). En el
+// carrusel, cover (la portada de la tarjeta) va primero y el resto en orden alfabético (01-…, 02-…); los videos llevan
+// su portada <nombre>.poster.webp. Un nombre terminado en -fill hace que esa foto llene todo el marco.
+// Enlace a Behance: la dirección en «behance» del proyecto; aparece en su tarjeta (ícono) y en su detalle como «Ver
+// proyecto en Behance». Sin Behance: Arka, Sistema de diseño AI-ready, Sandunguera, MILL5 Colombia y We Study World.
 
 // Archivos de los carruseles, agrupados por carpeta de proyecto
 const files = import.meta.glob('../../assets/sections/projects/work/*/*.{webp,jpg,jpeg,png,mp4,webm}', {
@@ -13,14 +14,17 @@ const files = import.meta.glob('../../assets/sections/projects/work/*/*.{webp,jp
   import: 'default',
 });
 
+// Orden: la portada (cover) primero y el resto alfabético. fill: el nombre termina en -fill y la foto llena todo el
+// marco del carrusel (recortada, sin el fondo desenfocado).
+const isCover = (path) => /\/cover\.[^/]+$/.test(path);
 const mediaOf = (id) =>
   Object.keys(files)
     .filter((path) => path.includes(`/work/${id}/`) && !path.includes('.poster.'))
-    .sort()
+    .sort((a, b) => isCover(b) - isCover(a) || a.localeCompare(b))
     .map((path) => {
       const video = /\.(mp4|webm)$/i.test(path);
       const poster = video ? files[path.replace(/\.(mp4|webm)$/i, '.poster.webp')] : undefined;
-      return { type: video ? 'video' : 'image', src: files[path], poster };
+      return { type: video ? 'video' : 'image', src: files[path], poster, fill: /-fill\.[^/.]+$/.test(path) };
     });
 
 // Categorías = los seis objetos de la sección; cada una abre su propio modal. Cada proyecto pertenece a UNA sola
