@@ -23,16 +23,10 @@ const mediaOf = (id) =>
       return { type: video ? 'video' : 'image', src: files[path], poster };
     });
 
-// Categorías = los seis objetos de la sección; cada una abre su propio modal. Un proyecto pertenece a una categoría
-// si tiene alguna de sus etiquetas (puede estar en varias).
-export const categories = [
-  { id: 'prism', tags: ['ui', 'prototyping'] },
-  { id: 'compass', tags: ['research'] },
-  { id: 'shell', tags: ['accessibility'] },
-  { id: 'chess', tags: ['designSystem', 'branding'] },
-  { id: 'clip', tags: ['editorial', 'social', 'internalComms'] },
-  { id: 'coffee', tags: ['client'] },
-];
+// Categorías = los seis objetos de la sección; cada una abre su propio modal. Cada proyecto pertenece a UNA sola
+// categoría (su «category»): prism = UX/UI, compass = UX research, shell = Accesibilidad, chess = DS y Marca,
+// clip = Diseño gráfico, coffee = Freelance.
+export const categories = ['prism', 'compass', 'shell', 'chess', 'clip', 'coffee'];
 
 // Etiquetas de los proyectos, en el orden de los filtros del modal, con su color (App móvil, Prototipado y Fintech
 // son los del diseño de Figma 157:2338; el resto, de la misma familia). El texto de cada una está en translations.js.
@@ -56,57 +50,55 @@ export const tagColors = {
   internalComms: '#3f6f4a',
 };
 
+// category: su categoría (una de las seis) · isNew: lleva el sticker «Nuevo proyecto» en su tarjeta y su detalle
 // tags: en el orden en que se muestran · tools: herramientas (nombres propios, iguales en los dos idiomas)
 export const projects = [
-  { id: 'arka', name: 'Arka', tags: ['mobile', 'ui', 'prototyping', 'ai'], tools: ['Figma', 'Figma Make', 'Lovable'] },
+  { id: 'arka', category: 'prism', name: 'Arka', tags: ['mobile', 'ui', 'prototyping', 'ai'], tools: ['Figma', 'Figma Make', 'Lovable'] },
   {
-    id: 'shotplay', behance: 'https://www.behance.net/gallery/253500831/ShotPlay-Mobile-Party-Game-App-UXUI-Case-Study', name: 'ShotPlay', tags: ['mobile', 'game', 'ui', 'ai'],
+    id: 'shotplay', category: 'prism', isNew: true, behance: 'https://www.behance.net/gallery/253500831/ShotPlay-Mobile-Party-Game-App-UXUI-Case-Study', name: 'ShotPlay', tags: ['mobile', 'game', 'ui', 'ai'],
     tools: ['Figma', 'Flutter', 'Supabase', 'Jira', 'Stitch', 'Claude', 'ChatGPT'],
   },
   {
-    id: 'solarapp', behance: 'https://www.behance.net/gallery/250429999/SolarApp-GDO', name: 'SolarApp GDO', tags: ['mobile', 'development', 'ai', 'client'],
+    id: 'solarapp', category: 'prism', isNew: true, behance: 'https://www.behance.net/gallery/250429999/SolarApp-GDO', name: 'SolarApp GDO', tags: ['mobile', 'development', 'ai', 'client'],
     tools: ['Flutter', 'Figma', 'Figma Make', 'Codex', 'Lovable', 'Claude'],
   },
-  { id: 'zapeo', behance: 'https://www.behance.net/gallery/213642007/Personal-Finance-Mobile-UX-UI-DESIGN', name: 'Zapeo', tags: ['mobile', 'research', 'ui', 'fintech'], tools: ['Figma'] },
-  { id: 'platepath', behance: 'https://www.behance.net/gallery/239413411/Case-Study-Plate-Path', name: 'Plate Path', tags: ['mobile', 'research', 'ui', 'ai'], tools: ['Figma', 'Stitch', 'Supabase', 'Claude'] },
+  { id: 'zaveo', category: 'prism', behance: 'https://www.behance.net/gallery/213642007/Personal-Finance-Mobile-UX-UI-DESIGN', name: 'Zaveo', tags: ['mobile', 'research', 'ui', 'fintech'], tools: ['Figma'] },
+  { id: 'platepath', category: 'prism', behance: 'https://www.behance.net/gallery/239413411/Case-Study-Plate-Path', name: 'Plate Path', tags: ['mobile', 'research', 'ui', 'ai'], tools: ['Figma', 'Stitch', 'Supabase', 'Claude'] },
   {
-    id: 'kingwash', behance: 'https://www.behance.net/gallery/222625815/King-Wash-Track-Website-Applications-Ecosystems', name: 'King Wash-Track', tags: ['web', 'ui', 'development'],
+    id: 'kingwash', category: 'prism', behance: 'https://www.behance.net/gallery/222625815/King-Wash-Track-Website-Applications-Ecosystems', name: 'King Wash-Track', tags: ['web', 'ui', 'development'],
     tools: ['Figma', 'Supabase', 'API REST', 'WebSockets', 'Brevo'],
   },
-  { id: 'fellow', behance: 'https://www.behance.net/gallery/233280741/Fellow-App-Web-Project', name: 'Fellow App', tags: ['web', 'ui', 'development'], tools: ['Figma', 'React + Vite', 'Firebase'] },
-  { id: 'wikihunger', behance: 'https://www.behance.net/gallery/211203637/WikiHunger-Web-Page', name: 'WikiHunger', tags: ['web', 'ui', 'prototyping', 'development'], tools: ['Figma', 'HTML', 'CSS'] },
-  { id: 'cassy', behance: 'https://www.behance.net/gallery/196604717/CASSY-SkinCare-UI-Web-Desing-mr', name: 'CASSY SkinCare', tags: ['web', 'ui', 'individual'], tools: ['Figma'] },
-  { id: 'pixelpioneers', behance: 'https://www.behance.net/gallery/234815883/Pixel-Pioners', name: 'Pixel Pioneers', tags: ['game', 'prototyping'], tools: ['Figma'] },
-  { id: 'remoteworkers', behance: 'https://www.behance.net/gallery/207311861/UX-CASE-STUDY-REMOTE-WORKERS', name: 'Remote Workers', tags: ['research'], tools: ['Figma'] },
+  { id: 'fellow', category: 'prism', behance: 'https://www.behance.net/gallery/233280741/Fellow-App-Web-Project', name: 'Fellow App', tags: ['web', 'ui', 'development'], tools: ['Figma', 'React + Vite', 'Firebase'] },
+  { id: 'wikihunger', category: 'prism', behance: 'https://www.behance.net/gallery/211203637/WikiHunger-Web-Page', name: 'WikiHunger', tags: ['web', 'ui', 'prototyping', 'development'], tools: ['Figma', 'HTML', 'CSS'] },
+  { id: 'cassy', category: 'prism', behance: 'https://www.behance.net/gallery/196604717/CASSY-SkinCare-UI-Web-Desing-mr', name: 'CASSY SkinCare', tags: ['web', 'ui', 'individual'], tools: ['Figma'] },
+  { id: 'pixelpioneers', category: 'prism', behance: 'https://www.behance.net/gallery/234815883/Pixel-Pioners', name: 'Pixel Pioneers', tags: ['game', 'prototyping'], tools: ['Figma'] },
+  { id: 'remoteworkers', category: 'compass', behance: 'https://www.behance.net/gallery/207311861/UX-CASE-STUDY-REMOTE-WORKERS', name: 'Remote Workers', tags: ['research'], tools: ['Figma'] },
   {
-    id: 'websitetrust', behance: 'https://www.behance.net/gallery/248903883/Website-trust-measurement', name: 'Website Trust Measurement', tags: ['web', 'research', 'ai'],
+    id: 'websitetrust', category: 'compass', isNew: true, behance: 'https://www.behance.net/gallery/248903883/Website-trust-measurement', name: 'Website Trust Measurement', tags: ['web', 'research', 'ai'],
     tools: ['Figma', 'Lovable', 'Claude', 'ChatGPT'],
   },
-  { id: 'smartwatch', behance: 'https://www.behance.net/gallery/194752851/UX-UI-Smartwatch-for-Alzheimers-Desing', name: 'Smartwatch para Alzheimer', nameEn: 'Smartwatch for Alzheimer’s', tags: ['research', 'accessibility', 'individual'], tools: ['Figma'] },
+  { id: 'smartwatch', category: 'shell', behance: 'https://www.behance.net/gallery/194752851/UX-UI-Smartwatch-for-Alzheimers-Desing', name: 'Smartwatch para Alzheimer', nameEn: 'Smartwatch for Alzheimer’s', tags: ['research', 'accessibility', 'individual'], tools: ['Figma'] },
   {
-    id: 'aiready', name: 'Sistema de diseño AI-ready', nameEn: 'AI-ready design system', tags: ['designSystem', 'ai', 'client'],
+    id: 'aiready', category: 'chess', isNew: true, name: 'Sistema de diseño AI-ready', nameEn: 'AI-ready design system', tags: ['designSystem', 'ai', 'client'],
     tools: ['Figma', 'Claude', 'Codex'],
   },
-  { id: 'pastafactory', behance: 'https://www.behance.net/gallery/197714415/SIstema-de-Diseno-The-Pasta-Factory', name: 'The Pasta Factory', tags: ['designSystem', 'branding', 'prototyping'], tools: ['Figma'] },
-  { id: 'nike', behance: 'https://www.behance.net/gallery/192653087/Nikes-Redisign-BrandBook', name: 'Nike Redesign · BrandBook', tags: ['branding', 'individual'], tools: ['Illustrator', 'InDesign', 'Photoshop'] },
-  { id: 'throwback', behance: 'https://www.behance.net/gallery/200454855/THROWBACK-Magazine', name: 'THROWBACK Magazine', tags: ['editorial'], tools: ['InDesign', 'Illustrator', 'Photoshop'] },
-  { id: 'whiterhino', behance: 'https://www.behance.net/gallery/178615015/White-Rhino-Postage-Stamps', name: 'White Rhino Postage Stamps', tags: ['editorial', 'individual'], tools: ['Illustrator'] },
+  { id: 'pastafactory', category: 'chess', behance: 'https://www.behance.net/gallery/197714415/SIstema-de-Diseno-The-Pasta-Factory', name: 'The Pasta Factory', tags: ['designSystem', 'branding', 'prototyping'], tools: ['Figma'] },
+  { id: 'nike', category: 'chess', behance: 'https://www.behance.net/gallery/192653087/Nikes-Redisign-BrandBook', name: 'Nike Redesign · BrandBook', tags: ['branding', 'individual'], tools: ['Illustrator', 'InDesign', 'Photoshop'] },
+  { id: 'throwback', category: 'clip', behance: 'https://www.behance.net/gallery/200454855/THROWBACK-Magazine', name: 'THROWBACK Magazine', tags: ['editorial'], tools: ['InDesign', 'Illustrator', 'Photoshop'] },
+  { id: 'whiterhino', category: 'clip', behance: 'https://www.behance.net/gallery/178615015/White-Rhino-Postage-Stamps', name: 'White Rhino Postage Stamps', tags: ['editorial', 'individual'], tools: ['Illustrator'] },
   {
-    id: 'sandunguera', name: 'Sandunguera · Academia de salsa (Cali)', nameEn: 'Sandunguera · Salsa academy (Cali)',
+    id: 'sandunguera', category: 'coffee', isNew: true, name: 'Sandunguera · Academia de salsa (Cali)', nameEn: 'Sandunguera · Salsa academy (Cali)',
     tags: ['branding', 'social', 'client'], tools: ['Figma', 'Canva'],
   },
-  { id: 'mill5', name: 'MILL5 Colombia', tags: ['internalComms', 'client'], tools: ['Figma', 'Illustrator'] },
+  { id: 'mill5', category: 'coffee', name: 'MILL5 Colombia', tags: ['internalComms', 'client'], tools: ['Figma', 'Illustrator'] },
   {
-    id: 'westudy', name: 'We Study World', tags: ['social', 'internalComms', 'accessibility', 'client'],
+    id: 'westudy', category: 'coffee', isNew: true, name: 'We Study World', tags: ['social', 'internalComms', 'accessibility', 'client'],
     tools: ['Illustrator', 'Photoshop', 'CapCut'],
   },
-].map((p) => ({ behance: null, ...p, media: mediaOf(p.id) }));
+].map((p) => ({ behance: null, isNew: false, ...p, media: mediaOf(p.id) }));
 
 // Proyectos de una categoría, en el orden de la lista
-export const projectsIn = (categoryId) => {
-  const tags = categories.find((c) => c.id === categoryId)?.tags ?? [];
-  return projects.filter((p) => p.tags.some((tag) => tags.includes(tag)));
-};
+export const projectsIn = (categoryId) => projects.filter((p) => p.category === categoryId);
 
 // Etiquetas que tienen los proyectos de una categoría (los filtros de su modal), en el orden de tagColors
 export const tagsIn = (categoryId) => {
