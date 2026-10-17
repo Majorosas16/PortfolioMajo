@@ -7,6 +7,8 @@ import { projectsIn, tagColors, tagsIn } from './projects.js';
 import './ProjectsModal.css';
 
 const img = byName(import.meta.glob('../../assets/sections/projects/*', { eager: true, import: 'default' }));
+// Íconos del bolsillo: los objetos de la sección recortados a su contorno (sin el margen transparente de cada uno)
+const pocketIcon = byName(import.meta.glob('../../assets/sections/projects/pocket-icons/*', { eager: true, import: 'default' }));
 
 const FOCUSABLE = 'a[href], button:not([disabled]), video[controls], [tabindex]:not([tabindex="-1"])';
 
@@ -161,7 +163,12 @@ export default function ProjectsModal({ category, onClose }) {
               y a la misma altura, los filtros y el número de proyectos (en el detalle, el botón para volver) */}
           <div className="pmodal__head">
             <h2 id="pmodal-title" className="pmodal__pocket">
-              <img src={img[category]} alt="" />
+              {/* --a = proporción del ícono; el CSS la usa para que todos ocupen la misma superficie */}
+              <img
+                src={pocketIcon[category]}
+                alt=""
+                onLoad={(e) => e.currentTarget.style.setProperty('--a', e.currentTarget.naturalWidth / e.currentTarget.naturalHeight)}
+              />
               <span className="visually-hidden">{title}</span>
             </h2>
 
