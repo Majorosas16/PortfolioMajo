@@ -237,6 +237,19 @@ export default function ProjectsModal({ category, onClose }) {
                             <span className="visually-hidden">{m.tagsLabel}: </span>
                             {tagText(proj)}
                           </p>
+                          {/* Enlace a Behance (solo los proyectos que lo tienen), por encima del botón que abre el detalle */}
+                          {proj.behance && (
+                            <a
+                              className="pcard__behance"
+                              href={proj.behance}
+                              target="_blank"
+                              rel="noreferrer"
+                              aria-label={`${m.behance}: ${name}`}
+                              title={m.behance}
+                            >
+                              <img src={img['icon-behance']} alt="" />
+                            </a>
+                          )}
                         </li>
                       );
                     })}

@@ -419,6 +419,33 @@
   opacity: 0.8;
 }
 
+/* Ícono de Behance bajo las etiquetas: queda por encima del botón que cubre la tarjeta, así que abre Behance en otra
+   pestaña en vez del detalle */
+.pcard__behance {
+  position: relative;
+  z-index: 2;
+  align-self: flex-start;
+  display: block;
+  margin-top: 2px;
+  border-radius: 50%;
+  transition: scale 0.2s ease;
+}
+
+.pcard__behance img {
+  display: block;
+  width: max(26px, calc(64 * var(--u)));
+  height: max(26px, calc(64 * var(--u)));
+}
+
+.pcard__behance:hover {
+  scale: 1.1;
+}
+
+.pcard__behance:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+
 /* Sticker «Nuevo proyecto» (Figma 195:5920): pegado en la esquina de arriba a la derecha, saliéndose un poco y
    girado. No recibe toques: tocarlo abre el detalle como el resto de la tarjeta. */
 .pnew {
