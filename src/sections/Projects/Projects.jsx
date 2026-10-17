@@ -51,6 +51,12 @@ const objects = [
   },
 ];
 
+// Taza de café (índice en objects) y punto de la cara en la foto (fracción de su ancho/alto; boca ≈ 750, 400 en
+// Figma) con el radio de «cerca» (fracción del ancho de la foto). El mensaje se ve COFFEE_MS.
+const COFFEE = 5;
+const FACE = { x: 0.49, y: 0.23, r: 0.16 };
+const COFFEE_MS = 3500;
+
 // Aire extra (px de Figma) antes del cierre «¡Esto no termina aquí!» y el contacto: todo lo que va debajo baja lo mismo
 const CLOSE_DY = 110;
 
@@ -65,9 +71,34 @@ export default function Projects() {
 
   // Los objetos se agarran y se mueven por la sección (como los de la caja del inicio). El clic que sigue a un
   // arrastre no abre el modal (useDraggableObjects lo descarta).
-  useDraggableObjects(sectionRef, true, undefined, '.objects--projects .obj');
+  // Taza de café hasta la cara (como si la estuviera tomando): aparece el mensaje azul de Figma (190:2801) unos
+  // segundos. Solo vuelve a salir si la taza se aleja y se acerca otra vez.
+  const [coffeeMsg, setCoffeeMsg] = useState(false);
+  const coffeeNear = useRef(false);
+  const coffeeTimer = useRef(null);
+  useEffect(() => () => clearTimeout(coffeeTimer.current), []);
+  const onDrag = (el) => {
+    if (el !== sectionRef.current.querySelectorAll('.objects--projects .obj')[COFFEE]) return;
+    const photo = sectionRef.current.querySelector('.projects__photo').getBoundingClientRect();
+    const cup = el.querySelector('.obj__media').getBoundingClientRect();
+    const dx = cup.left + cup.width / 2 - (photo.left + photo.width * FACE.x);
+    const dy = cup.top + cup.height / 2 - (photo.top + photo.height * FACE.y);
+    const d = Math.hypot(dx, dy);
+    const r = photo.width * FACE.r;
+    if (!coffeeNear.current && d < r) {
+      coffeeNear.current = true;
+      setCoffeeMsg(true);
+      clearTimeout(coffeeTimer.current);
+      coffeeTimer.current = setTimeout(() => setCoffeeMsg(false), COFFEE_MS);
+    } else if (coffeeNear.current && d > r * 1.5) {
+      coffeeNear.current = false;
+    }
+  };
 
-  // Al aparecer la sección: el sticker «Proyectos» se pega y la corona aparece (una sola vez)
+  useDraggableObjects(sectionRef, true, onDrag, '.objects--projects .obj');
+
+  // Al aparecer la sección (una sola vez): la foto aparece con un fundido, el sticker «Proyectos» se pega, llega la
+  // corona y al final la burbuja «Toca y mueve los objetos»
   const [seen, setSeen] = useState(false);
   useEffect(() => {
     const io = new IntersectionObserver(([e]) => {
@@ -104,7 +135,14 @@ export default function Projects() {
         <div className="grp grp--box">
           <P x={283} y={199} w={945} className="projects__photo">
             <img loading="lazy" decoding="async" src={img['photo-projects']} alt={p.photoAlt} />
+            {/* Mensaje del café (Figma 190:2801), junto a la cara */}
+            <div className={`projects__coffee${coffeeMsg ? ' is-on' : ''}`} aria-hidden="true">
+              <Message variant="blue" text={p.coffeeMsg} emoji="☕️" k={0.86} />
+            </div>
           </P>
+          <p className="visually-hidden" aria-live="polite">
+            {coffeeMsg ? p.coffeeMsg : ''}
+          </p>
           <P x={379.9} y={257.9} w={291} r={-8.26} className="projects__sticker">
             <h2>
               <img loading="lazy" decoding="async" src={localizedSrc(img, 'sticker-projects', lang)} alt={p.stickerAlt} />
@@ -113,9 +151,10 @@ export default function Projects() {
           <P x={676.4} y={214.4} w={195.73} r={37.55} className="projects__crown">
             <img loading="lazy" decoding="async" src={img['crown']} alt="" />
           </P>
-          {/* Del tamaño de Figma (156:894, 254 de ancho) */}
-          <P x={978.97} y={385} cx className="projects__tap">
-            <Message text={p.tap} emoji="👆🏽" k={0.5} />
+          {/* Debajo del brazo derecho (el borde del antebrazo va de y 600 a 490), algo más pequeña que en Figma;
+              aparece al final de la entrada de la sección (Projects.css) */}
+          <P x={1080} y={598} cx className="projects__tap">
+            <Message text={p.tap} emoji="👆🏽" k={0.42} />
           </P>
           <div className="objects objects--projects">
             {objects.map((o, i) => (

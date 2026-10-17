@@ -129,6 +129,8 @@ export const translations = {
       photoAlt: 'María José con los brazos abiertos',
       stickerAlt: 'Proyectos',
       tap: 'Toca y mueve los objetos',
+      // Al acercar la taza de café a la cara (Figma 190:2801)
+      coffeeMsg: 'Uf, a mí el café con leche no me puede faltar en mi vida',
       objects: {
         prism: { label: 'UX/UI', alt: 'Prisma de cristal' },
         compass: { label: 'UX research', alt: 'Brújula' },
@@ -427,6 +429,7 @@ export const translations = {
       photoAlt: 'María José with her arms open',
       stickerAlt: 'Projects',
       tap: 'Tap and drag the objects',
+      coffeeMsg: 'Oh, I can’t live without my café con leche',
       objects: {
         prism: { label: 'UX/UI', alt: 'Crystal prism' },
         compass: { label: 'UX research', alt: 'Compass' },
