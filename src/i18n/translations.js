@@ -145,7 +145,7 @@ export const translations = {
       faceAlt: 'María José sonriendo con un post-it en la frente',
       // Modal de proyectos (ProjectsModal.jsx). Las categorías son los objetos (projects.js define sus etiquetas)
       modal: {
-        title: 'Proyectos de {category}',
+        title: '{category}',
         filtersButton: 'Filtros',
         filtersLabel: 'Filtrar por etiqueta',
         clear: 'Limpiar filtros',
