@@ -473,6 +473,26 @@
   rotate: 10deg;
 }
 
+/* Sticker «Trabajando en ello» (Figma 196:5968): en la esquina de arriba a la izquierda, girado hacia el otro lado,
+   y se pega un poco después que el de «Nuevo proyecto» */
+.pwip {
+  animation-delay: calc(0.6s + var(--i, 0) * 0.08s);
+}
+
+.pwip--card {
+  top: -6%;
+  left: -8%;
+  width: 32%;
+  rotate: -9deg;
+}
+
+.pwip--detail {
+  top: -30px;
+  left: -30px;
+  width: 98px;
+  rotate: -10deg;
+}
+
 /* ---------- Detalle de un proyecto ---------- */
 
 .pdetail {
@@ -845,6 +865,12 @@
     width: 30%;
   }
 
+  .pwip--card {
+    top: -5%;
+    left: -6%;
+    width: 28%;
+  }
+
   .pcard__name {
     font-size: 16px;
   }
@@ -899,6 +925,12 @@
     top: -20px;
     right: -10px;
     width: 84px;
+  }
+
+  .pwip--detail {
+    top: -20px;
+    left: -10px;
+    width: 80px;
   }
 
   .polaroid--detail {

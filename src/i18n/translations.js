@@ -161,6 +161,7 @@ export const translations = {
         open: 'Ver detalles de {project}',
         back: 'Volver a {category}',
         newProject: 'Proyecto nuevo',
+        wipProject: 'Trabajando en ello',
         goTo: 'Ver {n} de {total}',
       },
       tags: {
@@ -457,6 +458,7 @@ export const translations = {
         open: 'View details of {project}',
         back: 'Back to {category}',
         newProject: 'New project',
+        wipProject: 'Working on it',
         goTo: 'View {n} of {total}',
       },
       tags: {
