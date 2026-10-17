@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { byName } from '../../assets/images.js';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
@@ -17,9 +17,25 @@ const FOCUSABLE = 'a[href], button:not([disabled]), video[controls], [tabindex]:
 // sus fotos/videos (carrusel manual), nombre y etiquetas. Al tocar una tarjeta se ve el detalle de ese proyecto
 // (descripción, aporte, herramientas, medios y Behance) dentro del mismo modal, con un botón para volver a la lista.
 // Los filtros solo afectan a este modal y empiezan vacíos cada vez que se abre; al volver del detalle se conservan.
-// category: id del objeto (projects.js) · onClose: cerrar (Escape, el botón rojo de la ventana o el fondo).
+// category: id del objeto (projects.js) · onClose: cerrar (Escape, el botón de cerrar o el fondo); antes de cerrar,
+// el modal se desvanece (CLOSE_MS, la animación .is-closing de ProjectsModal.css).
 // Mientras está abierto, la página no se desplaza ni recibe el foco.
+const CLOSE_MS = 260;
+
 export default function ProjectsModal({ category, onClose }) {
+  // Cierre con fundido: se marca .is-closing y se cierra al terminar (sin espera con «reducir movimiento»)
+  const [closing, setClosing] = useState(false);
+  const closingRef = useRef(false);
+  const timer = useRef(null);
+  const requestClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setClosing(true);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    timer.current = setTimeout(onClose, reduced ? 0 : CLOSE_MS);
+  }, [onClose]);
+  useEffect(() => () => clearTimeout(timer.current), []);
+
   const { lang, t } = useLanguage();
   const p = t.projects;
   const m = p.modal;
@@ -91,7 +107,7 @@ export default function ProjectsModal({ category, onClose }) {
         const st = stateRef.current;
         if (st.panelOpen) setPanelOpen(false);
         else if (st.detail) st.backToList();
-        else onClose();
+        else requestClose();
         return;
       }
       if (e.key !== 'Tab') return;
@@ -109,7 +125,7 @@ export default function ProjectsModal({ category, onClose }) {
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, [requestClose]);
 
   // Al cambiar los filtros la lista vuelve arriba
   useEffect(() => {
@@ -117,7 +133,7 @@ export default function ProjectsModal({ category, onClose }) {
   }, [active]);
 
   return createPortal(
-    <div className="pmodal" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div className={`pmodal${closing ? ' is-closing' : ''}`} onClick={(e) => e.target === e.currentTarget && requestClose()}>
       <div
         ref={windowRef}
         id={`projects-modal-${category}`}
@@ -127,7 +143,7 @@ export default function ProjectsModal({ category, onClose }) {
         aria-labelledby="pmodal-title"
       >
         {/* Carpeta de anillos (Figma 190:2799): el contenido va sobre la hoja; el botón de cerrar, en la tapa */}
-        <button ref={closeRef} type="button" className="pmodal__close" onClick={onClose} aria-label={m.close}>
+        <button ref={closeRef} type="button" className="pmodal__close" onClick={requestClose} aria-label={m.close}>
           <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
           </svg>

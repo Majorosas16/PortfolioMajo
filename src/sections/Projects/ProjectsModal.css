@@ -29,6 +29,30 @@
   }
 }
 
+/* Al cerrar: el fondo se desvanece y la carpeta baja un poco mientras se desvanece (ProjectsModal.jsx espera
+   CLOSE_MS = 260ms antes de quitar el modal). No recibe toques mientras tanto. */
+.pmodal.is-closing {
+  pointer-events: none;
+  animation: pmodal-fade-out 0.26s ease forwards;
+}
+
+.pmodal.is-closing .pmodal__window {
+  animation: pmodal-out 0.26s ease forwards;
+}
+
+@keyframes pmodal-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes pmodal-out {
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+
 @keyframes pmodal-in {
   from {
     opacity: 0;
@@ -798,7 +822,9 @@
 @media (prefers-reduced-motion: reduce) {
   .pmodal,
   .pmodal__window,
-  .pmodal__panel {
+  .pmodal__panel,
+  .pmodal.is-closing,
+  .pmodal.is-closing .pmodal__window {
     animation: none;
   }
 

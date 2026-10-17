@@ -4,7 +4,8 @@
 // Fotos y videos de un proyecto: guárdalos en src/assets/sections/projects/work/<id del proyecto>/ y quedan en su
 // carrusel en orden alfabético (p. ej. 01.webp, 02.webp, 03.mp4). Las imágenes van en .webp/.jpg/.png y los videos
 // en .mp4/.webm. Para un video puedes añadir su portada con el mismo nombre y .poster.webp (03.poster.webp).
-// Enlace a Behance: pon la dirección en «behance» del proyecto (si no hay, el enlace no aparece).
+// Enlace a Behance: la dirección en «behance» del proyecto; aparece en su detalle como «Ver proyecto en Behance» con el
+// ícono. Sin Behance: Arka, Sistema de diseño AI-ready, Sandunguera, MILL5 Colombia y We Study World.
 
 // Archivos de los carruseles, agrupados por carpeta de proyecto
 const files = import.meta.glob('../../assets/sections/projects/work/*/*.{webp,jpg,jpeg,png,mp4,webm}', {
@@ -59,37 +60,37 @@ export const tagColors = {
 export const projects = [
   { id: 'arka', name: 'Arka', tags: ['mobile', 'ui', 'prototyping', 'ai'], tools: ['Figma', 'Figma Make', 'Lovable'] },
   {
-    id: 'shotplay', name: 'ShotPlay', tags: ['mobile', 'game', 'ui', 'ai'],
+    id: 'shotplay', behance: 'https://www.behance.net/gallery/253500831/ShotPlay-Mobile-Party-Game-App-UXUI-Case-Study', name: 'ShotPlay', tags: ['mobile', 'game', 'ui', 'ai'],
     tools: ['Figma', 'Flutter', 'Supabase', 'Jira', 'Stitch', 'Claude', 'ChatGPT'],
   },
   {
-    id: 'solarapp', name: 'SolarApp GDO', tags: ['mobile', 'development', 'ai', 'client'],
+    id: 'solarapp', behance: 'https://www.behance.net/gallery/250429999/SolarApp-GDO', name: 'SolarApp GDO', tags: ['mobile', 'development', 'ai', 'client'],
     tools: ['Flutter', 'Figma', 'Figma Make', 'Codex', 'Lovable', 'Claude'],
   },
-  { id: 'zapeo', name: 'Zapeo', tags: ['mobile', 'research', 'ui', 'fintech'], tools: ['Figma'] },
-  { id: 'platepath', name: 'Plate Path', tags: ['mobile', 'research', 'ui', 'ai'], tools: ['Figma', 'Stitch', 'Supabase', 'Claude'] },
+  { id: 'zapeo', behance: 'https://www.behance.net/gallery/213642007/Personal-Finance-Mobile-UX-UI-DESIGN', name: 'Zapeo', tags: ['mobile', 'research', 'ui', 'fintech'], tools: ['Figma'] },
+  { id: 'platepath', behance: 'https://www.behance.net/gallery/239413411/Case-Study-Plate-Path', name: 'Plate Path', tags: ['mobile', 'research', 'ui', 'ai'], tools: ['Figma', 'Stitch', 'Supabase', 'Claude'] },
   {
-    id: 'kingwash', name: 'King Wash-Track', tags: ['web', 'ui', 'development'],
+    id: 'kingwash', behance: 'https://www.behance.net/gallery/222625815/King-Wash-Track-Website-Applications-Ecosystems', name: 'King Wash-Track', tags: ['web', 'ui', 'development'],
     tools: ['Figma', 'Supabase', 'API REST', 'WebSockets', 'Brevo'],
   },
-  { id: 'fellow', name: 'Fellow App', tags: ['web', 'ui', 'development'], tools: ['Figma', 'React + Vite', 'Firebase'] },
-  { id: 'wikihunger', name: 'WikiHunger', tags: ['web', 'ui', 'prototyping', 'development'], tools: ['Figma', 'HTML', 'CSS'] },
-  { id: 'cassy', name: 'CASSY SkinCare', tags: ['web', 'ui', 'individual'], tools: ['Figma'] },
-  { id: 'pixelpioneers', name: 'Pixel Pioneers', tags: ['game', 'prototyping'], tools: ['Figma'] },
-  { id: 'remoteworkers', name: 'Remote Workers', tags: ['research'], tools: ['Figma'] },
+  { id: 'fellow', behance: 'https://www.behance.net/gallery/233280741/Fellow-App-Web-Project', name: 'Fellow App', tags: ['web', 'ui', 'development'], tools: ['Figma', 'React + Vite', 'Firebase'] },
+  { id: 'wikihunger', behance: 'https://www.behance.net/gallery/211203637/WikiHunger-Web-Page', name: 'WikiHunger', tags: ['web', 'ui', 'prototyping', 'development'], tools: ['Figma', 'HTML', 'CSS'] },
+  { id: 'cassy', behance: 'https://www.behance.net/gallery/196604717/CASSY-SkinCare-UI-Web-Desing-mr', name: 'CASSY SkinCare', tags: ['web', 'ui', 'individual'], tools: ['Figma'] },
+  { id: 'pixelpioneers', behance: 'https://www.behance.net/gallery/234815883/Pixel-Pioners', name: 'Pixel Pioneers', tags: ['game', 'prototyping'], tools: ['Figma'] },
+  { id: 'remoteworkers', behance: 'https://www.behance.net/gallery/207311861/UX-CASE-STUDY-REMOTE-WORKERS', name: 'Remote Workers', tags: ['research'], tools: ['Figma'] },
   {
-    id: 'websitetrust', name: 'Website Trust Measurement', tags: ['web', 'research', 'ai'],
+    id: 'websitetrust', behance: 'https://www.behance.net/gallery/248903883/Website-trust-measurement', name: 'Website Trust Measurement', tags: ['web', 'research', 'ai'],
     tools: ['Figma', 'Lovable', 'Claude', 'ChatGPT'],
   },
-  { id: 'smartwatch', name: 'Smartwatch para Alzheimer', nameEn: 'Smartwatch for Alzheimer’s', tags: ['research', 'accessibility', 'individual'], tools: ['Figma'] },
+  { id: 'smartwatch', behance: 'https://www.behance.net/gallery/194752851/UX-UI-Smartwatch-for-Alzheimers-Desing', name: 'Smartwatch para Alzheimer', nameEn: 'Smartwatch for Alzheimer’s', tags: ['research', 'accessibility', 'individual'], tools: ['Figma'] },
   {
     id: 'aiready', name: 'Sistema de diseño AI-ready', nameEn: 'AI-ready design system', tags: ['designSystem', 'ai', 'client'],
     tools: ['Figma', 'Claude', 'Codex'],
   },
-  { id: 'pastafactory', name: 'The Pasta Factory', tags: ['designSystem', 'branding', 'prototyping'], tools: ['Figma'] },
-  { id: 'nike', name: 'Nike Redesign · BrandBook', tags: ['branding', 'individual'], tools: ['Illustrator', 'InDesign', 'Photoshop'] },
-  { id: 'throwback', name: 'THROWBACK Magazine', tags: ['editorial'], tools: ['InDesign', 'Illustrator', 'Photoshop'] },
-  { id: 'whiterhino', name: 'White Rhino Postage Stamps', tags: ['editorial', 'individual'], tools: ['Illustrator'] },
+  { id: 'pastafactory', behance: 'https://www.behance.net/gallery/197714415/SIstema-de-Diseno-The-Pasta-Factory', name: 'The Pasta Factory', tags: ['designSystem', 'branding', 'prototyping'], tools: ['Figma'] },
+  { id: 'nike', behance: 'https://www.behance.net/gallery/192653087/Nikes-Redisign-BrandBook', name: 'Nike Redesign · BrandBook', tags: ['branding', 'individual'], tools: ['Illustrator', 'InDesign', 'Photoshop'] },
+  { id: 'throwback', behance: 'https://www.behance.net/gallery/200454855/THROWBACK-Magazine', name: 'THROWBACK Magazine', tags: ['editorial'], tools: ['InDesign', 'Illustrator', 'Photoshop'] },
+  { id: 'whiterhino', behance: 'https://www.behance.net/gallery/178615015/White-Rhino-Postage-Stamps', name: 'White Rhino Postage Stamps', tags: ['editorial', 'individual'], tools: ['Illustrator'] },
   {
     id: 'sandunguera', name: 'Sandunguera · Academia de salsa (Cali)', nameEn: 'Sandunguera · Salsa academy (Cali)',
     tags: ['branding', 'social', 'client'], tools: ['Figma', 'Canva'],
