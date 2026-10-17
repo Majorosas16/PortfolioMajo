@@ -195,30 +195,30 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 16px;
+  gap: 8px 12px;
 }
 
 .pmodal__filters-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: 38px;
+  gap: 6px;
+  height: 32px;
   margin: 0;
-  padding: 0 16px 0 13px;
+  padding: 0 13px 0 11px;
   border: 1.5px solid var(--brown);
   border-radius: 38px;
   background: transparent;
   color: var(--brown);
   font-family: var(--font-head);
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .pmodal__filters-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
 }
 
 .pmodal__filters-btn:hover,
@@ -244,7 +244,7 @@
   margin: 0;
   font-family: var(--font-head);
   font-weight: 300;
-  font-size: 16px;
+  font-size: 14px;
   opacity: 0.75;
 }
 
@@ -422,6 +422,80 @@
   filter: drop-shadow(0 calc(10 * var(--u)) calc(26 * var(--u)) rgba(0, 0, 0, 0.3));
 }
 
+/* Grupos por subcategoría (UX/UI): el nombre escrito a lápiz, inclinado y encerrado en un óvalo (Figma 195:5967,
+   Bad Script de 47 unidades girado −2.8°), con el grano del filtro #pmodal-pencil de la X de cerrar */
+.pgroup + .pgroup {
+  margin-top: calc(110 * var(--u));
+}
+
+.psub {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  margin: calc(50 * var(--u)) 0 0 calc(130 * var(--u));
+  padding: 0.5em 0.95em 0.55em;
+  color: #3b3735;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: max(17px, calc(47 * var(--u)));
+  line-height: 1;
+  white-space: nowrap;
+  rotate: -2.8deg;
+  filter: url(#pmodal-pencil);
+}
+
+.psub svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4px;
+}
+
+.pgroup:has(.psub) .pcards {
+  padding-top: calc(50 * var(--u));
+}
+
+/* Animación de escritura: el texto se descubre de izquierda a derecha, como si se escribiera, y después el óvalo se
+   traza alrededor (una máscara cónica que gira, --sweep). Empieza al verse (.is-written, SubLabel en ProjectsModal.jsx). */
+@property --sweep {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.psub span {
+  clip-path: inset(-20% 100% -20% 0);
+}
+
+.psub svg {
+  --sweep: 0deg;
+  mask-image: conic-gradient(from 200deg, #000 var(--sweep), transparent 0);
+}
+
+.psub.is-written span {
+  animation: psub-write 0.9s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+}
+
+.psub.is-written svg {
+  animation: psub-ring 0.6s ease-in-out 0.8s forwards;
+}
+
+@keyframes psub-write {
+  to {
+    clip-path: inset(-20% -5% -20% 0);
+  }
+}
+
+@keyframes psub-ring {
+  to {
+    --sweep: 360deg;
+  }
+}
+
 /* Portada: la primera foto del proyecto, recortada a 4:3 */
 .pcover {
   display: block;
@@ -566,17 +640,17 @@
   min-width: 0;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: 38px;
+  gap: 6px;
+  height: 32px;
   margin: 0;
-  padding: 0 16px 0 10px;
+  padding: 0 13px 0 9px;
   border: 1.5px solid var(--brown);
   border-radius: 38px;
   background: transparent;
   color: var(--brown);
   font-family: var(--font-head);
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -874,18 +948,18 @@
   }
 
   .pmodal__toolbar {
-    gap: 8px 12px;
+    gap: 6px 10px;
   }
 
   .pmodal__filters-btn,
   .pdetail__back {
-    height: 34px;
-    font-size: 15px;
+    height: 30px;
+    font-size: 13px;
   }
 
 
   .pmodal__count {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .pmodal__panel {
@@ -912,6 +986,20 @@
     justify-content: center;
     gap: 30px;
     padding: 24px 14px 0;
+  }
+
+  /* El nombre de la subcategoría, alineado con el borde izquierdo de las tarjetas (centradas, de 220px) */
+  .psub {
+    margin: 24px 0 0 max(4px, calc(50% - 116px));
+    font-size: 18px;
+  }
+
+  .pgroup + .pgroup {
+    margin-top: 40px;
+  }
+
+  .pgroup:has(.psub) .pcards {
+    padding-top: 22px;
   }
 
   .pnew--card {
@@ -1015,14 +1103,14 @@
 
   .pmodal__filters-btn,
   .pdetail__back {
-    height: 30px;
-    gap: 6px;
-    padding: 0 11px 0 9px;
-    font-size: 13px;
+    height: 28px;
+    gap: 5px;
+    padding: 0 10px 0 8px;
+    font-size: 12px;
   }
 
   .pmodal__count {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .pmodal__panel {
@@ -1053,6 +1141,13 @@
   }
 
   .pnew {
+    animation: none;
+  }
+
+  .psub span,
+  .psub svg {
+    clip-path: none;
+    mask-image: none;
     animation: none;
   }
 }

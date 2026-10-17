@@ -4,7 +4,7 @@ import { byName } from '../../assets/images.js';
 import { localizedSrc } from '../../i18n/images.js';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import MediaCarousel from './MediaCarousel.jsx';
-import { projectsIn, tagColors, tagsIn } from './projects.js';
+import { projectsIn, subcategoriesOf, tagColors, tagsIn } from './projects.js';
 import './ProjectsModal.css';
 
 const img = byName(import.meta.glob('../../assets/sections/projects/*', { eager: true, import: 'default' }));
@@ -56,6 +56,12 @@ export default function ProjectsModal({ category, onClose }) {
   const [active, setActive] = useState([]);
   const matches = (proj, selected) => selected.every((tag) => proj.tags.includes(tag));
   const list = all.filter((proj) => matches(proj, active));
+  // La lista en grupos por subcategoría (solo las que tienen proyectos con los filtros elegidos); sin subcategorías,
+  // un solo grupo sin nombre
+  const subs = subcategoriesOf(category);
+  const groups = subs
+    ? subs.map((id) => ({ id, items: list.filter((proj) => proj.sub === id) })).filter((g) => g.items.length)
+    : [{ id: null, items: list }];
   const toggleTag = (tag) => setActive((cur) => (cur.includes(tag) ? cur.filter((x) => x !== tag) : [...cur, tag]));
   const count =
     active.length === 0
@@ -281,33 +287,41 @@ export default function ProjectsModal({ category, onClose }) {
                   </div>
                 )}
                 {/* Tarjetas con forma de libreta blanca (Figma 194:5911): portada, nombre y etiquetas. Toda la
-                    tarjeta abre el detalle (el botón del nombre la cubre). */}
-                <ul className="pcards">
-                  {list.map((proj, i) => {
-                    const name = nameOf(proj);
-                    return (
-                      <li key={proj.id} className="pcard" style={{ '--i': i }}>
-                        {proj.isNew && <img className="pnew pnew--card" src={newSticker} alt={m.newProject} />}
-                        <ProjectCover media={proj.media} labels={m} />
-                        <h3 className="pcard__name">
-                          <button
-                            type="button"
-                            className="pcard__open"
-                            data-open-project={proj.id}
-                            onClick={() => openDetail(proj.id)}
-                            aria-label={m.open.replace('{project}', name)}
-                          >
-                            {name}
-                          </button>
-                        </h3>
-                        <p className="pcard__tags">
-                          <span className="visually-hidden">{m.tagsLabel}: </span>
-                          {tagText(proj)}
-                        </p>
-                      </li>
-                    );
-                  })}
-                </ul>
+                    tarjeta abre el detalle (el botón del nombre la cubre). En las categorías con subcategorías (UX/UI),
+                    las tarjetas van en grupos, cada uno con su nombre escrito a lápiz y encerrado en un óvalo
+                    (Figma 195:5967). */}
+                {groups.map((group) => (
+                  <section key={group.id ?? 'all'} className="pgroup" aria-labelledby={group.id ? `psub-${group.id}` : undefined}>
+                    {group.id && <SubLabel id={`psub-${group.id}`} text={p.subcategories[group.id]} />}
+                    <ul className="pcards">
+                      {group.items.map((proj) => {
+                        const name = nameOf(proj);
+                        const Name = group.id ? 'h4' : 'h3';
+                        return (
+                          <li key={proj.id} className="pcard" style={{ '--i': list.indexOf(proj) }}>
+                            {proj.isNew && <img className="pnew pnew--card" src={newSticker} alt={m.newProject} />}
+                            <ProjectCover media={proj.media} labels={m} />
+                            <Name className="pcard__name">
+                              <button
+                                type="button"
+                                className="pcard__open"
+                                data-open-project={proj.id}
+                                onClick={() => openDetail(proj.id)}
+                                aria-label={m.open.replace('{project}', name)}
+                              >
+                                {name}
+                              </button>
+                            </Name>
+                            <p className="pcard__tags">
+                              <span className="visually-hidden">{m.tagsLabel}: </span>
+                              {tagText(proj)}
+                            </p>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </section>
+                ))}
               </div>
             </>
           )}
@@ -315,6 +329,34 @@ export default function ProjectsModal({ category, onClose }) {
       </div>
     </div>,
     document.body
+  );
+}
+
+// Nombre de una subcategoría escrito a lápiz y encerrado en un óvalo. Se escribe al verse por primera vez: el texto
+// aparece de izquierda a derecha y luego se traza el óvalo (.is-written, ProjectsModal.css).
+function SubLabel({ id, text }) {
+  const ref = useRef(null);
+  const [written, setWritten] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setWritten(true);
+        io.disconnect();
+      },
+      { threshold: 0.6 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <h3 ref={ref} id={id} className={`psub${written ? ' is-written' : ''}`}>
+      <span>{text}</span>
+      <svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <ellipse cx="50" cy="20" rx="49" ry="19" vectorEffect="non-scaling-stroke" />
+      </svg>
+    </h3>
   );
 }
 

@@ -187,6 +187,8 @@ export const translations = {
         social: 'Redes sociales',
         internalComms: 'Comunicación interna',
       },
+      // Subcategorías de UX/UI (projects.js), escritas a mano sobre la hoja del modal
+      subcategories: { mobileApps: 'Apps móviles', web: 'Web', prototyping: 'Prototipado' },
       items: {
         arka: {
           description:
@@ -486,6 +488,8 @@ export const translations = {
         social: 'Social media',
         internalComms: 'Internal communications',
       },
+      // Subcategorías de UX/UI (projects.js), escritas a mano sobre la hoja del modal
+      subcategories: { mobileApps: 'Mobile apps', web: 'Web', prototyping: 'Prototyping' },
       items: {
         arka: {
           description:
