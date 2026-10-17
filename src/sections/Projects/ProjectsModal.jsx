@@ -267,13 +267,10 @@ export default function ProjectsModal({ category, onClose }) {
                             {name}
                           </button>
                         </h3>
-                        <ul className="pcard__tags" aria-label={m.tagsLabel}>
-                          {proj.tags.map((tag) => (
-                            <li key={tag} style={{ '--c': tagColors[tag] }}>
-                              {p.tags[tag]}
-                            </li>
-                          ))}
-                        </ul>
+                        <p className="pcard__tags">
+                          <span className="visually-hidden">{m.tagsLabel}: </span>
+                          {tagText(proj)}
+                        </p>
                       </li>
                     );
                   })}
