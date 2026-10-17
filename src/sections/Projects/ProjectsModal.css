@@ -499,8 +499,10 @@
   padding: 8px 0 48px;
 }
 
+/* Nunca más ancho que su columna: si el nombre de la categoría no cabe, se corta con «…» antes de llegar a la X */
 .pdetail__back {
   min-width: 0;
+  max-width: 100%;
   display: inline-flex;
   align-items: center;
   gap: 6px;
