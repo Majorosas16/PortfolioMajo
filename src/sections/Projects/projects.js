@@ -34,8 +34,9 @@ export const subcategories = { prism: ['mobileApps', 'web', 'prototyping'] };
 export const subcategoriesOf = (categoryId) => subcategories[categoryId] ?? null;
 
 // category: su categoría (una de las seis) · sub: su subcategoría, si la categoría tiene · isNew: lleva el sticker
-// «Nuevo proyecto» en su tarjeta y su detalle · tags: sus etiquetas (texto en translations.js, projects.tags), en el
-// orden en que se muestran · tools: herramientas (nombres propios, iguales en los dos idiomas)
+// «Nuevo proyecto» en su tarjeta y su detalle · wip: sigue en desarrollo, lleva el sticker «Trabajando en ello» ·
+// tags: sus etiquetas (texto en translations.js, projects.tags), en el orden en que se muestran · tools: herramientas
+// (nombres propios, iguales en los dos idiomas)
 export const projects = [
   { id: 'arka', category: 'prism', sub: 'mobileApps', name: 'Arka', tags: ['mobile', 'ui', 'prototyping', 'ai'], tools: ['Figma', 'Figma Make', 'Lovable'] },
   {
@@ -63,7 +64,7 @@ export const projects = [
   },
   { id: 'smartwatch', category: 'shell', behance: 'https://www.behance.net/gallery/194752851/UX-UI-Smartwatch-for-Alzheimers-Desing', name: 'Smartwatch para Alzheimer', nameEn: 'Smartwatch for Alzheimer’s', tags: ['research', 'accessibility', 'individual'], tools: ['Figma'] },
   {
-    id: 'aiready', category: 'chess', isNew: true, name: 'Sistema de diseño AI-ready', nameEn: 'AI-ready design system', tags: ['designSystem', 'ai', 'client'],
+    id: 'aiready', category: 'chess', isNew: true, wip: true, name: 'Sistema de diseño AI-ready', nameEn: 'AI-ready design system', tags: ['designSystem', 'ai', 'client'],
     tools: ['Figma', 'Claude', 'Codex'],
   },
   { id: 'pastafactory', category: 'chess', behance: 'https://www.behance.net/gallery/197714415/SIstema-de-Diseno-The-Pasta-Factory', name: 'The Pasta Factory', tags: ['designSystem', 'branding', 'prototyping'], tools: ['Figma'] },
@@ -71,7 +72,7 @@ export const projects = [
   { id: 'throwback', category: 'clip', behance: 'https://www.behance.net/gallery/200454855/THROWBACK-Magazine', name: 'THROWBACK Magazine', tags: ['editorial'], tools: ['InDesign', 'Illustrator', 'Photoshop'] },
   { id: 'whiterhino', category: 'clip', behance: 'https://www.behance.net/gallery/178615015/White-Rhino-Postage-Stamps', name: 'White Rhino Postage Stamps', tags: ['editorial', 'individual'], tools: ['Illustrator'] },
   {
-    id: 'sandunguera', category: 'coffee', isNew: true, name: 'Sandunguera · Academia de salsa (Cali)', nameEn: 'Sandunguera · Salsa academy (Cali)',
+    id: 'sandunguera', category: 'coffee', isNew: true, wip: true, name: 'Sandunguera · Academia de salsa (Cali)', nameEn: 'Sandunguera · Salsa academy (Cali)',
     tags: ['branding', 'social', 'client'], tools: ['Figma', 'Canva'],
   },
   { id: 'mill5', category: 'coffee', name: 'MILL5 Colombia', tags: ['internalComms', 'client'], tools: ['Figma', 'Illustrator'] },
@@ -79,7 +80,7 @@ export const projects = [
     id: 'westudy', category: 'coffee', isNew: true, name: 'We Study World', tags: ['social', 'internalComms', 'accessibility', 'client'],
     tools: ['Illustrator', 'Photoshop', 'CapCut'],
   },
-].map((p) => ({ behance: null, isNew: false, ...p, media: mediaOf(p.id) }));
+].map((p) => ({ behance: null, isNew: false, wip: false, ...p, media: mediaOf(p.id) }));
 
 // Proyectos de una categoría, en el orden de la lista
 export const projectsIn = (categoryId) => projects.filter((p) => p.category === categoryId);

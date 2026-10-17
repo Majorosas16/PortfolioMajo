@@ -9,6 +9,7 @@ export const localizedImages = {
   'title-what-i-bring': { es: 'title-what-i-bring', en: 'title-what-i-bring.en' }, // src/assets/sections/what-i-bring/
   'sticker-projects': { es: 'sticker-projects', en: 'sticker-projects.en' }, // src/assets/sections/projects/
   'sticker-new': { es: 'sticker-new', en: 'sticker-new.en' }, // src/assets/sections/projects/ (proyectos nuevos)
+  'sticker-wip': { es: 'sticker-wip', en: 'sticker-wip.en' }, // src/assets/sections/projects/ (proyectos en desarrollo)
   // Fotogramas de la caja del inicio (etiqueta «Portafolio de Majo» / «Majo's Portfolio») — src/assets/sections/intro/
   'box-closed': { es: 'box-closed', en: 'box-closed.en' },
   'box-opening-1': { es: 'box-opening-1', en: 'box-opening-1.en' },

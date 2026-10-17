@@ -71,8 +71,9 @@ export default function ProjectsModal({ category, onClose }) {
   };
   const nameOf = (proj) => (lang === 'en' && proj.nameEn ? proj.nameEn : proj.name);
   const tagText = (proj) => proj.tags.map((tag) => p.tags[tag]).join(' · ');
-  // Sticker «Nuevo proyecto» / «New project» de los proyectos con isNew (projects.js)
+  // Stickers «Nuevo proyecto» (isNew) y «Trabajando en ello» (wip) de projects.js, en el idioma de la página
   const newSticker = localizedSrc(img, 'sticker-new', lang);
+  const wipSticker = localizedSrc(img, 'sticker-wip', lang);
 
   // Al abrir un detalle, el foco va al botón de volver
   const backRef = useRef(null);
@@ -201,6 +202,7 @@ export default function ProjectsModal({ category, onClose }) {
               m={m}
               behanceIcon={img['icon-behance']}
               newSticker={newSticker}
+              wipSticker={wipSticker}
             />
           ) : (
             <div ref={listRef} className="pmodal__list">
@@ -218,6 +220,7 @@ export default function ProjectsModal({ category, onClose }) {
                       return (
                         <li key={proj.id} className="pcard" style={{ '--i': list.indexOf(proj) }}>
                           {proj.isNew && <img className="pnew pnew--card" src={newSticker} alt={m.newProject} />}
+                        {proj.wip && <img className="pnew pwip pwip--card" src={wipSticker} alt={m.wipProject} />}
                           <ProjectCover media={proj.media} labels={m} />
                           <Name className="pcard__name">
                             <button
@@ -310,13 +313,14 @@ function ProjectCover({ media, labels }) {
 
 // Detalle de un proyecto dentro del modal de su categoría (el botón para volver está en la cabecera): sus
 // fotos/videos (Polaroid grande con carrusel) y su información completa.
-function ProjectDetail({ proj, name, tags, item, m, behanceIcon, newSticker }) {
+function ProjectDetail({ proj, name, tags, item, m, behanceIcon, newSticker, wipSticker }) {
   return (
     <div className="pdetail">
       <article className="project" aria-labelledby={`project-${proj.id}`}>
         <div className="polaroid polaroid--detail">
           <MediaCarousel media={proj.media} name={name} labels={m} />
           {proj.isNew && <img className="pnew pnew--detail" src={newSticker} alt={m.newProject} />}
+          {proj.wip && <img className="pnew pwip pwip--detail" src={wipSticker} alt={m.wipProject} />}
         </div>
         <div className="project__body">
           <h3 id={`project-${proj.id}`} className="project__name">

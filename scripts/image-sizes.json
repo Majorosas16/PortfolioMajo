@@ -2,6 +2,10 @@
   "_info": "Ancho (px) de cada imagen en la web = ancho máximo en pantalla (medido a 1512, 1024, 768 y 390 px) × 6, sin superar el original. ×6 = 2 × los píxeles de una pantalla 3x: así el navegador siempre reduce la imagen con su método de alta calidad y se ve igual de nítida que el original. Si cambias el tamaño de una imagen en el diseño, actualiza su ancho aquí y ejecuta npm run images -- --forzar.",
   "_fotos": [
     "sections/projects/binder.png",
+    "sections/projects/sticker-new.png",
+    "sections/projects/sticker-new.en.png",
+    "sections/projects/sticker-wip.png",
+    "sections/projects/sticker-wip.en.png",
     "sections/projects/book.png"
   ],
   "_omitir": [
@@ -42,6 +46,7 @@
   "sections/projects/prism.png": 947,
   "sections/projects/shell.png": 1176,
   "sections/projects/sticker-new.png": 660,
+  "sections/projects/sticker-wip.png": 660,
   "sections/projects/sticker-projects.png": 1749,
   "sections/what-i-bring/folder-back.png": 1114,
   "sections/what-i-bring/folder-texture.png": 500,
