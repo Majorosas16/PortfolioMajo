@@ -28,6 +28,11 @@ const mediaOf = (id) =>
 // clip = Diseño gráfico, coffee = Freelance.
 export const categories = ['prism', 'compass', 'shell', 'chess', 'clip', 'coffee'];
 
+// Subcategorías de una categoría, en el orden en que se muestran en su modal (su nombre está en translations.js,
+// projects.subcategories). Los proyectos de esa categoría indican la suya en «sub».
+export const subcategories = { prism: ['mobileApps', 'web', 'prototyping'] };
+export const subcategoriesOf = (categoryId) => subcategories[categoryId] ?? null;
+
 // Etiquetas de los proyectos, en el orden de los filtros del modal, con su color (App móvil, Prototipado y Fintech
 // son los del diseño de Figma 157:2338; el resto, de la misma familia). El texto de cada una está en translations.js.
 export const tagColors = {
@@ -50,28 +55,28 @@ export const tagColors = {
   internalComms: '#3f6f4a',
 };
 
-// category: su categoría (una de las seis) · isNew: lleva el sticker «Nuevo proyecto» en su tarjeta y su detalle
+// category: su categoría (una de las seis) · sub: su subcategoría, si la categoría tiene · isNew: lleva el sticker «Nuevo proyecto» en su tarjeta y su detalle
 // tags: en el orden en que se muestran · tools: herramientas (nombres propios, iguales en los dos idiomas)
 export const projects = [
-  { id: 'arka', category: 'prism', name: 'Arka', tags: ['mobile', 'ui', 'prototyping', 'ai'], tools: ['Figma', 'Figma Make', 'Lovable'] },
+  { id: 'arka', category: 'prism', sub: 'mobileApps', name: 'Arka', tags: ['mobile', 'ui', 'prototyping', 'ai'], tools: ['Figma', 'Figma Make', 'Lovable'] },
   {
-    id: 'shotplay', category: 'prism', isNew: true, behance: 'https://www.behance.net/gallery/253500831/ShotPlay-Mobile-Party-Game-App-UXUI-Case-Study', name: 'ShotPlay', tags: ['mobile', 'game', 'ui', 'ai'],
+    id: 'shotplay', category: 'prism', sub: 'mobileApps', isNew: true, behance: 'https://www.behance.net/gallery/253500831/ShotPlay-Mobile-Party-Game-App-UXUI-Case-Study', name: 'ShotPlay', tags: ['mobile', 'game', 'ui', 'ai'],
     tools: ['Figma', 'Flutter', 'Supabase', 'Jira', 'Stitch', 'Claude', 'ChatGPT'],
   },
   {
-    id: 'solarapp', category: 'prism', isNew: true, behance: 'https://www.behance.net/gallery/250429999/SolarApp-GDO', name: 'SolarApp GDO', tags: ['mobile', 'development', 'ai', 'client'],
+    id: 'solarapp', category: 'prism', sub: 'mobileApps', isNew: true, behance: 'https://www.behance.net/gallery/250429999/SolarApp-GDO', name: 'SolarApp GDO', tags: ['mobile', 'development', 'ai', 'client'],
     tools: ['Flutter', 'Figma', 'Figma Make', 'Codex', 'Lovable', 'Claude'],
   },
-  { id: 'zaveo', category: 'prism', behance: 'https://www.behance.net/gallery/213642007/Personal-Finance-Mobile-UX-UI-DESIGN', name: 'Zaveo', tags: ['mobile', 'research', 'ui', 'fintech'], tools: ['Figma'] },
-  { id: 'platepath', category: 'prism', behance: 'https://www.behance.net/gallery/239413411/Case-Study-Plate-Path', name: 'Plate Path', tags: ['mobile', 'research', 'ui', 'ai'], tools: ['Figma', 'Stitch', 'Supabase', 'Claude'] },
+  { id: 'zaveo', category: 'prism', sub: 'mobileApps', behance: 'https://www.behance.net/gallery/213642007/Personal-Finance-Mobile-UX-UI-DESIGN', name: 'Zaveo', tags: ['mobile', 'research', 'ui', 'fintech'], tools: ['Figma'] },
+  { id: 'platepath', category: 'prism', sub: 'mobileApps', behance: 'https://www.behance.net/gallery/239413411/Case-Study-Plate-Path', name: 'Plate Path', tags: ['mobile', 'research', 'ui', 'ai'], tools: ['Figma', 'Stitch', 'Supabase', 'Claude'] },
   {
-    id: 'kingwash', category: 'prism', behance: 'https://www.behance.net/gallery/222625815/King-Wash-Track-Website-Applications-Ecosystems', name: 'King Wash-Track', tags: ['web', 'ui', 'development'],
+    id: 'kingwash', category: 'prism', sub: 'web', behance: 'https://www.behance.net/gallery/222625815/King-Wash-Track-Website-Applications-Ecosystems', name: 'King Wash-Track', tags: ['web', 'ui', 'development'],
     tools: ['Figma', 'Supabase', 'API REST', 'WebSockets', 'Brevo'],
   },
-  { id: 'fellow', category: 'prism', behance: 'https://www.behance.net/gallery/233280741/Fellow-App-Web-Project', name: 'Fellow App', tags: ['web', 'ui', 'development'], tools: ['Figma', 'React + Vite', 'Firebase'] },
-  { id: 'wikihunger', category: 'prism', behance: 'https://www.behance.net/gallery/211203637/WikiHunger-Web-Page', name: 'WikiHunger', tags: ['web', 'ui', 'prototyping', 'development'], tools: ['Figma', 'HTML', 'CSS'] },
-  { id: 'cassy', category: 'prism', behance: 'https://www.behance.net/gallery/196604717/CASSY-SkinCare-UI-Web-Desing-mr', name: 'CASSY SkinCare', tags: ['web', 'ui', 'individual'], tools: ['Figma'] },
-  { id: 'pixelpioneers', category: 'prism', behance: 'https://www.behance.net/gallery/234815883/Pixel-Pioners', name: 'Pixel Pioneers', tags: ['game', 'prototyping'], tools: ['Figma'] },
+  { id: 'fellow', category: 'prism', sub: 'web', behance: 'https://www.behance.net/gallery/233280741/Fellow-App-Web-Project', name: 'Fellow App', tags: ['web', 'ui', 'development'], tools: ['Figma', 'React + Vite', 'Firebase'] },
+  { id: 'wikihunger', category: 'prism', sub: 'web', behance: 'https://www.behance.net/gallery/211203637/WikiHunger-Web-Page', name: 'WikiHunger', tags: ['web', 'ui', 'prototyping', 'development'], tools: ['Figma', 'HTML', 'CSS'] },
+  { id: 'cassy', category: 'prism', sub: 'web', behance: 'https://www.behance.net/gallery/196604717/CASSY-SkinCare-UI-Web-Desing-mr', name: 'CASSY SkinCare', tags: ['web', 'ui', 'individual'], tools: ['Figma'] },
+  { id: 'pixelpioneers', category: 'prism', sub: 'prototyping', behance: 'https://www.behance.net/gallery/234815883/Pixel-Pioners', name: 'Pixel Pioneers', tags: ['game', 'prototyping'], tools: ['Figma'] },
   { id: 'remoteworkers', category: 'compass', behance: 'https://www.behance.net/gallery/207311861/UX-CASE-STUDY-REMOTE-WORKERS', name: 'Remote Workers', tags: ['research'], tools: ['Figma'] },
   {
     id: 'websitetrust', category: 'compass', isNew: true, behance: 'https://www.behance.net/gallery/248903883/Website-trust-measurement', name: 'Website Trust Measurement', tags: ['web', 'research', 'ai'],
