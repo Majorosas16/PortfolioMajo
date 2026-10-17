@@ -4,7 +4,7 @@ import { byName } from '../../assets/images.js';
 import { localizedSrc } from '../../i18n/images.js';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import MediaCarousel from './MediaCarousel.jsx';
-import { projectsIn, subcategoriesOf, tagColors, tagsIn } from './projects.js';
+import { projectsIn, subcategoriesOf } from './projects.js';
 import './ProjectsModal.css';
 
 const img = byName(import.meta.glob('../../assets/sections/projects/*', { eager: true, import: 'default' }));
@@ -15,12 +15,10 @@ const FOCUSABLE = 'a[href], button:not([disabled]), video[controls], [tabindex]:
 
 // Modal de una categoría, con forma de carpeta de anillos (Figma 190:2799): cada objeto de la sección abre el suyo,
 // solo con sus proyectos, escritos sobre la hoja de la carpeta.
-// Lista: arriba, el ícono de la categoría sobre un bolsillo de cuero y, a su lado, un desplegable «Filtros» con las
-// etiquetas que tienen esos proyectos (App móvil, UI Design, Cliente real…; al elegir varias quedan los proyectos que
-// tienen todas); debajo, una tarjeta con forma de libreta por proyecto con su portada, nombre y etiquetas. Al tocar
-// una tarjeta se ve el detalle de ese proyecto (descripción, aporte, herramientas, medios en carrusel y Behance)
-// dentro del mismo modal, con un botón para volver a la lista en la cabecera.
-// Los filtros solo afectan a este modal y empiezan vacíos cada vez que se abre; al volver del detalle se conservan.
+// Lista: arriba, el ícono de la categoría sobre un bolsillo de cuero y, a su lado, el título y cuántos proyectos hay;
+// debajo, una tarjeta con forma de libreta por proyecto con su portada, nombre y etiquetas. Al tocar una tarjeta se
+// ve el detalle de ese proyecto (descripción, aporte, herramientas, medios en carrusel y Behance) dentro del mismo
+// modal, con un botón para volver a la lista en la cabecera.
 // category: id del objeto (projects.js) · onClose: cerrar (Escape, el botón de cerrar o el fondo); antes de cerrar,
 // el modal se desvanece (CLOSE_MS, la animación .is-closing de ProjectsModal.css).
 // Mientras está abierto, la página no se desplaza ni recibe el foco.
@@ -46,35 +44,21 @@ export default function ProjectsModal({ category, onClose }) {
   const windowRef = useRef(null);
   const listRef = useRef(null);
   const closeRef = useRef(null);
-  const all = projectsIn(category);
-  const tags = tagsIn(category);
+  const list = projectsIn(category);
   const label = p.objects[category].label;
   const title = m.title.replace('{category}', label);
 
-  // Filtros por etiqueta: el panel abierto o cerrado y las etiquetas elegidas (el proyecto debe tenerlas todas)
-  const [panelOpen, setPanelOpen] = useState(false);
-  const [active, setActive] = useState([]);
-  const matches = (proj, selected) => selected.every((tag) => proj.tags.includes(tag));
-  const list = all.filter((proj) => matches(proj, active));
-  // La lista en grupos por subcategoría (solo las que tienen proyectos con los filtros elegidos); sin subcategorías,
-  // un solo grupo sin nombre
+  // La lista en grupos por subcategoría (solo las que tienen proyectos); sin subcategorías, un solo grupo sin nombre
   const subs = subcategoriesOf(category);
   const groups = subs
     ? subs.map((id) => ({ id, items: list.filter((proj) => proj.sub === id) })).filter((g) => g.items.length)
     : [{ id: null, items: list }];
-  const toggleTag = (tag) => setActive((cur) => (cur.includes(tag) ? cur.filter((x) => x !== tag) : [...cur, tag]));
-  const count =
-    active.length === 0
-      ? all.length === 1
-        ? m.countOne
-        : m.count.replace('{n}', all.length)
-      : m.countFiltered.replace('{n}', list.length).replace('{total}', all.length);
+  const count = list.length === 1 ? m.countOne : m.count.replace('{n}', list.length);
   // Proyecto abierto en detalle (id) o null = lista. Al volver, la lista recupera su posición y el foco su tarjeta.
   const [detail, setDetail] = useState(null);
   const listScroll = useRef(0);
   const openDetail = (id) => {
     listScroll.current = listRef.current?.scrollTop ?? 0;
-    setPanelOpen(false);
     setDetail(id);
   };
   const backToList = () => {
@@ -97,7 +81,7 @@ export default function ProjectsModal({ category, onClose }) {
   }, [detail]);
 
   const stateRef = useRef({});
-  stateRef.current = { panelOpen, detail, backToList };
+  stateRef.current = { detail, backToList };
 
   // Página inactiva y sin scroll (conserva la posición, como el menú del celular en Header.jsx); foco dentro
   useLayoutEffect(() => {
@@ -121,10 +105,9 @@ export default function ProjectsModal({ category, onClose }) {
     const onKey = (e) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        // Primero cierra el panel de filtros, luego vuelve del detalle a la lista y por último cierra el modal
+        // Primero vuelve del detalle a la lista y después cierra el modal
         const st = stateRef.current;
-        if (st.panelOpen) setPanelOpen(false);
-        else if (st.detail) st.backToList();
+        if (st.detail) st.backToList();
         else requestClose();
         return;
       }
@@ -145,11 +128,6 @@ export default function ProjectsModal({ category, onClose }) {
     return () => document.removeEventListener('keydown', onKey);
   }, [requestClose]);
 
-  // Al cambiar los filtros la lista vuelve arriba
-  useEffect(() => {
-    listRef.current?.scrollTo({ top: 0 });
-  }, [active]);
-
   return createPortal(
     <div className={`pmodal${closing ? ' is-closing' : ''}`} onClick={(e) => e.target === e.currentTarget && requestClose()}>
       <div
@@ -163,7 +141,7 @@ export default function ProjectsModal({ category, onClose }) {
         {/* Carpeta de anillos (Figma 190:2799): todo va sobre la hoja, también el botón de cerrar */}
         <div className="pmodal__page">
           {/* Cabecera (Figma 194:5885): el ícono de la categoría sobre el bolsillo de cuero de la hoja y, a su derecha
-              y a la misma altura, los filtros y el número de proyectos (en el detalle, el botón para volver) */}
+              y a la misma altura, el título y el número de proyectos (en el detalle, el botón para volver) */}
           <div className="pmodal__head">
             <div className="pmodal__pocket" aria-hidden="true">
               {/* --a = proporción del ícono; el CSS la usa para que todos ocupen la misma superficie */}
@@ -174,7 +152,7 @@ export default function ProjectsModal({ category, onClose }) {
               />
             </div>
 
-            {/* Título de la categoría y, debajo, los filtros o el botón para volver */}
+            {/* Título de la categoría y, debajo, cuántos proyectos hay o el botón para volver */}
             <div className="pmodal__heading">
               <h2 id="pmodal-title" className="pmodal__title">
                 {title}
@@ -188,33 +166,11 @@ export default function ProjectsModal({ category, onClose }) {
                   <span>{m.back.replace('{category}', title)}</span>
                 </button>
               ) : (
-                <div className="pmodal__toolbar">
-                  <button
-                    type="button"
-                    className={`pmodal__filters-btn${panelOpen ? ' is-open' : ''}`}
-                    aria-expanded={panelOpen}
-                    aria-controls={`pmodal-filters-${category}`}
-                    onClick={() => setPanelOpen((v) => !v)}
-                  >
-                    <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                      <path d="M3 4.5h14l-5.5 6.4v4.6l-3 1.5v-6.1z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                    </svg>
-                    <span>{m.filtersButton}</span>
-                    {active.length > 0 && <span className="pmodal__filters-count">{active.length}</span>}
-                  </button>
-                  <p className="pmodal__count" aria-live="polite">
-                    {count}
-                  </p>
-                  {active.length > 0 && (
-                    <button type="button" className="pmodal__clear" onClick={() => setActive([])}>
-                      {m.clear}
-                    </button>
-                  )}
-                </div>
+                <p className="pmodal__count">{count}</p>
               )}
             </div>
 
-            {/* Cerrar: una X dibujada a lápiz a la derecha de la cabecera, centrada con el título y los filtros (trazos
+            {/* Cerrar: una X dibujada a lápiz a la derecha de la cabecera, centrada con el título y el número (trazos
                 dobles algo torcidos y el filtro #pmodal-pencil, que los hace irregulares y les da el grano del grafito) */}
             <button ref={closeRef} type="button" className="pmodal__close" onClick={requestClose} aria-label={m.close}>
               <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
@@ -238,92 +194,53 @@ export default function ProjectsModal({ category, onClose }) {
 
           {detail ? (
             <ProjectDetail
-              proj={all.find((x) => x.id === detail)}
-              name={nameOf(all.find((x) => x.id === detail))}
-              tags={tagText(all.find((x) => x.id === detail))}
+              proj={list.find((x) => x.id === detail)}
+              name={nameOf(list.find((x) => x.id === detail))}
+              tags={tagText(list.find((x) => x.id === detail))}
               item={p.items[detail]}
               m={m}
               behanceIcon={img['icon-behance']}
               newSticker={newSticker}
             />
           ) : (
-            <>
-              {/* Filtros por etiqueta, en un desplegable bajo la cabecera */}
-              <div
-                id={`pmodal-filters-${category}`}
-                className="pmodal__panel"
-                role="group"
-                aria-label={m.filtersLabel}
-                hidden={!panelOpen}
-              >
-                {tags.map((tag) => {
-                  const on = active.includes(tag);
-                  // Cuántos proyectos quedarían con esta etiqueta añadida a las elegidas
-                  const n = all.filter((proj) => matches(proj, on ? active : [...active, tag])).length;
-                  return (
-                    <button
-                      key={tag}
-                      type="button"
-                      className={`pmodal__tag${on ? ' is-active' : ''}`}
-                      style={{ '--c': tagColors[tag] }}
-                      aria-pressed={on}
-                      disabled={!on && n === 0}
-                      onClick={() => toggleTag(tag)}
-                    >
-                      {p.tags[tag]}
-                      <span className="pmodal__tag-n">{n}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div ref={listRef} className="pmodal__list">
-                {list.length === 0 && (
-                  <div className="pmodal__empty">
-                    <p>{m.noResults}</p>
-                    <button type="button" className="pmodal__clear" onClick={() => setActive([])}>
-                      {m.clear}
-                    </button>
-                  </div>
-                )}
-                {/* Tarjetas con forma de libreta blanca (Figma 194:5911): portada, nombre y etiquetas. Toda la
-                    tarjeta abre el detalle (el botón del nombre la cubre). En las categorías con subcategorías (UX/UI),
-                    las tarjetas van en grupos, cada uno con su nombre escrito a lápiz y encerrado en un óvalo
-                    (Figma 195:5967). */}
-                {groups.map((group) => (
-                  <section key={group.id ?? 'all'} className="pgroup" aria-labelledby={group.id ? `psub-${group.id}` : undefined}>
-                    {group.id && <SubLabel id={`psub-${group.id}`} text={p.subcategories[group.id]} />}
-                    <ul className="pcards">
-                      {group.items.map((proj) => {
-                        const name = nameOf(proj);
-                        const Name = group.id ? 'h4' : 'h3';
-                        return (
-                          <li key={proj.id} className="pcard" style={{ '--i': list.indexOf(proj) }}>
-                            {proj.isNew && <img className="pnew pnew--card" src={newSticker} alt={m.newProject} />}
-                            <ProjectCover media={proj.media} labels={m} />
-                            <Name className="pcard__name">
-                              <button
-                                type="button"
-                                className="pcard__open"
-                                data-open-project={proj.id}
-                                onClick={() => openDetail(proj.id)}
-                                aria-label={m.open.replace('{project}', name)}
-                              >
-                                {name}
-                              </button>
-                            </Name>
-                            <p className="pcard__tags">
-                              <span className="visually-hidden">{m.tagsLabel}: </span>
-                              {tagText(proj)}
-                            </p>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </section>
-                ))}
-              </div>
-            </>
+            <div ref={listRef} className="pmodal__list">
+              {/* Tarjetas con forma de libreta blanca (Figma 194:5911): portada, nombre y etiquetas. Toda la
+                  tarjeta abre el detalle (el botón del nombre la cubre). En las categorías con subcategorías (UX/UI),
+                  las tarjetas van en grupos, cada uno con su nombre escrito a lápiz y encerrado en un óvalo
+                  (Figma 195:5967). */}
+              {groups.map((group) => (
+                <section key={group.id ?? 'all'} className="pgroup" aria-labelledby={group.id ? `psub-${group.id}` : undefined}>
+                  {group.id && <SubLabel id={`psub-${group.id}`} text={p.subcategories[group.id]} />}
+                  <ul className="pcards">
+                    {group.items.map((proj) => {
+                      const name = nameOf(proj);
+                      const Name = group.id ? 'h4' : 'h3';
+                      return (
+                        <li key={proj.id} className="pcard" style={{ '--i': list.indexOf(proj) }}>
+                          {proj.isNew && <img className="pnew pnew--card" src={newSticker} alt={m.newProject} />}
+                          <ProjectCover media={proj.media} labels={m} />
+                          <Name className="pcard__name">
+                            <button
+                              type="button"
+                              className="pcard__open"
+                              data-open-project={proj.id}
+                              onClick={() => openDetail(proj.id)}
+                              aria-label={m.open.replace('{project}', name)}
+                            >
+                              {name}
+                            </button>
+                          </Name>
+                          <p className="pcard__tags">
+                            <span className="visually-hidden">{m.tagsLabel}: </span>
+                            {tagText(proj)}
+                          </p>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              ))}
+            </div>
           )}
         </div>
       </div>

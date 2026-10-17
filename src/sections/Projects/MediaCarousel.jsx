@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // Fotos y videos de un proyecto, dentro de su marco tipo Polaroid (tarjeta de la lista y vista de detalle).
 // Carrusel manual: solo cambia con los botones ‹ › o tocando una barra; nunca solo ni por tiempo. Las barras de
-// arriba (como las de «Sobre mí») muestran cuántos elementos hay y cuál se ve. Los videos tienen sus controles y solo
-// se reproducen al darles play.
+// arriba (como las de «Sobre mí») muestran cuántos elementos hay y cuál se ve. Los videos van a 1.5× y se reproducen
+// solos (sin sonido, en bucle) mientras se ven en pantalla; tienen sus controles para pausarlos o verlos en grande.
 // media: [{ type: 'image' | 'video', src, poster? }] (projects.js) · labels: projects.modal de translations.js
 export default function MediaCarousel({ media, name, labels }) {
   const [current, setCurrent] = useState(0);
@@ -34,7 +34,7 @@ export default function MediaCarousel({ media, name, labels }) {
         <img key={`bg-${item.src}`} className="media__backdrop" src={item.type === 'image' ? item.src : item.poster} alt="" aria-hidden="true" />
       )}
       {item.type === 'video' ? (
-        <video key={item.src} className="media__item" src={item.src} poster={item.poster} controls playsInline preload="metadata" />
+        <AutoVideo key={item.src} src={item.src} poster={item.poster} />
       ) : (
         <img key={item.src} className="media__item" src={item.src} alt="" loading="lazy" decoding="async" draggable="false" />
       )}
@@ -73,5 +73,43 @@ export default function MediaCarousel({ media, name, labels }) {
         {n > 1 ? position : ''}
       </p>
     </div>
+  );
+}
+
+// Video del carrusel: a 1.5× (VIDEO_RATE) y en reproducción solo mientras al menos la mitad está a la vista (al llegar
+// a él en el carrusel o al desplazarse hasta él); se pausa al salir. Con «reducir movimiento» no arranca solo.
+const VIDEO_RATE = 1.5;
+
+function AutoVideo({ src, poster }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const video = ref.current;
+    video.defaultPlaybackRate = VIDEO_RATE;
+    video.playbackRate = VIDEO_RATE;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { threshold: 0.5 }
+    );
+    io.observe(video);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <video
+      ref={ref}
+      className="media__item"
+      src={src}
+      poster={poster}
+      controls
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      // Si se cambia la velocidad desde los controles y vuelve a 1×, se respeta; solo se fija al cargar
+      onLoadedMetadata={(e) => (e.currentTarget.playbackRate = VIDEO_RATE)}
+    />
   );
 }
