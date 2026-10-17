@@ -307,7 +307,7 @@
   }
 
   /* --pw: ancho de la foto (100% de la columna, máx. 560px, centrada); la corona y el sticker se colocan respecto a
-     ella (cqw = ancho de .grp--box) */
+     ella (cqw = ancho de .grp--box), con las mismas proporciones que en la web */
   .grp--box {
     gap: 24px;
     container-type: inline-size;
@@ -320,19 +320,19 @@
     position: absolute;
   }
 
+  /* Misma posición respecto a la foto que en el diseño de Figma (foto en 283, 199, de 945 de ancho):
+     sticker en 379.9, 257.9 (291 de ancho) y corona en 676.4, 214.4 (195.7 de ancho, girada hacia la derecha) */
   .grp--box .projects__sticker {
-    left: var(--pl);
-    top: 0;
-    width: calc(var(--pw) * 0.3);
+    left: calc(var(--pl) + var(--pw) * 0.1025);
+    top: calc(var(--pw) * 0.0623);
+    width: calc(var(--pw) * 0.3079);
     max-width: none;
   }
 
-  /* Corona sobre la cabeza: centro de la cabeza en x 47.9 % de la foto, su parte de arriba en y 14.2 % del alto
-     (= 13.3 % del ancho, la foto es 945 × 887) */
   .grp--box .projects__crown {
-    left: calc(var(--pl) + var(--pw) * 0.379);
-    top: calc(var(--pw) * 0.03);
-    width: calc(var(--pw) * 0.2);
+    left: calc(var(--pl) + var(--pw) * 0.4163);
+    top: calc(var(--pw) * 0.0163);
+    width: calc(var(--pw) * 0.2071);
     max-width: none;
   }
 
