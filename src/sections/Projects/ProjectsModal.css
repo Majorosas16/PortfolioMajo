@@ -130,14 +130,19 @@
   background: url('../../assets/sections/projects/pocket.webp') center / 100% 100% no-repeat;
 }
 
-/* El ícono, centrado en la parte redonda del bolsillo (bajo la costura de arriba) */
+/* El ícono, centrado en la parte redonda del bolsillo (bajo la costura de arriba). Todos ocupan la misma superficie
+   (la de un cuadrado del 50 % del bolsillo), sea cual sea su proporción (--a = ancho / alto, ProjectsModal.jsx);
+   los muy altos o muy anchos se limitan para no salirse del bolsillo. */
 .pmodal__pocket img {
   position: absolute;
-  left: 18%;
-  top: 22%;
-  width: 64%;
-  height: 64%;
+  left: 50%;
+  top: 57%;
+  width: calc(50% * sqrt(var(--a, 1)));
+  height: auto;
+  max-width: 72%;
+  max-height: 64%;
   object-fit: contain;
+  translate: -50% -50%;
   rotate: -3.29deg;
   filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
 }
