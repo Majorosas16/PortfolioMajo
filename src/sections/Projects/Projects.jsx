@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import P from '../../components/P.jsx';
 import { byName } from '../../assets/images.js';
 import Message from '../../components/Message.jsx';
@@ -17,38 +17,42 @@ const img = byName(import.meta.glob('../../assets/sections/projects/*', { eager:
 // Objetos alrededor de la foto (coordenadas del frame 4 de Figma). Texto y alt en translations.js (projects.objects[id]).
 // Cada objeto es una categoría de proyectos: se puede arrastrar por la sección y, al tocarlo, abre el modal con sus
 // proyectos (ProjectsModal.jsx; qué proyectos van en cada una, en projects.js).
+// La etiqueta va centrada bajo su objeto, así sigue alineada en los dos idiomas (en inglés algunas son más largas).
 const objects = [
   {
     id: 'prism', src: 'prism',
     x: 138.15, y: 713.19, w: 154.55, h: 130.93, r: -3.29,
-    label: { dx: 33.85, dy: 150.2 },
+    label: { center: true, dy: 150.2 },
   },
   {
     id: 'compass', src: 'compass',
     x: 367.1, y: 809.1, w: 151.8, h: 144.9,
-    label: { dx: -6.1, dy: 167.3 },
+    label: { center: true, dy: 167.3 },
   },
   {
     id: 'shell', src: 'shell',
     x: 539.95, y: 895, w: 195.56, h: 147.29,
-    label: { dx: 33.05, dy: 155.4 },
+    label: { center: true, dy: 155.4 },
   },
   {
     id: 'chess', src: 'chess',
     x: 751.28, y: 847.4, w: 210.32, h: 210.32, r: -7.12,
-    label: { dx: 48.72, dy: 203 },
+    label: { center: true, dy: 203 },
   },
   {
     id: 'clip', src: 'clip',
     x: 1007.05, y: 809.1, w: 133.42, h: 158.83,
-    label: { dx: -5.05, dy: 167.3 },
+    label: { center: true, dy: 167.3 },
   },
   {
     id: 'coffee', src: 'coffee',
     x: 1169.96, y: 659.38, w: 277.74, h: 236.4, r: -6.64,
-    label: { dx: 67.04, dy: 204 },
+    label: { center: true, dy: 204 },
   },
 ];
+
+// Aire extra (px de Figma) antes del cierre «¡Esto no termina aquí!» y el contacto: todo lo que va debajo baja lo mismo
+const CLOSE_DY = 110;
 
 // Frame 4 de Figma — "WEB" 1512 × 1937
 export default function Projects() {
@@ -63,6 +67,18 @@ export default function Projects() {
   // arrastre no abre el modal (useDraggableObjects lo descarta).
   useDraggableObjects(sectionRef, true, undefined, '.objects--projects .obj');
 
+  // Al aparecer la sección: el sticker «Proyectos» se pega y la corona aparece (una sola vez)
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      setSeen(true);
+      io.disconnect();
+    }, { threshold: 0.3 });
+    io.observe(sectionRef.current.querySelector('.projects__sticker'));
+    return () => io.disconnect();
+  }, []);
+
   const openCategory = (id, e) => {
     opener.current = e.currentTarget;
     setOpen(id);
@@ -76,9 +92,9 @@ export default function Projects() {
     <section
       ref={sectionRef}
       id="projects"
-      className="section section--paper projects"
+      className={`section section--paper projects${seen ? ' is-seen' : ''}`}
       style={{
-        '--height': 1937,
+        '--height': 1937 + CLOSE_DY,
         // Círculos a mano que rodean la palabra marcada con [[…]] en translations.js (ver .circled en Projects.css)
         '--ring-blue': `url("${img['circle-blue']}")`,
         '--ring-orange': `url("${img['circle-orange']}")`,
@@ -102,10 +118,11 @@ export default function Projects() {
             <Message text={p.tap} emoji="👆🏽" k={0.5} />
           </P>
           <div className="objects objects--projects">
-            {objects.map((o) => (
+            {objects.map((o, i) => (
               <ObjectItem
                 key={o.id}
                 {...o}
+                index={i}
                 src={img[o.src]}
                 alt={p.objects[o.id].alt}
                 label={{ ...o.label, text: p.objects[o.id].label }}
@@ -120,12 +137,12 @@ export default function Projects() {
         </div>
 
         {/* Contacto */}
-        <span id="contact" className="anchor" style={{ '--y': 1250 }} />
+        <span id="contact" className="anchor" style={{ '--y': 1250 + CLOSE_DY }} />
         <div className="grp grp--closing">
-          <P x={756} y={1345.5} w={426} fs={35.66} cx cy className="projects__end">
+          <P x={756} y={1345.5 + CLOSE_DY} w={426} fs={35.66} cx cy className="projects__end">
             <p>{p.end}</p>
           </P>
-          <P x={755.58} y={1417} w={1053.17} fs={88.16} cx cy className="hand projects__cta">
+          <P x={755.58} y={1417 + CLOSE_DY} w={1053.17} fs={88.16} cx cy className="hand projects__cta">
             <h2>
               <Rich text={p.cta} />
             </h2>
@@ -133,13 +150,13 @@ export default function Projects() {
         </div>
 
         <div className="grp grp--contact">
-          <P x={197} y={1549} w={317} fs={35} className="projects__invite">
+          <P x={197} y={1549 + CLOSE_DY} w={317} fs={35} className="projects__invite">
             <p>
               <Rich text={p.invite} />
             </p>
           </P>
 
-          <P x={1021} y={1555} w={373.84} className="contact">
+          <P x={1021} y={1555 + CLOSE_DY} w={373.84} className="contact">
             <a className="contact__email" href="mailto:multimedia.mr16@gmail.com">
               <img loading="lazy" decoding="async" src={img['icon-email']} alt="" />
               <span>multimedia.mr16@gmail.com</span>
@@ -156,10 +173,10 @@ export default function Projects() {
           </P>
 
           <div className="grp grp--face">
-            <P x={448} y={1504} w={618} h={433} className="projects__face">
+            <P x={448} y={1504 + CLOSE_DY} w={618} h={433} className="projects__face">
               <img loading="lazy" decoding="async" src={img['photo-contact']} alt={p.faceAlt} />
             </P>
-            <P x={743.21} y={1730} w={100.04} className="projects__note">
+            <P x={743.21} y={1730 + CLOSE_DY} w={100.04} className="projects__note">
               <img loading="lazy" decoding="async" src={img['note-green']} alt="" />
             </P>
           </div>
