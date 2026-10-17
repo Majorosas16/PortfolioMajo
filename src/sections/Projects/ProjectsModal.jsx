@@ -162,27 +162,6 @@ export default function ProjectsModal({ category, onClose }) {
       >
         {/* Carpeta de anillos (Figma 190:2799): todo va sobre la hoja, también el botón de cerrar */}
         <div className="pmodal__page">
-          {/* Cerrar: una X dibujada a lápiz en la esquina de la hoja (trazos dobles algo torcidos y el filtro #pmodal-pencil,
-              que los hace irregulares y les da el grano del grafito) */}
-          <button ref={closeRef} type="button" className="pmodal__close" onClick={requestClose} aria-label={m.close}>
-            <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-              <defs>
-                <filter id="pmodal-pencil" x="-20%" y="-20%" width="140%" height="140%">
-                  <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="4" result="noise" />
-                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.6" result="rough" />
-                  <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2 0 0 0 -0.35" result="grain" />
-                  <feComposite in="rough" in2="grain" operator="in" />
-                </filter>
-              </defs>
-              <g filter="url(#pmodal-pencil)" fill="none" stroke="currentColor" strokeLinecap="round">
-                <path d="M7.5 8.2C12 13 18 18.6 24.6 24.2" strokeWidth="2.1" />
-                <path d="M8.6 7.3C13.2 12.5 19 18 23.7 25" strokeWidth="1.1" opacity="0.6" />
-                <path d="M24.3 7.5C19 12.4 13.4 18.7 7.7 24.7" strokeWidth="2.1" />
-                <path d="M23.3 8.7C18.5 13.5 13 19.1 8.9 23.6" strokeWidth="1.1" opacity="0.6" />
-              </g>
-            </svg>
-          </button>
-
           {/* Cabecera (Figma 194:5885): el ícono de la categoría sobre el bolsillo de cuero de la hoja y, a su derecha
               y a la misma altura, los filtros y el número de proyectos (en el detalle, el botón para volver) */}
           <div className="pmodal__head">
@@ -234,6 +213,27 @@ export default function ProjectsModal({ category, onClose }) {
                 </div>
               )}
             </div>
+
+            {/* Cerrar: una X dibujada a lápiz a la derecha de la cabecera, centrada con el título y los filtros (trazos
+                dobles algo torcidos y el filtro #pmodal-pencil, que los hace irregulares y les da el grano del grafito) */}
+            <button ref={closeRef} type="button" className="pmodal__close" onClick={requestClose} aria-label={m.close}>
+              <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                <defs>
+                  <filter id="pmodal-pencil" x="-20%" y="-20%" width="140%" height="140%">
+                    <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="4" result="noise" />
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.6" result="rough" />
+                    <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2 0 0 0 -0.35" result="grain" />
+                    <feComposite in="rough" in2="grain" operator="in" />
+                  </filter>
+                </defs>
+                <g filter="url(#pmodal-pencil)" fill="none" stroke="currentColor" strokeLinecap="round">
+                  <path d="M7.5 8.2C12 13 18 18.6 24.6 24.2" strokeWidth="2.1" />
+                  <path d="M8.6 7.3C13.2 12.5 19 18 23.7 25" strokeWidth="1.1" opacity="0.6" />
+                  <path d="M24.3 7.5C19 12.4 13.4 18.7 7.7 24.7" strokeWidth="2.1" />
+                  <path d="M23.3 8.7C18.5 13.5 13 19.1 8.9 23.6" strokeWidth="1.1" opacity="0.6" />
+                </g>
+              </svg>
+            </button>
           </div>
 
           {detail ? (

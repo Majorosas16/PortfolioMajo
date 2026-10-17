@@ -29,6 +29,10 @@ export default function MediaCarousel({ media, name, labels }) {
 
   return (
     <div className="media" role="group" aria-roledescription="carousel" aria-label={fill(labels.media, { project: name })}>
+      {/* Cada foto o video se ve completo (sin recortar), sobre la misma imagen ampliada y desenfocada de fondo */}
+      {(item.type === 'image' || item.poster) && (
+        <img key={`bg-${item.src}`} className="media__backdrop" src={item.type === 'image' ? item.src : item.poster} alt="" aria-hidden="true" />
+      )}
       {item.type === 'video' ? (
         <video key={item.src} className="media__item" src={item.src} poster={item.poster} controls playsInline preload="metadata" />
       ) : (
