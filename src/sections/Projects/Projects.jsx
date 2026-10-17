@@ -106,8 +106,21 @@ export default function Projects() {
       setSeen(true);
       io.disconnect();
     }, { threshold: 0.3 });
+    // La carpeta del modal (binder.webp, a resolución completa) se descarga y se decodifica cuando la sección se
+    // acerca a la pantalla, no al abrir el modal: así aparece al instante, sin bajar su calidad
+    const preload = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      const im = new Image();
+      im.src = img.binder;
+      im.decode?.().catch(() => {});
+      preload.disconnect();
+    }, { rootMargin: '600px 0px' });
+    preload.observe(sectionRef.current);
     io.observe(sectionRef.current.querySelector('.projects__sticker'));
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      preload.disconnect();
+    };
   }, []);
 
   const openCategory = (id, e) => {
