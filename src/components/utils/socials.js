@@ -1,7 +1,7 @@
-import { byName } from '../assets/images.js';
+import { byName } from '../../assets/images.js';
 
 // Íconos de redes (src/assets/sections/projects/icon-*)
-const icons = byName(import.meta.glob('../assets/sections/projects/icon-*', { eager: true, import: 'default' }));
+const icons = byName(import.meta.glob('../../assets/sections/projects/icon-*', { eager: true, import: 'default' }));
 
 // Redes del portafolio: las usan la sección de contacto (Projects.jsx) y el menú del celular (Header.jsx).
 // size: tamaño del ícono en el lienzo de 1512px (sección de contacto).

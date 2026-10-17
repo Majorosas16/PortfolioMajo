@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import Message from '../../components/Message.jsx';
-import P from '../../components/P.jsx';
-import useDraggableObjects from '../../components/useDraggableObjects.js';
+import Message from '../../components/ui/Message/Message.jsx';
+import P from '../../components/ui/P/P.jsx';
+import useDraggableObjects from '../../components/hooks/useDraggableObjects.js';
 import { byName } from '../../assets/images.js';
-import Pill from '../../components/Pill.jsx';
+import Pill from '../../components/ui/Pill/Pill.jsx';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
 import { localizedSrc } from '../../i18n/images.js';
 import Rich from '../../i18n/Rich.jsx';

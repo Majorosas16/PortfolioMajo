@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import Footer from './components/Footer.jsx';
-import Header from './components/Header.jsx';
+import Footer from './components/layout/Footer/Footer.jsx';
+import Header from './components/layout/Header/Header.jsx';
 import { LanguageProvider } from './i18n/LanguageContext.jsx';
 import Intro from './sections/Intro/Intro.jsx';
 import About from './sections/About/About.jsx';

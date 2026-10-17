@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
-import Message from '../../components/Message.jsx';
+import Message from '../../components/ui/Message/Message.jsx';
 import './ObjectMessage.css';
 
 const clamp = (v, min, max) => Math.min(Math.max(v, min), Math.max(min, max));

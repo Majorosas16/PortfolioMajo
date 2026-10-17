@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
-import { useLanguage } from '../i18n/LanguageContext.jsx';
-import LanguageSwitch from './LanguageSwitch.jsx';
-import { goToSection } from './goToSection.js';
-import { socials } from './socials.js';
+import { useLanguage } from '../../../i18n/LanguageContext.jsx';
+import LanguageSwitch from '../LanguageSwitch/LanguageSwitch.jsx';
+import { goToSection } from '../../utils/goToSection.js';
+import { socials } from '../../utils/socials.js';
 import './Header.css';
 import './MobileMenu.css';
 
