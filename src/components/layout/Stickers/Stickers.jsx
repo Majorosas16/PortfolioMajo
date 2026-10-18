@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '../../../i18n/LanguageContext.jsx';
+import Peelable from './Peelable.jsx';
+import { nearestCorner, peelGeometry } from './peel.js';
 import StickerArt, { STICKER_IDS as IDS, artSize, stickerImg as img } from './StickerArt.jsx';
 import useStickerDrag from './useStickerDrag.js';
 import './Stickers.css';
@@ -26,6 +28,17 @@ const sidesFor = (w) =>
 const SHADOW_REST = 'drop-shadow(0 2px 3px rgba(67, 47, 46, 0.25))';
 const SHADOW_LIFT = 'drop-shadow(0 14px 14px rgba(67, 47, 46, 0.22))';
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const easeOut = (t) => 1 - (1 - t) ** 3;
+const easeIn = (t) => t ** 3;
+const easeInOut = (t) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
+
+// Clave del despegado de cada celda del panel (los stickers de la página usan su uid)
+const tileKey = (id) => `tile:${id}`;
+// Hasta dónde se lleva la esquina de arriba a la derecha para despegarlo entero (más allá de la esquina opuesta)
+const peeledOff = (w, h) => [-0.4 * w, 1.4 * h];
+// Con el despegado a mano, se suelta del todo cuando le queda pegado menos de esta fracción
+const DETACH_AT = 0.12;
 
 const fill = (text, vars) => Object.entries(vars).reduce((t, [k, v]) => t.replace(`{${k}}`, v), text);
 const clamp = (v, min, max) => Math.min(Math.max(v, min), Math.max(min, max));
@@ -76,6 +89,16 @@ export default function Stickers() {
   const [flight, setFlight] = useState(null);
   // El panel sigue montado mientras se desvanece al cerrarse
   const [panelMounted, setPanelMounted] = useState(false);
+  // Despegados en curso ({ [clave]: { C, P } }, ver peel.js). peelsNow tiene siempre el último valor (para empezar cada
+  // animación desde donde está); frames, los requestAnimationFrame en marcha.
+  const [peels, setPeels] = useState({});
+  const peelsNow = useRef({});
+  const frames = useRef({});
+  // Celdas del panel cuyo sticker ya se despegó (queda su silueta gris hasta que se repone) y celdas ocupadas en un
+  // despegado (a mano o automático); stickers de la página que se están quitando
+  const [emptied, setEmptied] = useState(() => new Set());
+  const busy = useRef(new Set());
+  const removing = useRef(new Set());
 
   if (zTop.current === null) zTop.current = placed.reduce((m, p) => Math.max(m, p.z || 0), 0);
 
@@ -186,6 +209,114 @@ export default function Stickers() {
     tabRef.current?.focus({ preventScroll: true });
   };
 
+  // ---------- Despegar (como en una hoja de stickers) ----------
+  const setPeel = (key, value) => {
+    const next = { ...peelsNow.current };
+    if (value) next[key] = value;
+    else delete next[key];
+    peelsNow.current = next;
+    setPeels(next);
+  };
+
+  const stopPeel = (key) => {
+    cancelAnimationFrame(frames.current[key]);
+    delete frames.current[key];
+  };
+
+  // Lleva el punto que se levanta (P) desde donde está hasta `to`, con la esquina C fija
+  const tweenPeel = (key, C, to, ms, ease, done) => {
+    stopPeel(key);
+    const cur = peelsNow.current[key];
+    const from = cur && cur.C[0] === C[0] && cur.C[1] === C[1] ? cur.P : C;
+    const t0 = performance.now();
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / ms);
+      const e = ease(k);
+      setPeel(key, { C, P: [from[0] + (to[0] - from[0]) * e, from[1] + (to[1] - from[1]) * e] });
+      if (k < 1) frames.current[key] = requestAnimationFrame(step);
+      else {
+        delete frames.current[key];
+        done?.();
+      }
+    };
+    frames.current[key] = requestAnimationFrame(step);
+  };
+
+  useEffect(() => () => Object.values(frames.current).forEach(cancelAnimationFrame), []);
+
+  const tileSize = (id) => artSize(id, sides.tile, sides.tileMax);
+
+  // La celda queda con la silueta gris del papel y el sticker se repone al rato (con un fundido)
+  const empty = (id) => {
+    setEmptied((set) => new Set(set).add(id));
+    setTimeout(() => {
+      setEmptied((set) => {
+        const next = new Set(set);
+        next.delete(id);
+        return next;
+      });
+    }, 900);
+  };
+
+  // Al pasar el ratón por un sticker del panel se levanta un poco su esquina de arriba a la derecha. El punto se lleva
+  // hacia el centro lo justo para que el doblez llegue al dibujo aunque la esquina de la caja esté vacía (pizza, taza)
+  const peek = (id, on) => {
+    if (reducedMotion() || busy.current.has(id)) return;
+    const { w, h } = tileSize(id);
+    const C = [w, 0];
+    if (on) tweenPeel(tileKey(id), C, [w - w * 0.3, h * 0.3], 180, easeOut);
+    else tweenPeel(tileKey(id), C, C, 160, easeOut, () => setPeel(tileKey(id), null));
+  };
+
+  // Tocar (o Enter) un sticker del panel: se despega solo, de la esquina hacia la contraria, y luego vuela a la página
+  const pick = (id, tile) => {
+    if (busy.current.has(id)) return;
+    if (reducedMotion()) {
+      placeAtCenter(id, tile);
+      return;
+    }
+    busy.current.add(id);
+    const { w, h } = tileSize(id);
+    tweenPeel(tileKey(id), [w, 0], peeledOff(w, h), 300, easeIn, () => {
+      setPeel(tileKey(id), null);
+      empty(id);
+      busy.current.delete(id);
+      placeAtCenter(id, tile);
+    });
+  };
+
+  // Quitar un sticker de la página (× o Suprimir): se despega solo y se va
+  const peelOff = (uid) => {
+    const p = placed.find((q) => q.uid === uid);
+    if (!p || removing.current.has(uid)) return;
+    if (reducedMotion()) {
+      remove(uid);
+      return;
+    }
+    removing.current.add(uid);
+    setSelected(null);
+    const { w, h } = pageSize(p.id);
+    tweenPeel(uid, [w, 0], peeledOff(w, h), 380, easeInOut, () => {
+      const done = () => {
+        removing.current.delete(uid);
+        setPeel(uid, null);
+        remove(uid);
+      };
+      const el = layerRef.current?.querySelector(`[data-uid="${uid}"]`);
+      if (!el) {
+        done();
+        return;
+      }
+      el.animate(
+        [
+          { opacity: 1, translate: '-50% -50%' },
+          { opacity: 0, translate: '-50% calc(-50% - 24px)' },
+        ],
+        { duration: 180, easing: 'ease-in', fill: 'forwards' }
+      ).onfinish = done;
+    });
+  };
+
   // Rebote al pegarse: llega un poco grande y en el aire, se aplasta contra la página y se asienta
   const land = (uid) => {
     if (reducedMotion()) return;
@@ -256,8 +387,32 @@ export default function Stickers() {
     onMove(target, clientX, clientY, startX, startY) {
       const { x, y, w, h } = toLayer(clientX, clientY);
       if (target.id) {
-        // Desde el panel: el primer movimiento crea el sticker bajo el puntero, ya en el aire
         if (!target.uid) {
+          // Desde el panel: primero se despega siguiendo al dedo o al cursor, desde la esquina más cercana a donde se
+          // agarró; cuando casi no le queda nada pegado, se suelta y pasa a la mano
+          if (!reducedMotion()) {
+            const key = tileKey(target.id);
+            if (!target.peel) {
+              const size = tileSize(target.id);
+              const r = target.el.querySelector('.peel').getBoundingClientRect();
+              const C = nearestCorner(size.w, size.h, startX - r.left, startY - r.top);
+              const cur = peelsNow.current[key];
+              stopPeel(key);
+              busy.current.add(target.id);
+              target.peel = { ...size, C, base: cur && cur.C[0] === C[0] && cur.C[1] === C[1] ? cur.P : C };
+            }
+            const { C, base } = target.peel;
+            const P = [base[0] + clientX - startX, base[1] + clientY - startY];
+            const g = peelGeometry(target.peel.w, target.peel.h, C, P);
+            if (!g || g.stuckRatio > DETACH_AT) {
+              setPeel(key, { C, P });
+              return;
+            }
+            setPeel(key, null);
+            empty(target.id);
+            busy.current.delete(target.id);
+          }
+          // Ya despegado: el sticker aparece bajo el puntero, en el aire
           target.uid = add(target.id, x, y).uid;
           setDraggingOut(true);
           setLifted(target.uid);
@@ -275,6 +430,13 @@ export default function Stickers() {
       update(target.uid, positionAt(p.id, target.start.cx + clientX - startX, target.start.cy + clientY - startY, w, h));
     },
     onEnd(target, moved) {
+      // Soltado antes de despegarse del todo: vuelve a pegarse en su celda
+      if (target.peel && !target.uid) {
+        busy.current.delete(target.id);
+        const key = tileKey(target.id);
+        tweenPeel(key, target.peel.C, target.peel.C, 220, easeOut, () => setPeel(key, null));
+        return;
+      }
       if (!moved) return;
       setLifted(null);
       if (target.uid) land(target.uid);
@@ -295,7 +457,7 @@ export default function Stickers() {
       setSelected(p.uid);
     } else if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
-      remove(p.uid);
+      peelOff(p.uid);
     } else if (e.key === 'Escape') {
       setSelected(null);
     }
@@ -318,6 +480,11 @@ export default function Stickers() {
       setPanelMounted(true);
       return undefined;
     }
+    // Al cerrarse, las celdas vuelven a estar completas
+    Object.keys(frames.current).filter((k) => k.startsWith('tile:')).forEach(stopPeel);
+    Object.keys(peelsNow.current).filter((k) => k.startsWith('tile:')).forEach((k) => setPeel(k, null));
+    busy.current.clear();
+    setEmptied(new Set());
     if (reducedMotion()) {
       setPanelMounted(false);
       return undefined;
@@ -368,14 +535,14 @@ export default function Stickers() {
               type="button"
               className="sticker__body"
               aria-label={fill(s.placed, { name: nameOf(p.id) })}
-              onPointerDown={(e) => startDrag(e, { uid: p.uid })}
+              onPointerDown={(e) => !removing.current.has(p.uid) && startDrag(e, { uid: p.uid })}
               onClick={() => setSelected((cur) => (cur === p.uid ? null : p.uid))}
               onKeyDown={(e) => onStickerKey(e, p)}
             >
-              <StickerArt id={p.id} side={sides.page} max={sides.pageMax} />
+              <Peelable id={p.id} side={sides.page} max={sides.pageMax} peel={peels[p.uid]} />
             </button>
             {selected === p.uid && !p.arriving && (
-              <button type="button" className="sticker__remove" aria-label={fill(s.remove, { name: nameOf(p.id) })} onClick={() => remove(p.uid)}>
+              <button type="button" className="sticker__remove" aria-label={fill(s.remove, { name: nameOf(p.id) })} onClick={() => peelOff(p.uid)}>
                 <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                   <path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
@@ -427,18 +594,19 @@ export default function Stickers() {
                   type="button"
                   className="stickers-panel__item"
                   aria-label={fill(s.place, { name: nameOf(id) })}
-                  // Con mouse o lápiz se puede arrastrar directo a la página; con el dedo, un toque lo pone en el
-                  // centro (así el panel se sigue desplazando con el dedo)
-                  onPointerDown={(e) => e.pointerType !== 'touch' && startDrag(e, { id })}
-                  onClick={(e) => placeAtCenter(id, e.currentTarget)}
+                  // Se despega arrastrándolo (mouse, lápiz o dedo) o tocándolo; con el mouse encima levanta la esquina
+                  onPointerDown={(e) => startDrag(e, { id, el: e.currentTarget })}
+                  onPointerEnter={(e) => e.pointerType === 'mouse' && peek(id, true)}
+                  onPointerLeave={(e) => e.pointerType === 'mouse' && peek(id, false)}
+                  onClick={(e) => pick(id, e.currentTarget)}
                 >
-                  <StickerArt id={id} side={sides.tile} max={sides.tileMax} />
+                  <Peelable id={id} side={sides.tile} max={sides.tileMax} peel={peels[tileKey(id)]} slot emptied={emptied.has(id)} />
                 </button>
               </li>
             ))}
           </ul>
           {placed.length > 0 && (
-            <button type="button" className="stickers-panel__clear" onClick={() => setPlaced([])}>
+            <button type="button" className="stickers-panel__clear" onClick={() => (reducedMotion() ? setPlaced([]) : placed.forEach((p, i) => setTimeout(() => peelOff(p.uid), i * 70)))}>
               {s.removeAll}
             </button>
           )}

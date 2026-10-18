@@ -49,6 +49,48 @@
   mask: var(--src) center / 100% 100% no-repeat;
 }
 
+/* ---------- Despegar (Peelable.jsx, peel.js) ----------
+   La parte pegada es el sticker recortado (clip-path); la levantada se ve encima, reflejada sobre el doblez, como el
+   reverso blanco con su sombra. Debajo, en el panel, la silueta gris del papel donde estaba pegado. */
+.peel {
+  position: relative;
+  display: block;
+  flex: none;
+}
+
+.peel__slot,
+.peel__back {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: var(--src) center / 100% 100% no-repeat;
+  mask: var(--src) center / 100% 100% no-repeat;
+}
+
+.peel__slot {
+  background: rgba(67, 47, 46, 0.1);
+}
+
+.peel__flap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 0 0;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 1.5px rgba(67, 47, 46, 0.28)) drop-shadow(0 4px 6px rgba(67, 47, 46, 0.14));
+}
+
+.peel__back {
+  background-color: #fff;
+}
+
+/* Ya despegado: queda la silueta y el sticker se repone con un fundido */
+.peel.is-emptied .sticker-art {
+  opacity: 0;
+  transition: none;
+}
+
 /* En el aire (al arrastrarlo): un poco más grande, inclinado y con la sombra más lejos */
 .sticker.is-lifted .sticker-art,
 .sticker-flyer {
@@ -306,12 +348,13 @@
   background: var(--cream);
   position: relative;
   cursor: grab;
-  touch-action: manipulation;
+  /* El gesto sobre un sticker lo despega (no desplaza el panel; se desplaza desde fuera de los stickers) */
+  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color 0.2s ease, scale 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 /* Realce al pasar el ratón: solo con ratón (en pantallas táctiles el :hover se queda pegado tras tocar) */
@@ -325,7 +368,6 @@
 
   .stickers-panel__item:hover {
     background: #f3ebe4;
-    scale: 1.05;
   }
 }
 
