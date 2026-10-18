@@ -121,8 +121,9 @@ html[data-box='closed'] .header--intro .header__toggle {
   opacity: 0.4;
 }
 
-/* Con teclado el selector y el botón recuperan la opacidad completa para que el foco se vea bien */
-html[data-box='closed'] .header--intro .lang-switch:focus-within,
+/* Con teclado el selector y el botón recuperan la opacidad completa para que el foco se vea bien. Solo con teclado
+   (:focus-visible): al tocarlo con el dedo o el ratón el botón también recibe el foco, y no debe destacarse. */
+html[data-box='closed'] .header--intro .lang-switch:has(:focus-visible),
 html[data-box='closed'] .header--intro .header__toggle:focus-visible {
   opacity: 1;
 }

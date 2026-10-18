@@ -133,7 +133,8 @@ export default function About() {
         <div className="about__canvas" style={{ '--trim': TRIM, '--extra': COLS_DY }}>
           {/* Presentación */}
           <div className="grp grp--presentation">
-            <P x={140} y={1212 + LEFT_DY} w={257} r={-6.44} className="about__sticker">
+            {/* Algo más grande que en Figma (257 de ancho): crece hacia arriba y a la izquierda, sin acercarse a «¡Hola! soy» */}
+            <P x={124} y={1183 + LEFT_DY} w={290} r={-6.44} className="about__sticker">
               <button type="button" className="about__tap" onClick={(e) => { e.stopPropagation(); showBubble('sticker'); }}>
                 <img loading="lazy" decoding="async" src={localizedSrc(img, 'sticker-about-me', lang)} alt={a.stickerAlt} />
               </button>

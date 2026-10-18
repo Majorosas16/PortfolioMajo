@@ -141,12 +141,13 @@
   display: flex;
   flex-direction: column;
   gap: calc(var(--u) * 5.3);
-  font-size: calc(var(--u) * 27.21);
+  font-size: calc(var(--u) * 24.5);
 }
 
+/* Íconos al 80 % del tamaño de Figma */
 .contact__email img {
-  width: calc(var(--u) * 48.14);
-  height: calc(var(--u) * 40.44);
+  width: calc(var(--u) * 38.5);
+  height: calc(var(--u) * 32.35);
 }
 
 .contact__email:hover span,
@@ -157,13 +158,13 @@
 .contact__socials {
   display: flex;
   align-items: center;
-  gap: calc(var(--u) * 26.23);
+  gap: calc(var(--u) * 22);
 }
 
 .contact__socials a {
   display: block;
-  width: calc(var(--u) * var(--s));
-  height: calc(var(--u) * var(--s));
+  width: calc(var(--u) * var(--s) * 0.8);
+  height: calc(var(--u) * var(--s) * 0.8);
   transition: transform 0.2s ease;
 }
 
@@ -361,16 +362,19 @@
     height: 84px;
   }
 
-  /* El peón y la taza tienen mucho aire alrededor en su imagen: se agrandan dentro de su espacio (todas las etiquetas
-     de la fila quedan a la misma altura) */
+  /* El peón y la taza tienen mucho aire alrededor en su imagen: se agrandan desde su base (el peón termina al 85.5 %
+     del alto de su imagen y la taza al 80.3 %) y bajan hasta apoyarse donde termina el clip, así los tres objetos de la
+     fila quedan a la misma distancia de su etiqueta */
   .objects--projects .obj:nth-child(4) .obj__media img {
     scale: 1.35;
-    transform-origin: 50% 100%;
+    transform-origin: 50% 85.5%;
+    translate: 0 13%;
   }
 
   .objects--projects .obj:nth-child(6) .obj__media img {
-    scale: 1.2;
-    transform-origin: 50% 100%;
+    scale: 1.4;
+    transform-origin: 50% 80.3%;
+    translate: 0 19%;
   }
 
   /* Etiquetas de ~12px para que quepan en tres columnas (también «DS & Branding», «Graphic design») */
@@ -402,11 +406,11 @@
   }
 
   /* Misma posición respecto a la foto que en el diseño de Figma (foto en 283, 199, de 945 de ancho):
-     sticker en 379.9, 257.9 (291 de ancho) y corona en 676.4, 214.4 (195.7 de ancho, girada hacia la derecha) */
+     sticker en 363, 246.4 (325 de ancho, algo más grande que en Figma) y corona en 676.4, 214.4 (195.7 de ancho, girada hacia la derecha) */
   .grp--box .projects__sticker {
-    left: calc(var(--pl) + var(--pw) * 0.1025);
-    top: calc(var(--pw) * 0.0623);
-    width: calc(var(--pw) * 0.3079);
+    left: calc(var(--pl) + var(--pw) * 0.084);
+    top: calc(var(--pw) * 0.05);
+    width: calc(var(--pw) * 0.345);
     max-width: none;
   }
 
@@ -417,13 +421,14 @@
     max-width: none;
   }
 
+  /* Mismos tamaños que los textos de «Sobre mí» en celular (About.css) */
   .projects__end {
-    font-size: 21px;
+    font-size: 19px;
     margin-top: 16px;
   }
 
   .projects__cta {
-    font-size: 54px;
+    font-size: 50px;
     white-space: normal;
   }
 
@@ -449,7 +454,7 @@
   }
 
   .projects__invite {
-    font-size: 23px;
+    font-size: 21px;
     text-align: center;
     max-width: 360px;
   }
@@ -461,21 +466,21 @@
 
   .contact__email {
     align-items: center;
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .contact__email img {
-    width: 40px;
-    height: 34px;
+    width: 32px;
+    height: 27px;
   }
 
   .contact__socials {
-    gap: 22px;
+    gap: 20px;
   }
 
   .contact__socials a {
-    width: 46px;
-    height: 46px;
+    width: 38px;
+    height: 38px;
   }
 
   .projects .stage {

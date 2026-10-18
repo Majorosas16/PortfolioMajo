@@ -27,7 +27,8 @@ const objects = [
   {
     id: 'compass', src: 'compass',
     x: 367.1, y: 809.1, w: 151.8, h: 144.9,
-    label: { center: true, dy: 167.3 },
+    // Centrada bajo la esfera de la brújula (la argolla de arriba a la derecha alarga la imagen hacia ese lado)
+    label: { center: true, cx: 65.6, dy: 167.3 },
   },
   {
     id: 'shell', src: 'shell',
@@ -37,7 +38,8 @@ const objects = [
   {
     id: 'chess', src: 'chess',
     x: 751.28, y: 847.4, w: 210.32, h: 210.32, r: -7.12,
-    label: { center: true, dy: 203 },
+    // Centrada bajo la base del peón (con el giro, la base queda a la derecha del centro de la imagen) y más cerca de ella
+    label: { center: true, cx: 113, dy: 192 },
   },
   {
     id: 'clip', src: 'clip',
@@ -174,7 +176,8 @@ export default function Projects() {
           <p className="visually-hidden" aria-live="polite">
             {coffeeMsg ? p.coffeeMsg : ''}
           </p>
-          <P x={379.9} y={257.9} w={291} r={-8.26} className="projects__sticker">
+          {/* Algo más grande que en Figma (291 de ancho en 379.9, 257.9), con el mismo centro */}
+          <P x={363} y={246.4} w={325} r={-8.26} className="projects__sticker">
             <h2>
               <img loading="lazy" decoding="async" src={localizedSrc(img, 'sticker-projects', lang)} alt={p.stickerAlt} />
             </h2>
@@ -209,10 +212,11 @@ export default function Projects() {
         {/* Contacto */}
         <span id="contact" className="anchor" style={{ '--y': 1250 + CLOSE_DY }} />
         <div className="grp grp--closing">
-          <P x={756} y={1345.5 + CLOSE_DY} w={426} fs={35.66} cx cy className="projects__end">
+          {/* Textos al mismo tamaño que los de «Sobre mí» (la bio y «Mi enfoque» se ven a 32 y 81.68 × 0.9, About.css) */}
+          <P x={756} y={1345.5 + CLOSE_DY} w={426} fs={28.8} cx cy className="projects__end">
             <p>{p.end}</p>
           </P>
-          <P x={755.58} y={1417 + CLOSE_DY} w={1053.17} fs={88.16} cx cy className="hand projects__cta" data-reveal="cta">
+          <P x={755.58} y={1417 + CLOSE_DY} w={1053.17} fs={73.5} cx cy className="hand projects__cta" data-reveal="cta">
             <h2>
               <Rich text={p.cta} />
             </h2>
@@ -220,7 +224,7 @@ export default function Projects() {
         </div>
 
         <div className="grp grp--contact">
-          <P x={197} y={1549 + CLOSE_DY} w={317} fs={35} className="projects__invite" data-reveal="contact">
+          <P x={197} y={1549 + CLOSE_DY} w={317} fs={28.8} className="projects__invite" data-reveal="contact">
             <p>
               <Rich text={p.invite} />
             </p>

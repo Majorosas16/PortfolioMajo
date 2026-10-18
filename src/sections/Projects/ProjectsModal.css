@@ -1089,3 +1089,41 @@
     animation: none;
   }
 }
+
+/* «Activar sonido»: solo en los reels, si el navegador los arrancó en silencio (MediaCarousel.jsx) */
+.media__sound {
+  position: absolute;
+  z-index: 2;
+  top: 30px;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 6px 12px 6px 9px;
+  border: 0;
+  border-radius: 50px;
+  background: rgba(255, 252, 249, 0.92);
+  color: var(--brown);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transform: translateX(-50%);
+}
+
+.media__sound svg {
+  width: 16px;
+  height: 16px;
+}
+
+.media__sound:hover {
+  background: #fff;
+}
+
+.media__sound:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}

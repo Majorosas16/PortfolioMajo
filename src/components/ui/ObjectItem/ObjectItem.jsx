@@ -5,7 +5,8 @@ import './ObjectItem.css';
 // src: URL de la imagen (ya importada por la sección)
 // x, y, w, h: caja del objeto en el lienzo de 1512px
 // crop: recorte de la imagen tal como en Figma ({ w, h, left, top } en %)
-// label: { text, dx, dy } posición de la etiqueta relativa al objeto (o center: true)
+// label: { text, dx, dy } posición de la etiqueta relativa al objeto (o center: true; con cx, centrada en ese x del
+//        objeto en vez de en su mitad, para objetos cuya parte visible no está en el centro de la imagen)
 // index: orden del objeto (se usa para el desfase de la animación de salida)
 // m: posición en celular, en % del ancho de la escena ({ x, y, w }); solo la usa la caja del inicio
 // onClick: opcional; con él el objeto se comporta como botón (teclado: Enter / Espacio)
@@ -22,7 +23,7 @@ export default function ObjectItem({ src, alt, x, y, w, h, r = 0, crop, flip = f
     ...(m && { '--mx': m.x, '--my': m.y, '--mw': m.w }),
   };
   const labelStyle = label.center
-    ? { '--lx': w / 2, '--ly': label.dy, '--ltx': '-50%' }
+    ? { '--lx': label.cx ?? w / 2, '--ly': label.dy, '--ltx': '-50%' }
     : { '--lx': label.dx, '--ly': label.dy };
 
   const buttonProps = onClick && {
