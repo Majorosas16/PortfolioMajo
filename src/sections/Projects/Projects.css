@@ -287,13 +287,40 @@
   }
 }
 
-/* «Toca y mueve los objetos»: aparece después de la foto, el sticker y la corona */
+/* Los seis objetos aparecen uno tras otro cuando la foto ya llegó (crecen un poco desde abajo). Se anima .obj__media
+   (opacity y scale) para no pisar la flotación (translate del objeto) ni el arrastre (left/top). */
+.objects--projects .obj__media {
+  opacity: 0;
+}
+
+.projects.is-seen .objects--projects .obj__media {
+  opacity: 1;
+  animation: obj-in 0.55s cubic-bezier(0.3, 1.3, 0.5, 1) calc(0.9s + var(--i) * 0.13s) both;
+}
+
+@keyframes obj-in {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+}
+
+.objects--projects .obj__label {
+  opacity: 0;
+}
+
+.projects.is-seen .objects--projects .obj__label {
+  opacity: 1;
+  transition: opacity 0.4s ease calc(1.1s + var(--i) * 0.13s);
+}
+
+/* «Toca y mueve los objetos»: aparece al final, después de la foto, el sticker, la corona y los objetos */
 .projects__tap {
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity 0.5s ease 1.9s,
-    visibility 0s linear 1.9s;
+    opacity 0.5s ease 2.4s,
+    visibility 0s linear 2.4s;
 }
 
 .projects.is-seen .projects__tap {
@@ -382,8 +409,13 @@
     --p: 0.68px;
   }
 
+  /* Más pequeña y un poco más cerca de la foto */
+  .projects__tap {
+    margin-top: -36px;
+  }
+
   .projects__tap .msg {
-    --m: 0.4px;
+    --m: 0.34px;
   }
 
   .projects__photo {
@@ -406,11 +438,11 @@
   }
 
   /* Misma posición respecto a la foto que en el diseño de Figma (foto en 283, 199, de 945 de ancho):
-     sticker en 363, 246.4 (325 de ancho, algo más grande que en Figma) y corona en 676.4, 214.4 (195.7 de ancho, girada hacia la derecha) */
+     sticker en 345.5, 234.4 (360 de ancho, más grande que en Figma) y corona en 676.4, 214.4 (195.7 de ancho, girada hacia la derecha) */
   .grp--box .projects__sticker {
-    left: calc(var(--pl) + var(--pw) * 0.084);
-    top: calc(var(--pw) * 0.05);
-    width: calc(var(--pw) * 0.345);
+    left: calc(var(--pl) + var(--pw) * 0.0665);
+    top: calc(var(--pw) * 0.038);
+    width: calc(var(--pw) * 0.38);
     max-width: none;
   }
 
@@ -531,6 +563,7 @@
   .projects.is-seen .projects__photo img,
   .projects.is-seen .projects__sticker img,
   .projects.is-seen .projects__crown img,
+  .projects.is-seen .objects--projects .obj__media,
   .projects.is-contact .projects__face img,
   .projects.is-contact .projects__note img,
   .circled::after {
@@ -540,8 +573,14 @@
   .projects__photo img,
   .projects__sticker img,
   .projects__crown img,
-  .projects__note img {
+  .projects__note img,
+  .objects--projects .obj__media,
+  .objects--projects .obj__label {
     opacity: 1;
+  }
+
+  .projects.is-seen .objects--projects .obj__label {
+    transition: none;
   }
 
   .projects__face img {
