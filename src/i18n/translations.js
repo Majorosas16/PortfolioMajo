@@ -166,6 +166,7 @@ export const translations = {
         mediaGroups: 'Qué ver',
         posts: 'Post',
         reels: 'Reels',
+        soundOn: 'Activar sonido',
       },
       tags: {
         mobile: 'App móvil',
@@ -460,6 +461,7 @@ export const translations = {
         mediaGroups: 'What to view',
         posts: 'Posts',
         reels: 'Reels',
+        soundOn: 'Turn on sound',
       },
       tags: {
         mobile: 'Mobile app',

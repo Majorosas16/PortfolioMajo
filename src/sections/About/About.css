@@ -210,8 +210,8 @@
 
 /* Figma: centro en x 453, top 1210 (el sticker está en 197, 1212). Se compensa el giro del sticker. */
 .about__bubble--sticker {
-  left: calc(var(--u) * 267);
-  top: calc(var(--u) * 12);
+  left: calc(var(--u) * 300);
+  top: calc(var(--u) * 14);
   rotate: 6.44deg;
 }
 
@@ -463,7 +463,7 @@
   }
 
   .about__sticker {
-    width: 190px;
+    width: 215px;
   }
 
   .about__hello {
@@ -503,7 +503,7 @@
   }
 
   .about__bubble--sticker {
-    left: 150px;
+    left: 170px;
     top: -34px;
   }
 

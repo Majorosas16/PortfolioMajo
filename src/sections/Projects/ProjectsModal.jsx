@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { createPortal, flushSync } from 'react-dom';
 import { byName } from '../../assets/images.js';
 import { localizedSrc } from '../../i18n/images.js';
 import { useLanguage } from '../../i18n/LanguageContext.jsx';
-import MediaCarousel from './MediaCarousel.jsx';
+import MediaCarousel, { playWithSound } from './MediaCarousel.jsx';
 import { projectsIn, subcategoriesOf } from './projects.js';
 import './ProjectsModal.css';
 
@@ -343,7 +343,14 @@ function ProjectDetail({ proj, name, tags, item, m, behanceIcon, newSticker, wip
                   type="button"
                   className={`media-groups__btn${g === group ? ' is-current' : ''}`}
                   aria-pressed={g === group}
-                  onClick={() => setGroup(g)}
+                  onClick={(e) => {
+                    if (g !== 'reels') return setGroup(g);
+                    // Los reels arrancan con sonido dentro del toque (ver playWithSound en MediaCarousel.jsx)
+                    const polaroid = e.currentTarget.closest('.polaroid');
+                    flushSync(() => setGroup(g));
+                    const video = polaroid.querySelector('video.media__item');
+                    if (video) playWithSound(video);
+                  }}
                 >
                   {m[g]}
                 </button>
