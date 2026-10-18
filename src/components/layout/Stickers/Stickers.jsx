@@ -21,7 +21,7 @@ const STORAGE_KEY = 'portfolio-stickers';
 // mayor permitido: en la página, en las celdas del panel y en la pestaña (su interior)
 const sidesFor = (w) =>
   w <= 768
-    ? { page: 72, pageMax: 108, tile: 52, tileMax: 84, tab: 32, tabMax: 40 }
+    ? { page: 72, pageMax: 108, tile: 50, tileMax: 76, tab: 32, tabMax: 40 }
     : { page: 88, pageMax: 132, tile: 46, tileMax: 64, tab: 42, tabMax: 56 };
 
 // Sombra en reposo (pegado) y en el aire; las mismas que .sticker-art y .is-lifted en Stickers.css
@@ -587,7 +587,7 @@ export default function Stickers() {
           <p id="stickers-panel-hint" className="stickers-panel__hint">
             {s.hint}
           </p>
-          <ul className="stickers-panel__grid">
+          <ul className="stickers-panel__grid" style={{ '--tile-h': `${sides.tileMax + 6}px` }}>
             {IDS.map((id) => (
               <li key={id}>
                 <button

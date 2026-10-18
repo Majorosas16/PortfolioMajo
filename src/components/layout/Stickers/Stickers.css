@@ -251,7 +251,7 @@
   right: 96px;
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: 264px;
   max-height: min(70vh, 560px);
   padding: 18px 18px 16px;
   border-radius: 20px;
@@ -322,7 +322,7 @@
 }
 
 .stickers-panel__hint {
-  margin: 6px 0 14px;
+  margin: 6px 0 10px;
   font-size: 13px;
   font-weight: 300;
   line-height: 1.35;
@@ -332,20 +332,21 @@
 .stickers-panel__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 6px;
 }
 
+/* Sin recuadro: solo el sticker, en una celda del alto del más alto (--tile-h, Stickers.jsx) */
 .stickers-panel__item {
   appearance: none;
   display: grid;
   place-items: center;
   width: 100%;
-  aspect-ratio: 1;
+  height: var(--tile-h);
   margin: 0;
-  padding: 8px;
+  padding: 0;
   border: 0;
-  border-radius: 14px;
-  background: var(--cream);
+  border-radius: 12px;
+  background: none;
   position: relative;
   cursor: grab;
   /* El gesto sobre un sticker lo despega (no desplaza el panel; se desplaza desde fuera de los stickers) */
@@ -354,7 +355,12 @@
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color 0.2s ease;
+}
+
+.stickers-panel__item .peel {
+  transition:
+    translate 0.2s ease,
+    rotate 0.2s ease;
 }
 
 /* Realce al pasar el ratón: solo con ratón (en pantallas táctiles el :hover se queda pegado tras tocar) */
@@ -366,8 +372,10 @@
       0 2px 6px rgba(67, 47, 46, 0.12);
   }
 
-  .stickers-panel__item:hover {
-    background: #f3ebe4;
+  /* Al pasar el ratón el sticker se mueve un poquito (sube y se ladea) */
+  .stickers-panel__item:hover .peel {
+    translate: 0 -3px;
+    rotate: -3deg;
   }
 }
 
@@ -432,7 +440,7 @@
   .stickers-tab.is-hidden,
   .stickers-tab img,
   .stickers-panel,
-  .stickers-panel__item {
+  .stickers-panel__item .peel {
     transition: none;
   }
 
