@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { byName } from '../../../assets/images.js';
+import { createPortal } from 'react-dom';
 import { useLanguage } from '../../../i18n/LanguageContext.jsx';
+import StickerArt, { STICKER_IDS as IDS, artSize, stickerImg as img } from './StickerArt.jsx';
 import useStickerDrag from './useStickerDrag.js';
 import './Stickers.css';
 
-// Stickers (src/assets/stickers/, generados desde design-originals/stickers con `npm run images`). Cualquier imagen
-// nueva de esa carpeta aparece sola en el panel; su nombre accesible va en translations.js (stickers.names).
-const img = byName(import.meta.glob('../../../assets/stickers/*', { eager: true, import: 'default' }));
-const IDS = Object.keys(img).sort();
+// Cualquier imagen nueva de design-originals/stickers (tras `npm run images`) aparece sola en el panel; su nombre
+// accesible va en translations.js (stickers.names).
 
 // Cada cuánto cambia el sticker de la pestaña y cuánto dura su fundido (ms)
 const ROTATE_MS = 10000;
@@ -16,8 +15,17 @@ const FADE_MS = 300;
 // Stickers colocados: se recuerdan mientras la pestaña del navegador siga abierta (también al recargar)
 const STORAGE_KEY = 'portfolio-stickers';
 
-// Lado del cuadrado que ocupa cada sticker colocado (la imagen se ajusta dentro sin recortarse)
-const sizeFor = (w) => (w <= 768 ? 104 : Math.round(Math.min(140, Math.max(96, w * 0.09))));
+// Tamaño común de los stickers (lado del cuadrado con la misma área visible, ver artSize en StickerArt.jsx) y lado
+// mayor permitido: en la página, en las celdas del panel y en la pestaña (su interior)
+const sidesFor = (w) =>
+  w <= 768
+    ? { page: 72, pageMax: 108, tile: 52, tileMax: 84, tab: 32, tabMax: 40 }
+    : { page: 88, pageMax: 132, tile: 46, tileMax: 64, tab: 42, tabMax: 56 };
+
+// Sombra en reposo (pegado) y en el aire; las mismas que .sticker-art y .is-lifted en Stickers.css
+const SHADOW_REST = 'drop-shadow(0 2px 3px rgba(67, 47, 46, 0.25))';
+const SHADOW_LIFT = 'drop-shadow(0 14px 14px rgba(67, 47, 46, 0.22))';
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const fill = (text, vars) => Object.entries(vars).reduce((t, [k, v]) => t.replace(`{${k}}`, v), text);
 const clamp = (v, min, max) => Math.min(Math.max(v, min), Math.max(min, max));
@@ -29,15 +37,18 @@ const pickOther = (current) => {
 const readStored = () => {
   try {
     const list = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
-    return Array.isArray(list) ? list.filter((s) => s && img[s.id] && Number.isFinite(s.x) && Number.isFinite(s.y)) : [];
+    return Array.isArray(list)
+      ? list.filter((s) => s && img[s.id] && Number.isFinite(s.x) && Number.isFinite(s.y)).map(({ fresh, arriving, ...p }) => p)
+      : [];
   } catch {
     return [];
   }
 };
 
 // Pestaña flotante (a la derecha, centrada) con un sticker que cambia cada 10 s. Al tocarla abre el panel con todos
-// los stickers: tocar uno lo pone en el centro de la pantalla; con el mouse también se puede arrastrar directo a la
-// página. Los colocados se arrastran (mouse y dedo), se mueven con las flechas y se quitan con su × o con Suprimir.
+// los stickers: tocar uno lo despega del panel y lo lleva volando hasta el centro de la pantalla, donde se pega con un
+// pequeño rebote; con el mouse también se puede arrastrar directo a la página (se levanta al agarrarlo y rebota al
+// soltarlo). Los colocados se arrastran (mouse y dedo), se mueven con las flechas y se quitan con su × o con Suprimir.
 // Los stickers viven en una capa que cubre todo <main> sin recibir toques (pointer-events: none): solo cada sticker
 // los recibe, así el scroll y las secciones funcionan igual. Posición: x en fracción del ancho de <main> (sigue en su
 // columna si cambia el ancho de la ventana) e y en px desde arriba de <main>.
@@ -48,6 +59,7 @@ export default function Stickers() {
   const tabRef = useRef(null);
   const panelRef = useRef(null);
   const focusUid = useRef(null);
+  const flyerRef = useRef(null);
   // Capa más alta en uso: el sticker que se agarra pasa por encima de los demás
   const zTop = useRef(null);
 
@@ -57,21 +69,27 @@ export default function Stickers() {
   // El panel se esconde mientras se arrastra un sticker desde él (sigue montado: su botón tiene capturado el puntero)
   const [draggingOut, setDraggingOut] = useState(false);
   const [hidden, setHidden] = useState(true);
-  const [size, setSize] = useState(() => sizeFor(window.innerWidth));
+  const [sides, setSides] = useState(() => sidesFor(window.innerWidth));
+  // Sticker que se lleva en el aire (se inclina y su sombra crece mientras se arrastra)
+  const [lifted, setLifted] = useState(null);
+  // Sticker que viaja del panel a la página: { uid, id, from (rect de su celda), to (centro final), r }
+  const [flight, setFlight] = useState(null);
+  // El panel sigue montado mientras se desvanece al cerrarse
+  const [panelMounted, setPanelMounted] = useState(false);
 
   if (zTop.current === null) zTop.current = placed.reduce((m, p) => Math.max(m, p.z || 0), 0);
 
-  // Guarda los colocados (sin la marca de recién puesto, que solo sirve para la animación)
+  // Guarda los colocados (sin la marca de «en vuelo», que solo sirve para la animación)
   useEffect(() => {
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(placed.map(({ fresh, ...p }) => p)));
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(placed.map(({ arriving, ...p }) => p)));
     } catch {
       /* sin almacenamiento: los stickers duran mientras la página esté abierta */
     }
   }, [placed]);
 
   useEffect(() => {
-    const onResize = () => setSize(sizeFor(window.innerWidth));
+    const onResize = () => setSides(sidesFor(window.innerWidth));
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
@@ -141,18 +159,23 @@ export default function Stickers() {
     return { x: clientX - r.left, y: clientY - r.top, w: r.width, h: r.height };
   };
 
-  // Centro (px de la capa) → posición guardada, sin que el sticker salga de <main>
-  const positionAt = (cx, cy, w, h) => ({
-    x: clamp(cx, size / 2, w - size / 2) / w,
-    y: clamp(cy, size / 2, h - size / 2),
-  });
+  const pageSize = (id) => artSize(id, sides.page, sides.pageMax);
 
-  const add = (id, cx, cy) => {
+  // Centro (px de la capa) → posición guardada, sin que el sticker salga de <main>
+  const positionAt = (id, cx, cy, w, h) => {
+    const size = pageSize(id);
+    return {
+      x: clamp(cx, size.w / 2, w - size.w / 2) / w,
+      y: clamp(cy, size.h / 2, h - size.h / 2),
+    };
+  };
+
+  const add = (id, cx, cy, extra) => {
     const { w, h } = toLayer(0, 0);
     const uid = `${id}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
-    const sticker = { uid, id, ...positionAt(cx, cy, w, h), r: Math.round(Math.random() * 16 - 8), z: ++zTop.current, fresh: true };
+    const sticker = { uid, id, ...positionAt(id, cx, cy, w, h), r: Math.round(Math.random() * 16 - 8), z: ++zTop.current, ...extra };
     setPlaced((list) => [...list, sticker]);
-    return uid;
+    return sticker;
   };
 
   const update = (uid, patch) => setPlaced((list) => list.map((p) => (p.uid === uid ? { ...p, ...patch } : p)));
@@ -163,14 +186,64 @@ export default function Stickers() {
     tabRef.current?.focus({ preventScroll: true });
   };
 
-  // Tocar (o Enter) un sticker del panel: va al centro de la pantalla, un poco movido para que no se apilen exactos
-  const placeAtCenter = (id) => {
-    const { x, y } = toLayer(window.innerWidth / 2, window.innerHeight / 2);
-    const uid = add(id, x + (Math.random() * 60 - 30), y + (Math.random() * 60 - 30));
-    focusUid.current = uid;
-    setSelected(uid);
+  // Rebote al pegarse: llega un poco grande y en el aire, se aplasta contra la página y se asienta
+  const land = (uid) => {
+    if (reducedMotion()) return;
+    layerRef.current?.querySelector(`[data-uid="${uid}"] .sticker-art`)?.animate(
+      [
+        { opacity: 1, scale: 1.1, filter: SHADOW_LIFT },
+        { opacity: 1, scale: 0.93, filter: SHADOW_REST, offset: 0.45 },
+        { opacity: 1, scale: 1.03, filter: SHADOW_REST, offset: 0.75 },
+        { opacity: 1, scale: 1, filter: SHADOW_REST },
+      ],
+      { duration: 300, easing: 'ease-out' }
+    );
+  };
+
+  // Tocar (o Enter) un sticker del panel: se despega de su celda y vuela hasta el centro de la pantalla (un poco
+  // movido para que no se apilen exactos). El sticker real ya está en su sitio, invisible (arriving) pero con el foco,
+  // así se puede mover enseguida; al aterrizar el que vuela, aparece y rebota.
+  const placeAtCenter = (id, tile) => {
+    const from = tile?.querySelector('.sticker-art')?.getBoundingClientRect();
+    const fly = Boolean(from) && !reducedMotion();
+    const layer = toLayer(window.innerWidth / 2 + (Math.random() * 60 - 30), window.innerHeight / 2 + (Math.random() * 60 - 30));
+    const sticker = add(id, layer.x, layer.y, fly ? { arriving: true } : undefined);
+    if (fly) {
+      const r = layerRef.current.getBoundingClientRect();
+      setFlight({ uid: sticker.uid, id, from, to: { x: r.left + sticker.x * r.width, y: r.top + sticker.y }, r: sticker.r });
+    }
+    focusUid.current = sticker.uid;
+    setSelected(sticker.uid);
     setOpen(false);
   };
+
+  // Vuelo: despega (sube, gira y su sombra crece), hace un arco y llega al sitio donde se pega
+  useLayoutEffect(() => {
+    if (!flight) return undefined;
+    const { uid, from, to, r } = flight;
+    const size = pageSize(flight.id);
+    const s0 = from.width / size.w;
+    const dx = from.left + from.width / 2 - to.x;
+    const dy = from.top + from.height / 2 - to.y;
+    const anim = flyerRef.current.animate(
+      [
+        { translate: `${dx}px ${dy}px`, scale: s0, rotate: '0deg', filter: SHADOW_REST, easing: 'ease-out' },
+        { translate: `${dx}px ${dy - 14}px`, scale: s0 * 1.15, rotate: '-10deg', filter: SHADOW_LIFT, offset: 0.18, easing: 'cubic-bezier(0.45, 0, 0.3, 1)' },
+        { translate: `${dx / 2}px ${dy / 2 - 70}px`, scale: 1.15, rotate: `${r + 10}deg`, filter: SHADOW_LIFT, offset: 0.6, easing: 'cubic-bezier(0.3, 0.6, 0.4, 1)' },
+        { translate: '0px 0px', scale: 1.1, rotate: `${r}deg`, filter: SHADOW_LIFT },
+      ],
+      { duration: 560, fill: 'both' }
+    );
+    anim.onfinish = () => {
+      update(uid, { arriving: false });
+      setFlight(null);
+      land(uid);
+    };
+    return () => {
+      anim.onfinish = null;
+      anim.cancel();
+    };
+  }, [flight]); // Solo al empezar cada vuelo
 
   // Tras colocar con el panel, el foco pasa al sticker para moverlo enseguida con las flechas
   useLayoutEffect(() => {
@@ -183,24 +256,29 @@ export default function Stickers() {
     onMove(target, clientX, clientY, startX, startY) {
       const { x, y, w, h } = toLayer(clientX, clientY);
       if (target.id) {
-        // Desde el panel: el primer movimiento crea el sticker bajo el puntero
+        // Desde el panel: el primer movimiento crea el sticker bajo el puntero, ya en el aire
         if (!target.uid) {
-          target.uid = add(target.id, x, y);
+          target.uid = add(target.id, x, y).uid;
           setDraggingOut(true);
+          setLifted(target.uid);
         }
-        update(target.uid, positionAt(x, y, w, h));
+        update(target.uid, positionAt(target.id, x, y, w, h));
         return;
       }
+      const p = placed.find((q) => q.uid === target.uid);
+      if (!p) return;
       if (!target.start) {
-        const p = placed.find((q) => q.uid === target.uid);
-        if (!p) return;
         target.start = { cx: p.x * w, cy: p.y };
         update(target.uid, { z: ++zTop.current });
+        setLifted(target.uid);
       }
-      update(target.uid, positionAt(target.start.cx + clientX - startX, target.start.cy + clientY - startY, w, h));
+      update(target.uid, positionAt(p.id, target.start.cx + clientX - startX, target.start.cy + clientY - startY, w, h));
     },
     onEnd(target, moved) {
-      if (target.id && moved) {
+      if (!moved) return;
+      setLifted(null);
+      if (target.uid) land(target.uid);
+      if (target.id) {
         setDraggingOut(false);
         setOpen(false);
       }
@@ -213,7 +291,7 @@ export default function Stickers() {
     if (moves[e.key]) {
       e.preventDefault();
       const { w, h } = toLayer(0, 0);
-      update(p.uid, positionAt(p.x * w + moves[e.key][0], p.y + moves[e.key][1], w, h));
+      update(p.uid, positionAt(p.id, p.x * w + moves[e.key][0], p.y + moves[e.key][1], w, h));
       setSelected(p.uid);
     } else if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
@@ -234,6 +312,20 @@ export default function Stickers() {
   }, [selected]);
 
   // ---------- Panel ----------
+  // Al cerrarse se desvanece (0.2 s) antes de desmontarse
+  useEffect(() => {
+    if (open) {
+      setPanelMounted(true);
+      return undefined;
+    }
+    if (reducedMotion()) {
+      setPanelMounted(false);
+      return undefined;
+    }
+    const timer = setTimeout(() => setPanelMounted(false), 200);
+    return () => clearTimeout(timer);
+  }, [open]);
+
   const closePanel = useCallback(() => {
     setOpen(false);
     tabRef.current?.focus({ preventScroll: true });
@@ -264,12 +356,12 @@ export default function Stickers() {
 
   return (
     <>
-      <div ref={layerRef} className="stickers-layer" style={{ '--sticker-size': `${size}px` }}>
+      <div ref={layerRef} className="stickers-layer">
         {placed.map((p) => (
           <div
             key={p.uid}
             data-uid={p.uid}
-            className={`sticker${selected === p.uid ? ' is-selected' : ''}${p.fresh ? ' is-fresh' : ''}`}
+            className={`sticker${selected === p.uid ? ' is-selected' : ''}${lifted === p.uid ? ' is-lifted' : ''}${p.arriving ? ' is-arriving' : ''}`}
             style={{ left: `${p.x * 100}%`, top: `${p.y}px`, '--r': `${p.r}deg`, zIndex: p.z }}
           >
             <button
@@ -280,9 +372,9 @@ export default function Stickers() {
               onClick={() => setSelected((cur) => (cur === p.uid ? null : p.uid))}
               onKeyDown={(e) => onStickerKey(e, p)}
             >
-              <img src={img[p.id]} alt="" draggable={false} decoding="async" />
+              <StickerArt id={p.id} side={sides.page} max={sides.pageMax} />
             </button>
-            {selected === p.uid && (
+            {selected === p.uid && !p.arriving && (
               <button type="button" className="sticker__remove" aria-label={fill(s.remove, { name: nameOf(p.id) })} onClick={() => remove(p.uid)}>
                 <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                   <path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -303,14 +395,14 @@ export default function Stickers() {
         tabIndex={hidden ? -1 : undefined}
         onClick={() => (open ? closePanel() : setOpen(true))}
       >
-        <img className={fading ? 'is-fading' : ''} src={img[tabId]} alt="" draggable={false} />
+        <StickerArt id={tabId} side={sides.tab} max={sides.tabMax} className={fading ? 'is-fading' : ''} />
       </button>
 
-      {open && (
+      {(open || panelMounted) && (
         <div
           ref={panelRef}
           id="stickers-panel"
-          className={`stickers-panel${draggingOut ? ' is-dragging-out' : ''}`}
+          className={`stickers-panel${draggingOut ? ' is-dragging-out' : ''}${open ? '' : ' is-leaving'}`}
           role="dialog"
           aria-labelledby="stickers-panel-title"
           aria-describedby="stickers-panel-hint"
@@ -338,9 +430,9 @@ export default function Stickers() {
                   // Con mouse o lápiz se puede arrastrar directo a la página; con el dedo, un toque lo pone en el
                   // centro (así el panel se sigue desplazando con el dedo)
                   onPointerDown={(e) => e.pointerType !== 'touch' && startDrag(e, { id })}
-                  onClick={() => placeAtCenter(id)}
+                  onClick={(e) => placeAtCenter(id, e.currentTarget)}
                 >
-                  <img src={img[id]} alt="" draggable={false} decoding="async" />
+                  <StickerArt id={id} side={sides.tile} max={sides.tileMax} />
                 </button>
               </li>
             ))}
@@ -352,6 +444,21 @@ export default function Stickers() {
           )}
         </div>
       )}
+
+      {/* Sticker en vuelo del panel a la página: fijo y por encima del panel, en el sitio donde aterriza */}
+      {flight &&
+        createPortal(
+          <StickerArt
+            ref={flyerRef}
+            id={flight.id}
+            side={sides.page}
+            max={sides.pageMax}
+            className="sticker-flyer"
+            aria-hidden="true"
+            style={{ left: flight.to.x - pageSize(flight.id).w / 2, top: flight.to.y - pageSize(flight.id).h / 2 }}
+          />,
+          document.body,
+        )}
     </>
   );
 }
