@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useLanguage } from '../../../i18n/LanguageContext.jsx';
 import Peelable from './Peelable.jsx';
 import { nearestCorner, peelGeometry } from './peel.js';
+import { playPeelSound, unlockPeelSound } from './peelSound.js';
 import StickerArt, { STICKER_IDS as IDS, artSize, stickerImg as img } from './StickerArt.jsx';
 import useStickerDrag from './useStickerDrag.js';
 import './Stickers.css';
@@ -271,6 +272,8 @@ export default function Stickers() {
   // Tocar (o Enter) un sticker del panel: se despega solo, de la esquina hacia la contraria, y luego vuela a la página
   const pick = (id, tile) => {
     if (busy.current.has(id)) return;
+    unlockPeelSound();
+    playPeelSound();
     if (reducedMotion()) {
       placeAtCenter(id, tile);
       return;
@@ -289,6 +292,8 @@ export default function Stickers() {
   const peelOff = (uid) => {
     const p = placed.find((q) => q.uid === uid);
     if (!p || removing.current.has(uid)) return;
+    unlockPeelSound();
+    playPeelSound();
     if (reducedMotion()) {
       remove(uid);
       return;
@@ -399,6 +404,7 @@ export default function Stickers() {
               const cur = peelsNow.current[key];
               stopPeel(key);
               busy.current.add(target.id);
+              playPeelSound();
               target.peel = { ...size, C, base: cur && cur.C[0] === C[0] && cur.C[1] === C[1] ? cur.P : C };
             }
             const { C, base } = target.peel;
@@ -412,7 +418,8 @@ export default function Stickers() {
             empty(target.id);
             busy.current.delete(target.id);
           }
-          // Ya despegado: el sticker aparece bajo el puntero, en el aire
+          // Ya despegado: el sticker aparece bajo el puntero, en el aire (sin animación, el sonido va aquí)
+          if (reducedMotion()) playPeelSound();
           target.uid = add(target.id, x, y).uid;
           setDraggingOut(true);
           setLifted(target.uid);
@@ -560,7 +567,12 @@ export default function Stickers() {
         aria-expanded={open}
         aria-controls="stickers-panel"
         tabIndex={hidden ? -1 : undefined}
-        onClick={() => (open ? closePanel() : setOpen(true))}
+        onClick={() => {
+          // Abrir el panel es un toque: deja el sonido de despegar listo para cuando se use
+          unlockPeelSound();
+          if (open) closePanel();
+          else setOpen(true);
+        }}
       >
         <StickerArt id={tabId} side={sides.tab} max={sides.tabMax} className={fading ? 'is-fading' : ''} />
       </button>
@@ -595,7 +607,10 @@ export default function Stickers() {
                   className="stickers-panel__item"
                   aria-label={fill(s.place, { name: nameOf(id) })}
                   // Se despega arrastrándolo (mouse, lápiz o dedo) o tocándolo; con el mouse encima levanta la esquina
-                  onPointerDown={(e) => startDrag(e, { id, el: e.currentTarget })}
+                  onPointerDown={(e) => {
+                    unlockPeelSound();
+                    startDrag(e, { id, el: e.currentTarget });
+                  }}
                   onPointerEnter={(e) => e.pointerType === 'mouse' && peek(id, true)}
                   onPointerLeave={(e) => e.pointerType === 'mouse' && peek(id, false)}
                   onClick={(e) => pick(id, e.currentTarget)}
