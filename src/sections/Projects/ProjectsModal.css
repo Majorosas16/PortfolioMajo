@@ -909,6 +909,13 @@
     font-size: 13px;
   }
 
+  /* Solo scroll vertical: los stickers que sobresalen de las tarjetas (y su animación al pegarse, que llega más
+     grande) no deben abrir un scroll horizontal en la hoja */
+  .pmodal__list,
+  .pdetail {
+    overflow-x: hidden;
+  }
+
   .pmodal__list {
     padding: 8px 0 32px;
   }
@@ -997,15 +1004,16 @@
     padding: 16px 0 0;
   }
 
+  /* Sobresalen menos que el margen de la hoja (14px), para que el recorte del scroll horizontal no los corte */
   .pnew--detail {
     top: -20px;
-    right: -10px;
+    right: -6px;
     width: 84px;
   }
 
   .pwip--detail {
     top: -20px;
-    left: -10px;
+    left: -6px;
     width: 80px;
   }
 

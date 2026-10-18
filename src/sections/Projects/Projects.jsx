@@ -100,7 +100,7 @@ export default function Projects() {
   useDraggableObjects(sectionRef, true, onDrag, '.objects--projects .obj');
 
   // Al aparecer la sección (una sola vez): la foto aparece con un fundido, el sticker «Proyectos» se pega, llega la
-  // corona y al final la burbuja «Toca y mueve los objetos»
+  // corona, aparecen los seis objetos uno tras otro y al final la burbuja «Toca y mueve los objetos»
   const [seen, setSeen] = useState(false);
   useEffect(() => {
     const io = new IntersectionObserver(([e]) => {
@@ -176,8 +176,8 @@ export default function Projects() {
           <p className="visually-hidden" aria-live="polite">
             {coffeeMsg ? p.coffeeMsg : ''}
           </p>
-          {/* Algo más grande que en Figma (291 de ancho en 379.9, 257.9), con el mismo centro */}
-          <P x={363} y={246.4} w={325} r={-8.26} className="projects__sticker">
+          {/* Más grande que en Figma (291 de ancho en 379.9, 257.9), con el mismo centro */}
+          <P x={345.5} y={234.4} w={360} r={-8.26} className="projects__sticker">
             <h2>
               <img loading="lazy" decoding="async" src={localizedSrc(img, 'sticker-projects', lang)} alt={p.stickerAlt} />
             </h2>
@@ -185,10 +185,10 @@ export default function Projects() {
           <P x={676.4} y={214.4} w={195.73} r={37.55} className="projects__crown">
             <img loading="lazy" decoding="async" src={img['crown']} alt="" />
           </P>
-          {/* Debajo del brazo derecho (el borde del antebrazo va de y 600 a 490), algo más pequeña que en Figma;
-              aparece al final de la entrada de la sección (Projects.css) */}
-          <P x={1080} y={598} cx className="projects__tap">
-            <Message text={p.tap} emoji="👆🏽" k={0.42} />
+          {/* Debajo del brazo derecho (el borde del antebrazo va de y 600 a 490), más pequeña que en Figma;
+              aparece al final de la entrada de la sección, después de los objetos (Projects.css) */}
+          <P x={1080} y={572} cx className="projects__tap">
+            <Message text={p.tap} emoji="👆🏽" k={0.35} />
           </P>
           <div className="objects objects--projects">
             {objects.map((o, i) => (
