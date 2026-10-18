@@ -24,7 +24,9 @@ const mediaOf = (id) =>
     .map((path) => {
       const video = /\.(mp4|webm)$/i.test(path);
       const poster = video ? files[path.replace(/\.(mp4|webm)$/i, '.poster.webp')] : undefined;
-      return { type: video ? 'video' : 'image', src: files[path], poster, fill: /-fill\.[^/.]+$/.test(path) };
+      // group: en los proyectos con social, lo que viene de la subcarpeta Reels va en «Reels» y el resto en «Post»
+      const group = /\/reels-[^/]+$/.test(path) ? 'reels' : 'posts';
+      return { type: video ? 'video' : 'image', src: files[path], poster, fill: /-fill\.[^/.]+$/.test(path), group };
     });
 
 // Categorías = los seis objetos de la sección; cada una abre su propio modal. Cada proyecto pertenece a UNA sola
@@ -40,7 +42,9 @@ export const subcategoriesOf = (categoryId) => subcategories[categoryId] ?? null
 // category: su categoría (una de las seis) · sub: su subcategoría, si la categoría tiene · isNew: lleva el sticker
 // «Nuevo proyecto» en su tarjeta y su detalle · wip: sigue en desarrollo, lleva el sticker «Trabajando en ello» ·
 // tags: sus etiquetas (texto en translations.js, projects.tags), en el orden en que se muestran · tools: herramientas
-// (nombres propios, iguales en los dos idiomas)
+// (nombres propios, iguales en los dos idiomas) · social: proyecto de redes sociales; en su detalle la Polaroid lleva
+// los botones «Post» y «Reels» (sus fotos o sus videos de la subcarpeta Reels), y los reels van a velocidad normal y
+// con sonido
 export const projects = [
   { id: 'arka', category: 'prism', sub: 'mobileApps', name: 'Arka', tags: ['mobile', 'ui', 'prototyping', 'ai'], tools: ['Figma', 'Figma Make', 'Lovable'] },
   {
@@ -80,10 +84,10 @@ export const projects = [
   },
   { id: 'mill5', category: 'coffee', name: 'MILL5 Colombia', tags: ['internalComms', 'client'], tools: ['Figma', 'Illustrator'] },
   {
-    id: 'westudy', category: 'coffee', isNew: true, name: 'We Study World', tags: ['social', 'internalComms', 'accessibility', 'client'],
+    id: 'westudy', category: 'coffee', isNew: true, social: true, name: 'We Study World', tags: ['social', 'internalComms', 'accessibility', 'client'],
     tools: ['Illustrator', 'Photoshop', 'CapCut'],
   },
-].map((p) => ({ behance: null, isNew: false, wip: false, ...p, media: mediaOf(p.id) }));
+].map((p) => ({ behance: null, isNew: false, wip: false, social: false, ...p, media: mediaOf(p.id) }));
 
 // Proyectos de una categoría, en el orden de la lista
 export const projectsIn = (categoryId) => projects.filter((p) => p.category === categoryId);

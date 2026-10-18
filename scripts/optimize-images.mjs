@@ -49,7 +49,8 @@ const galeria = {
 // - Imágenes (.png, .jpg, .heic): WebP de alta calidad (90), conservando el perfil de color; como mucho 1680 de ancho y
 //   2100 de alto (6× lo que ocupan en el carrusel). Nunca se amplían. Las HEIC se pasan antes a TIFF con `sips` (macOS).
 // - Videos (.mov, .mp4): MP4 H.264 para la web con ffmpeg (alta calidad, CRF 22, inicio rápido), como mucho 1080
-//   de alto, más su portada <nombre>.poster.webp (el primer fotograma). Sin ffmpeg se omiten con un aviso.
+//   de alto, más su portada <nombre>.poster.webp (el primer fotograma). Van sin sonido, salvo los de una subcarpeta
+//   «Reels». Sin ffmpeg se omiten con un aviso.
 const trabajos = {
   origen: 'sections/projects/Images each project',
   destino: 'sections/projects/work',
@@ -245,18 +246,21 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
       console.log(`!  ${rel}: para convertir videos hace falta ffmpeg (brew install ffmpeg). Se omite.`);
       continue;
     }
+    // Los videos de una subcarpeta «Reels» (reels de redes sociales) conservan su sonido; los demás van sin audio
+    const conSonido = /(^|[\\/])reels[\\/]/i.test(nombre);
+    const audio = conSonido ? ['-c:a', 'aac', '-b:a', '128k'] : ['-an'];
     // Alto como mucho videoAlto (sin ampliar) y medidas pares, que H.264 exige
     const escala = `scale=-2:'min(${trabajos.videoAlto},ih)':flags=lanczos`;
     execFileSync('ffmpeg', [
       '-y', '-loglevel', 'error', '-i', archivo,
       '-vf', `${escala},format=yuv420p`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '22', '-profile:v', 'high',
-      '-movflags', '+faststart', '-an', salida,
+      '-movflags', '+faststart', ...audio, salida,
     ]);
     // Si el original ya es un MP4 H.264 más ligero (p. ej. un reel de Instagram), se usa su video tal cual, sin
-    // recomprimir: solo se quita el audio y se prepara para inicio rápido
+    // recomprimir: solo se quita el audio (salvo en los reels) y se prepara para inicio rápido
     const codec = execFileSync('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=codec_name', '-of', 'csv=p=0', archivo]).toString().trim();
     if (codec === 'h264' && (await stat(salida)).size >= pesoAntes) {
-      execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', archivo, '-map', '0:v:0', '-c', 'copy', '-movflags', '+faststart', salida]);
+      execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', archivo, '-map', '0:v:0', ...(conSonido ? ['-map', '0:a:0?'] : []), '-c', 'copy', '-movflags', '+faststart', salida]);
     }
     const poster = join(dirDestino, `${base}.poster.png`);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', archivo, '-vf', escala, '-frames:v', '1', poster]);

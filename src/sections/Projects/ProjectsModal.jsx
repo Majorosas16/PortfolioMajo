@@ -325,13 +325,31 @@ function ProjectCover({ media, labels }) {
 }
 
 // Detalle de un proyecto dentro del modal de su categoría (el botón para volver está en la cabecera): sus
-// fotos/videos (Polaroid grande con carrusel) y su información completa.
+// fotos/videos (Polaroid grande con carrusel) y su información completa. En un proyecto de redes (social), el borde
+// de abajo de la Polaroid lleva los botones «Post» y «Reels», que cambian lo que muestra el carrusel.
 function ProjectDetail({ proj, name, tags, item, m, behanceIcon, newSticker, wipSticker }) {
+  const [group, setGroup] = useState('posts');
+  const media = proj.social ? proj.media.filter((x) => x.group === group) : proj.media;
   return (
     <div className="pdetail">
       <article className="project" aria-labelledby={`project-${proj.id}`}>
-        <div className="polaroid polaroid--detail">
-          <MediaCarousel media={proj.media} name={name} labels={m} />
+        <div className={`polaroid polaroid--detail${proj.social ? ' polaroid--groups' : ''}`}>
+          <MediaCarousel key={group} media={media} name={name} labels={m} sound={proj.social && group === 'reels'} />
+          {proj.social && (
+            <div className="media-groups" role="group" aria-label={m.mediaGroups}>
+              {['posts', 'reels'].map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  className={`media-groups__btn${g === group ? ' is-current' : ''}`}
+                  aria-pressed={g === group}
+                  onClick={() => setGroup(g)}
+                >
+                  {m[g]}
+                </button>
+              ))}
+            </div>
+          )}
           {proj.isNew && <img className="pnew pnew--detail" src={newSticker} alt={m.newProject} />}
           {proj.wip && <img className="pnew pwip pwip--detail" src={wipSticker} alt={m.wipProject} />}
         </div>

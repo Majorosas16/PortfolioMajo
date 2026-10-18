@@ -163,6 +163,9 @@ export const translations = {
         newProject: 'Proyecto nuevo',
         wipProject: 'Trabajando en ello',
         goTo: 'Ver {n} de {total}',
+        mediaGroups: 'Qué ver',
+        posts: 'Post',
+        reels: 'Reels',
       },
       tags: {
         mobile: 'App móvil',
@@ -454,6 +457,9 @@ export const translations = {
         newProject: 'New project',
         wipProject: 'Working on it',
         goTo: 'View {n} of {total}',
+        mediaGroups: 'What to view',
+        posts: 'Posts',
+        reels: 'Reels',
       },
       tags: {
         mobile: 'Mobile app',

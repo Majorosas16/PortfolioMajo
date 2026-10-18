@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 // Carrusel manual: solo cambia con los botones ‹ › o tocando una barra; nunca solo ni por tiempo. Las barras de
 // arriba (como las de «Sobre mí») muestran cuántos elementos hay y cuál se ve. Los videos van a 1.5× y se reproducen
 // solos (sin sonido, en bucle) mientras se ven en pantalla; tienen sus controles para pausarlos o verlos en grande.
-// media: [{ type: 'image' | 'video', src, poster? }] (projects.js) · labels: projects.modal de translations.js
-export default function MediaCarousel({ media, name, labels }) {
+// media: [{ type: 'image' | 'video', src, poster? }] (projects.js) · labels: projects.modal de translations.js ·
+// sound: los videos van a velocidad normal y con sonido (los reels de un proyecto de redes)
+export default function MediaCarousel({ media, name, labels, sound = false }) {
   const [current, setCurrent] = useState(0);
   const n = media.length;
   const fill = (text, vars) => Object.entries(vars).reduce((t, [k, v]) => t.replace(`{${k}}`, v), text);
@@ -35,7 +36,7 @@ export default function MediaCarousel({ media, name, labels }) {
         <img key={`bg-${item.src}`} className="media__backdrop" src={item.type === 'image' ? item.src : item.poster} alt="" aria-hidden="true" />
       )}
       {item.type === 'video' ? (
-        <AutoVideo key={item.src} src={item.src} poster={item.poster} />
+        <AutoVideo key={item.src} src={item.src} poster={item.poster} sound={sound} />
       ) : (
         <img key={item.src} className={`media__item${item.fill ? ' media__item--fill' : ''}`} src={item.src} alt="" loading="lazy" decoding="async" draggable="false" />
       )}
@@ -79,25 +80,36 @@ export default function MediaCarousel({ media, name, labels }) {
 
 // Video del carrusel: a 1.5× (VIDEO_RATE) y en reproducción solo mientras al menos la mitad está a la vista (al llegar
 // a él en el carrusel o al desplazarse hasta él); se pausa al salir. Con «reducir movimiento» no arranca solo.
+// Con sound va a 1× y con sonido, a volumen bajo (VIDEO_VOLUME) porque arranca solo; se puede subir desde sus
+// controles. Si el navegador no deja arrancar con sonido, arranca silenciado y se activa desde sus controles.
 const VIDEO_RATE = 1.5;
+const VIDEO_VOLUME = 0.35;
 
-function AutoVideo({ src, poster }) {
+function AutoVideo({ src, poster, sound }) {
   const ref = useRef(null);
+  const rate = sound ? 1 : VIDEO_RATE;
   useEffect(() => {
     const video = ref.current;
-    video.defaultPlaybackRate = VIDEO_RATE;
-    video.playbackRate = VIDEO_RATE;
+    video.defaultPlaybackRate = rate;
+    video.playbackRate = rate;
+    if (sound) video.volume = VIDEO_VOLUME;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const play = () =>
+      video.play().catch(() => {
+        if (video.muted) return;
+        video.muted = true;
+        video.play().catch(() => {});
+      });
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
+        if (entry.isIntersecting) play();
         else video.pause();
       },
       { threshold: 0.5 }
     );
     io.observe(video);
     return () => io.disconnect();
-  }, []);
+  }, [rate, sound]);
   return (
     <video
       ref={ref}
@@ -105,12 +117,12 @@ function AutoVideo({ src, poster }) {
       src={src}
       poster={poster}
       controls
-      muted
+      muted={!sound}
       loop
       playsInline
       preload="metadata"
       // Si se cambia la velocidad desde los controles y vuelve a 1×, se respeta; solo se fija al cargar
-      onLoadedMetadata={(e) => (e.currentTarget.playbackRate = VIDEO_RATE)}
+      onLoadedMetadata={(e) => (e.currentTarget.playbackRate = rate)}
     />
   );
 }
