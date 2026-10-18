@@ -73,7 +73,7 @@ const stickers = {
   destino: 'stickers',
   ladoMax: 780,
   borde: 0.034,
-  version: 3,
+  version: 4,
 };
 
 // Al reducir, el alto se redondea y la proporción puede cambiar en la 4.ª cifra decimal; en móvil (alto automático)
