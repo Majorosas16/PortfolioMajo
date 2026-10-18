@@ -61,7 +61,6 @@ export const projects = [
   { id: 'wikihunger', category: 'prism', sub: 'web', behance: 'https://www.behance.net/gallery/211203637/WikiHunger-Web-Page', name: 'WikiHunger', tags: ['web', 'ui', 'prototyping', 'development'], tools: ['Figma', 'HTML', 'CSS'] },
   { id: 'cassy', category: 'prism', sub: 'web', behance: 'https://www.behance.net/gallery/196604717/CASSY-SkinCare-UI-Web-Desing-mr', name: 'CASSY SkinCare', tags: ['web', 'ui', 'individual'], tools: ['Figma'] },
   { id: 'pixelpioneers', category: 'prism', sub: 'prototyping', behance: 'https://www.behance.net/gallery/234815883/Pixel-Pioners', name: 'Pixel Pioneers', tags: ['game', 'prototyping'], tools: ['Figma'] },
-  { id: 'remoteworkers', category: 'compass', behance: 'https://www.behance.net/gallery/207311861/UX-CASE-STUDY-REMOTE-WORKERS', name: 'Remote Workers', tags: ['research'], tools: ['Figma'] },
   {
     id: 'websitetrust', category: 'compass', isNew: true, behance: 'https://www.behance.net/gallery/248903883/Website-trust-measurement', name: 'Website Trust Measurement', tags: ['web', 'research', 'ai'],
     tools: ['Figma', 'Lovable', 'Claude', 'ChatGPT'],

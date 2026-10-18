@@ -246,12 +246,6 @@ export const translations = {
           contribution:
             'Me encargué del prototipado y conecté las interacciones entre pantallas, definiendo transiciones y comportamientos para que el juego se sintiera fluido y natural.',
         },
-        remoteworkers: {
-          description:
-            'Investigación UX para mejorar la productividad de quienes trabajan de forma remota, a partir de encuestas y entrevistas sobre la organización del tiempo, la comunicación con los equipos y los obstáculos del día a día.',
-          contribution:
-            'Participé en la investigación con usuarios y analicé la información recolectada, organizando hallazgos en insights que orientaron oportunidades de diseño.',
-        },
         websitetrust: {
           description:
             'Evaluamos la confianza que generaba un sitio web existente, lo rediseñamos a partir de pruebas y entrevistas, y comparamos con usuarios la experiencia antes y después.',
@@ -540,12 +534,6 @@ export const translations = {
             'Interactive game that tells the history of Human-Computer Interaction (HCI) and turns a historical journey into a fun learning experience.',
           contribution:
             'I was in charge of prototyping and connected the interactions between screens, defining transitions and behaviors so the game felt smooth and natural.',
-        },
-        remoteworkers: {
-          description:
-            'UX research to improve the productivity of people who work remotely, based on surveys and interviews about time management, team communication and everyday obstacles.',
-          contribution:
-            'I took part in the user research and analyzed the data collected, organizing findings into insights that guided design opportunities.',
         },
         websitetrust: {
           description:
