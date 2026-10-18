@@ -195,7 +195,7 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
   const generados = new Set();
   for (const nombre of (await readdir(join(dirTrabajos, carpeta.name))).sort()) {
     const archivo = join(dirTrabajos, carpeta.name, nombre);
-    const base = basename(nombre, extname(nombre)).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const base = basename(nombre, extname(nombre)).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const esVideo = /\.(mov|mp4|m4v)$/i.test(nombre);
     if (!esVideo && !/\.(png|jpe?g|hei[cf])$/i.test(nombre)) continue;
     const salida = join(dirDestino, `${base}.${esVideo ? 'mp4' : 'webp'}`);
