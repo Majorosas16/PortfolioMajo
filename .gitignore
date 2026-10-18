@@ -15,3 +15,9 @@ dist
 
 # Logs
 *.log
+
+# Videos originales de los proyectos: pesan demasiado para GitHub (máx. 100 MB). La web usa las versiones comprimidas
+# que genera `npm run images` en src/assets/sections/projects/work/
+design-originals/sections/projects/Images each project/**/*.mov
+design-originals/sections/projects/Images each project/**/*.mp4
+design-originals/sections/projects/Images each project/**/*.m4v
