@@ -81,6 +81,11 @@ b {
 
 /* ---------- Secciones y lienzo ---------- */
 
+/* Referencia de la capa de stickers (Stickers.css), que cubre todas las secciones */
+main {
+  position: relative;
+}
+
 .section {
   position: relative;
   overflow: hidden;

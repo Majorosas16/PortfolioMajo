@@ -4,10 +4,11 @@
 // - Guarda en WebP casi sin pérdida (nearLossless): ningún píxel cambia más de unos pocos niveles; a la vista es idéntica.
 // - Si el WebP no pesa menos que el original, se usa el original tal cual (mismo nombre y extensión).
 // - Fotos y videos de los proyectos (design-originals/sections/projects/Images each project/<Proyecto>/): ver «trabajos».
+// - Stickers de la pestaña flotante (design-originals/stickers/): ver «stickers».
 // Uso: npm run images            (solo las que faltan o cuyo original cambió)
 //      npm run images -- --forzar (todas)
 import sharp from 'sharp';
-import { readFile, readdir, mkdir, stat, copyFile, rm, mkdtemp } from 'node:fs/promises';
+import { readFile, readdir, mkdir, stat, copyFile, rm, mkdtemp, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
@@ -59,6 +60,22 @@ const trabajos = {
   videoAlto: 1080,
 };
 
+// Stickers de la pestaña flotante (components/layout/Stickers). Cada PNG se recorta a su contenido (sin el margen
+// transparente), se reduce a ladoMax en su lado largo (6× lo que ocupa en pantalla como mucho) y se le añade un borde
+// blanco que sigue su silueta, como una pegatina troquelada (grosor: borde × la raíz de su área, unos 3 px en
+// pantalla). Se guardan en WebP casi sin pérdida, con transparencia, junto con stickers.json: ancho, alto y fill (la
+// fracción de la imagen que no es transparente) de cada uno, para que la web los muestre todos con el mismo peso visual.
+// Los sonidos de esa carpeta (.mp3, .wav, .m4a, .ogg; p. ej. «sticker peeling.MP3») se copian tal cual, con el nombre
+// en minúsculas y sin espacios (sticker-peeling.mp3).
+// version: súbela si cambias cómo se generan, así se regeneran sin --forzar.
+const stickers = {
+  origen: 'stickers',
+  destino: 'stickers',
+  ladoMax: 780,
+  borde: 0.034,
+  version: 3,
+};
+
 // Al reducir, el alto se redondea y la proporción puede cambiar en la 4.ª cifra decimal; en móvil (alto automático)
 // eso movería unas centésimas de píxel todo lo que va debajo. Se busca, desde el ancho pedido hacia arriba,
 // el ancho cuyo alto sea casi entero, para que la proporción quede igual que la del original.
@@ -78,7 +95,7 @@ const recorrer = async (dir) =>
   (await Promise.all((await readdir(dir, { withFileTypes: true })).map((e) => {
     const p = join(dir, e.name);
     const rel = relative(origen, p).split('\\').join('/');
-    if (rel === galeria.origen || galeria.extra.includes(rel) || rel === trabajos.origen) return [];
+    if (rel === galeria.origen || galeria.extra.includes(rel) || rel === trabajos.origen || rel === stickers.origen) return [];
     return e.isDirectory() ? recorrer(p) : /\.(png|jpe?g)$/i.test(e.name) ? [p] : [];
   }))).flat();
 
@@ -279,7 +296,101 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
 
 await rm(tmpTrabajos, { recursive: true, force: true });
 
+// Stickers (ver «stickers» arriba)
+const dirStickers = join(origen, stickers.origen);
+const dirStickersWeb = join(destino, stickers.destino);
+const rutaMedidas = join(dirStickersWeb, 'stickers.json');
+const medidas = existsSync(rutaMedidas) ? JSON.parse(await readFile(rutaMedidas, 'utf8')) : {};
+const viejaVersion = medidas._version !== stickers.version;
+let pegatinas = 0;
+const idsStickers = new Set();
+for (const nombre of existsSync(dirStickers) ? (await readdir(dirStickers)).sort() : []) {
+  if (/\.(mp3|wav|m4a|ogg)$/i.test(nombre)) {
+    const id = basename(nombre, extname(nombre)).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    idsStickers.add(id);
+    const salida = join(dirStickersWeb, `${id}${extname(nombre).toLowerCase()}`);
+    if (forzar || !existsSync(salida) || (await stat(salida)).mtimeMs < (await stat(join(dirStickers, nombre))).mtimeMs) {
+      await mkdir(dirStickersWeb, { recursive: true });
+      await copyFile(join(dirStickers, nombre), salida);
+      pegatinas++;
+      console.log(`✓  ${stickers.origen}/${nombre}  → ${stickers.destino}/${basename(salida)}  (sonido, se copia tal cual)`);
+    }
+    continue;
+  }
+  if (!/\.png$/i.test(nombre)) continue;
+  const id = basename(nombre, extname(nombre)).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  idsStickers.add(id);
+  const archivo = join(dirStickers, nombre);
+  const salida = join(dirStickersWeb, `${id}.webp`);
+  if (!forzar && !viejaVersion && medidas[id] && existsSync(salida) && (await stat(salida)).mtimeMs >= (await stat(archivo)).mtimeMs) continue;
+
+  // Caja del contenido: píxeles con algo de opacidad
+  const { data, info } = await sharp(archivo).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  let x0 = info.width, y0 = info.height, x1 = -1, y1 = -1;
+  for (let y = 0; y < info.height; y++) {
+    for (let x = 0; x < info.width; x++) {
+      if (data[(y * info.width + x) * 4 + 3] <= 16) continue;
+      if (x < x0) x0 = x;
+      if (x > x1) x1 = x;
+      if (y < y0) y0 = y;
+      if (y > y1) y1 = y;
+    }
+  }
+  if (x1 < 0) {
+    console.log(`!  ${stickers.origen}/${nombre}: es transparente por completo. Se omite.`);
+    continue;
+  }
+  const contenido = await sharp(archivo)
+    .ensureAlpha()
+    .extract({ left: x0, top: y0, width: x1 - x0 + 1, height: y1 - y0 + 1 })
+    .resize({ width: stickers.ladoMax, height: stickers.ladoMax, fit: 'inside', withoutEnlargement: true, kernel: 'lanczos3' })
+    .png()
+    .toBuffer({ resolveWithObject: true });
+  const b = Math.round(stickers.borde * Math.sqrt(contenido.info.width * contenido.info.height));
+  const conMargen = await sharp(contenido.data)
+    .extend({ top: b, bottom: b, left: b, right: b, background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png()
+    .toBuffer({ resolveWithObject: true });
+  const { width: W, height: H } = conMargen.info;
+  // Borde troquelado: la silueta se ensancha b px (desenfoque + umbral: el umbral 12/255 queda a ~1.67 σ del borde)
+  // y se suaviza 1 px para que el contorno no quede dentado. Cada paso en su propia tubería: sharp aplica una sola vez
+  // cada operación aunque se encadene dos veces (el segundo blur reemplazaría al primero).
+  const raw1 = { raw: { width: W, height: H, channels: 1 } };
+  const alfa = await sharp(conMargen.data).extractChannel('alpha').toColourspace('b-w').raw().toBuffer();
+  const ensanchada = await sharp(alfa, raw1).blur(b / 1.67).toColourspace('b-w').raw().toBuffer();
+  const silueta = await sharp(ensanchada, raw1).threshold(12).toColourspace('b-w').raw().toBuffer();
+  const mascara = await sharp(silueta, raw1).blur(1).toColourspace('b-w').raw().toBuffer();
+  let llenos = 0;
+  for (const v of mascara) if (v > 127) llenos++;
+  const blanco = await sharp({ create: { width: W, height: H, channels: 3, background: '#ffffff' } })
+    .joinChannel(mascara, { raw: { width: W, height: H, channels: 1 } })
+    .png()
+    .toBuffer();
+  await mkdir(dirStickersWeb, { recursive: true });
+  const salidaInfo = await sharp(blanco)
+    .composite([{ input: conMargen.data }])
+    .webp({ nearLossless: true, quality: 60, effort: 6 })
+    .toFile(salida);
+  medidas[id] = { w: W, h: H, fill: Math.round((llenos / (W * H)) * 1000) / 1000 };
+  pegatinas++;
+  console.log(`✓  ${stickers.origen}/${nombre}  → ${stickers.destino}/${id}.webp  ${W}×${H} (borde ${b}px)  ${((await stat(archivo)).size / 1024).toFixed(0)} KB → ${(salidaInfo.size / 1024).toFixed(0)} KB`);
+}
+// Stickers cuyo original se borró
+for (const viejo of existsSync(dirStickersWeb) ? await readdir(dirStickersWeb) : []) {
+  const id = basename(viejo, extname(viejo));
+  if (viejo === 'stickers.json' || idsStickers.has(id)) continue;
+  await rm(join(dirStickersWeb, viejo));
+  delete medidas[id];
+  console.log(`-  ${stickers.destino}/${viejo}  (ya no está en ${stickers.origen}/)`);
+}
+if (pegatinas || viejaVersion) {
+  medidas._version = stickers.version;
+  const ordenadas = Object.fromEntries(Object.keys(medidas).sort().map((k) => [k, medidas[k]]));
+  await writeFile(rutaMedidas, `${JSON.stringify(ordenadas, null, 2)}\n`);
+}
+
 if (hechas) console.log(`\n${hechas} imágenes generadas en src/assets/: ${(antes / 1048576).toFixed(1)} MB → ${(despues / 1048576).toFixed(1)} MB`);
 if (fotos) console.log(`${fotos} fotos del carrusel generadas en src/assets/${galeria.destino}/`);
 if (medios) console.log(`${medios} fotos y videos de proyectos generados en src/assets/${trabajos.destino}/`);
-if (!hechas && !fotos && !medios) console.log('Todas las imágenes ya estaban al día (usa --forzar para regenerarlas).');
+if (pegatinas) console.log(`${pegatinas} archivos de stickers generados en src/assets/${stickers.destino}/ (imágenes con borde troquelado y sonidos)`);
+if (!hechas && !fotos && !medios && !pegatinas) console.log('Todas las imágenes ya estaban al día (usa --forzar para regenerarlas).');
