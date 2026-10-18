@@ -32,6 +32,31 @@
   transform: rotate(-4.85deg);
 }
 
+/* El círculo se dibuja poco a poco, como un trazo a mano, al llegar a su frase (is-cta / is-contact en
+   Projects.jsx): una máscara en forma de abanico que va girando hasta descubrirlo entero */
+@property --ring-draw {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 360deg;
+}
+
+.circled::after {
+  --ring-draw: 0deg;
+  -webkit-mask: conic-gradient(from -50deg, #000 var(--ring-draw), transparent 0);
+  mask: conic-gradient(from -50deg, #000 var(--ring-draw), transparent 0);
+}
+
+.projects.is-cta .projects__cta .circled::after,
+.projects.is-contact .projects__invite .circled::after {
+  animation: ring-draw 1.1s cubic-bezier(0.55, 0.1, 0.35, 1) 0.25s forwards;
+}
+
+@keyframes ring-draw {
+  to {
+    --ring-draw: 360deg;
+  }
+}
+
 .projects__invite {
   font-weight: 300;
   line-height: 1.423;
@@ -43,11 +68,67 @@
   z-index: 2;
 }
 
+.projects__face {
+  overflow: hidden;
+}
+
 .projects__face img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: bottom;
+}
+
+/* Foto de cierre: sube desde abajo hasta su sitio al llegar al contacto (is-contact) y luego flota. Flota hacia abajo
+   (lo que baja queda oculto bajo el borde de la sección), así nunca se ve un hueco debajo de ella. */
+.projects__face img {
+  transform: translateY(101%);
+}
+
+.projects.is-contact .projects__face img {
+  transform: none;
+  animation:
+    face-rise 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both,
+    contact-float 4.2s ease-in-out 1.5s infinite alternate;
+}
+
+@keyframes face-rise {
+  from {
+    transform: translateY(101%);
+  }
+}
+
+@keyframes contact-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(var(--u) * 12);
+  }
+}
+
+/* Post-it de la frente: se pega cuando la foto ya llegó, flota con ella (mismo ritmo, así no se despega de la
+   frente) y se balancea un poco, como si colgara de su borde de arriba */
+.projects__note img {
+  opacity: 0;
+  transform-origin: 50% 12%;
+}
+
+.projects.is-contact .projects__note img {
+  opacity: 1;
+  animation:
+    sticker-stick 1s cubic-bezier(0.25, 0.8, 0.3, 1) 1.2s both,
+    contact-float 4.2s ease-in-out 1.5s infinite alternate,
+    note-sway 2.6s ease-in-out 2.2s infinite alternate;
+}
+
+@keyframes note-sway {
+  from {
+    rotate: -3deg;
+  }
+  to {
+    rotate: 4deg;
+  }
 }
 
 .contact {
@@ -444,14 +525,26 @@
   .objects--projects .obj,
   .projects.is-seen .projects__photo img,
   .projects.is-seen .projects__sticker img,
-  .projects.is-seen .projects__crown img {
-    animation: none;
+  .projects.is-seen .projects__crown img,
+  .projects.is-contact .projects__face img,
+  .projects.is-contact .projects__note img,
+  .circled::after {
+    animation: none !important;
   }
 
   .projects__photo img,
   .projects__sticker img,
-  .projects__crown img {
+  .projects__crown img,
+  .projects__note img {
     opacity: 1;
+  }
+
+  .projects__face img {
+    transform: none;
+  }
+
+  .circled::after {
+    --ring-draw: 360deg;
   }
 
   .projects__tap {
