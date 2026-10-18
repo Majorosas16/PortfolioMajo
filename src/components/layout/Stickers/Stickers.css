@@ -10,10 +10,72 @@
   pointer-events: none;
 }
 
+/* ---------- Arte de cada sticker (StickerArt.jsx) ----------
+   El borde blanco troquelado ya viene en la imagen (scripts/optimize-images.mjs). Aquí: sombra de pegatina sobre el
+   papel y una textura muy suave (brillo en diagonal y grano fino) recortada con la silueta de la imagen (--src), en
+   soft-light y con poca opacidad para no restar nitidez. */
+.sticker-art {
+  position: relative;
+  display: block;
+  flex: none;
+  filter: drop-shadow(0 2px 3px rgba(67, 47, 46, 0.25));
+  transition:
+    filter 0.15s ease,
+    scale 0.15s ease,
+    rotate 0.15s ease,
+    opacity 0.3s ease;
+}
+
+.sticker-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.sticker-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 38%, rgba(0, 0, 0, 0) 68%, rgba(0, 0, 0, 0.18) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 96px 96px;
+  mix-blend-mode: soft-light;
+  opacity: 0.3;
+  -webkit-mask: var(--src) center / 100% 100% no-repeat;
+  mask: var(--src) center / 100% 100% no-repeat;
+}
+
+/* En el aire (al arrastrarlo): un poco más grande, inclinado y con la sombra más lejos */
+.sticker.is-lifted .sticker-art,
+.sticker-flyer {
+  filter: drop-shadow(0 14px 14px rgba(67, 47, 46, 0.22));
+}
+
+.sticker.is-lifted .sticker-art {
+  scale: 1.08;
+  rotate: 4deg;
+}
+
+/* Llegando desde el panel: el que se ve es el que vuela (.sticker-flyer); este aparece al aterrizar */
+.sticker.is-arriving .sticker-art {
+  opacity: 0;
+  transition: none;
+}
+
+/* Sticker en vuelo del panel a la página (Stickers.jsx). Fijo, por encima del panel (46) y por debajo del menú del
+   celular (100) y del modal de proyectos (200). */
+.sticker-flyer {
+  position: fixed;
+  z-index: 60;
+  pointer-events: none;
+}
+
 .sticker {
   position: absolute;
-  width: var(--sticker-size);
-  height: var(--sticker-size);
   translate: -50% -50%;
   rotate: var(--r, 0deg);
 }
@@ -21,8 +83,6 @@
 .sticker__body {
   appearance: none;
   display: block;
-  width: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
   border: 0;
@@ -40,22 +100,6 @@
 
 .sticker__body:active {
   cursor: grabbing;
-}
-
-.sticker__body img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  -webkit-user-drag: none;
-  /* Borde blanco y sombra de sticker pegado */
-  filter: drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 4px 8px rgba(67, 47, 46, 0.22));
-}
-
-/* Recién puesto: se pega como los stickers de las secciones (sticker-stick en styles.css) */
-.sticker.is-fresh .sticker__body img {
-  transform-origin: 20% 85%;
-  animation: sticker-stick 0.9s cubic-bezier(0.25, 0.8, 0.3, 1) both;
 }
 
 .sticker.is-selected .sticker__body {
@@ -143,15 +187,7 @@
   outline-offset: 3px;
 }
 
-.stickers-tab img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: opacity 0.3s ease;
-  -webkit-user-drag: none;
-}
-
-.stickers-tab img.is-fading {
+.stickers-tab .sticker-art.is-fading {
   opacity: 0;
 }
 
@@ -196,8 +232,9 @@
   }
 }
 
-/* Mientras se arrastra un sticker desde el panel, este se aparta para dejar ver la página */
-.stickers-panel.is-dragging-out {
+/* Mientras se arrastra un sticker desde el panel, este se aparta para dejar ver la página; al cerrarse, se desvanece */
+.stickers-panel.is-dragging-out,
+.stickers-panel.is-leaving {
   opacity: 0;
   pointer-events: none;
 }
@@ -292,17 +329,6 @@
   }
 }
 
-.stickers-panel__item img {
-  /* Fuera del flujo: así la celda queda cuadrada aunque la imagen sea alta (como la de Lola) */
-  position: absolute;
-  inset: 8px;
-  width: calc(100% - 16px);
-  height: calc(100% - 16px);
-  object-fit: contain;
-  pointer-events: none;
-  -webkit-user-drag: none;
-}
-
 .stickers-panel__close:focus-visible,
 .stickers-panel__item:focus-visible,
 .stickers-panel__clear:focus-visible {
@@ -368,8 +394,17 @@
     transition: none;
   }
 
-  .stickers-panel,
-  .sticker.is-fresh .sticker__body img {
+  .stickers-panel {
     animation: none;
+  }
+
+  /* Sin vuelo ni rebote (Stickers.jsx); al arrastrarlo no se inclina */
+  .sticker-art {
+    transition: none;
+  }
+
+  .sticker.is-lifted .sticker-art {
+    scale: none;
+    rotate: none;
   }
 }
