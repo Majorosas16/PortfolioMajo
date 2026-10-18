@@ -123,6 +123,24 @@ export default function Projects() {
     };
   }, []);
 
+  // Cierre y contacto: al llegar a «¿Creamos algo increíble?» se dibuja su círculo (is-cta); al llegar a «Me encantaría…»
+  // se dibuja el suyo, la foto sube desde abajo y se pega el post-it (is-contact). Una sola vez cada uno.
+  const [reveal, setReveal] = useState({});
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          setReveal((r) => ({ ...r, [e.target.dataset.reveal]: true }));
+          io.unobserve(e.target);
+        });
+      },
+      { threshold: 0.6 }
+    );
+    sectionRef.current.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
   const openCategory = (id, e) => {
     opener.current = e.currentTarget;
     setOpen(id);
@@ -136,7 +154,7 @@ export default function Projects() {
     <section
       ref={sectionRef}
       id="projects"
-      className={`section section--paper projects${seen ? ' is-seen' : ''}`}
+      className={`section section--paper projects${seen ? ' is-seen' : ''}${reveal.cta ? ' is-cta' : ''}${reveal.contact ? ' is-contact' : ''}`}
       style={{
         '--height': 1937 + CLOSE_DY,
         // Círculos a mano que rodean la palabra marcada con [[…]] en translations.js (ver .circled en Projects.css)
@@ -194,7 +212,7 @@ export default function Projects() {
           <P x={756} y={1345.5 + CLOSE_DY} w={426} fs={35.66} cx cy className="projects__end">
             <p>{p.end}</p>
           </P>
-          <P x={755.58} y={1417 + CLOSE_DY} w={1053.17} fs={88.16} cx cy className="hand projects__cta">
+          <P x={755.58} y={1417 + CLOSE_DY} w={1053.17} fs={88.16} cx cy className="hand projects__cta" data-reveal="cta">
             <h2>
               <Rich text={p.cta} />
             </h2>
@@ -202,7 +220,7 @@ export default function Projects() {
         </div>
 
         <div className="grp grp--contact">
-          <P x={197} y={1549 + CLOSE_DY} w={317} fs={35} className="projects__invite">
+          <P x={197} y={1549 + CLOSE_DY} w={317} fs={35} className="projects__invite" data-reveal="contact">
             <p>
               <Rich text={p.invite} />
             </p>
