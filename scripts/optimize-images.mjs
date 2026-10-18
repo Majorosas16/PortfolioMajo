@@ -43,8 +43,9 @@ const galeria = {
 // aparece en ese nombre escrito en minúsculas y sin espacios ni símbolos (platepath, kingwash). Se guardan en
 // src/assets/sections/projects/work/<id>/ con el mismo nombre de archivo. Orden del carrusel: cover (la portada)
 // siempre primera y el resto alfabético; para fijarlo se numeran (01-hand, 02-record…). Si el nombre termina en -fill
-// (05-folder-fill), la foto llena todo el marco del carrusel (recortada, sin el fondo desenfocado). Lo que ya no tiene
-// original en la carpeta se borra de work/<id>/.
+// (05-folder-fill), la foto llena todo el marco del carrusel (recortada, sin el fondo desenfocado). Las subcarpetas
+// también se leen y su ruta pasa al nombre (Reels/intro.mp4 → reels-intro.mp4). Lo que ya no tiene original en la
+// carpeta se borra de work/<id>/.
 // - Imágenes (.png, .jpg, .heic): WebP de alta calidad (90), conservando el perfil de color; como mucho 1680 de ancho y
 //   2100 de alto (6× lo que ocupan en el carrusel). Nunca se amplían. Las HEIC se pasan antes a TIFF con `sips` (macOS).
 // - Videos (.mov, .mp4): MP4 H.264 para la web con ffmpeg (alta calidad, CRF 22, inicio rápido), como mucho 1080
@@ -193,15 +194,20 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
   }
   const dirDestino = join(destino, trabajos.destino, id);
   const generados = new Set();
-  for (const nombre of (await readdir(join(dirTrabajos, carpeta.name))).sort()) {
+  // También lee subcarpetas: Reels/video.mp4 queda como reels-video.mp4
+  for (const nombre of (await readdir(join(dirTrabajos, carpeta.name), { recursive: true })).sort()) {
     const archivo = join(dirTrabajos, carpeta.name, nombre);
-    const base = basename(nombre, extname(nombre)).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const base = nombre.slice(0, -extname(nombre).length || undefined).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const esVideo = /\.(mov|mp4|m4v)$/i.test(nombre);
     if (!esVideo && !/\.(png|jpe?g|hei[cf])$/i.test(nombre)) continue;
     const salida = join(dirDestino, `${base}.${esVideo ? 'mp4' : 'webp'}`);
+    // Si la imagen convertida pesa más que el original (JPG ya comprimidos, p. ej. de Instagram), se usa el original
+    const copia = join(dirDestino, `${base}${extname(nombre).toLowerCase().replace('.jpeg', '.jpg')}`);
     generados.add(basename(salida));
+    if (!esVideo && /\.(png|jpe?g)$/i.test(nombre)) generados.add(basename(copia));
     if (esVideo) generados.add(`${base}.poster.webp`);
-    if (!forzar && existsSync(salida) && (await stat(salida)).mtimeMs >= (await stat(archivo)).mtimeMs) continue;
+    const hecha = [salida, copia].find((f) => existsSync(f));
+    if (!forzar && hecha && (await stat(hecha)).mtimeMs >= (await stat(archivo)).mtimeMs) continue;
     await mkdir(dirDestino, { recursive: true });
     const pesoAntes = (await stat(archivo)).size;
     const rel = `${carpeta.name}/${nombre}`;
@@ -224,6 +230,13 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
         .webp({ quality: 90, smartSubsample: true, effort: 6 })
         .toFile(salida);
       medios++;
+      if (info.size >= pesoAntes && /\.(png|jpe?g)$/i.test(nombre)) {
+        await rm(salida);
+        await copyFile(archivo, copia);
+        console.log(`=  ${rel}  → work/${id}/${basename(copia)}  el original ya es más ligero (${(pesoAntes / 1024).toFixed(0)} KB): se usa tal cual`);
+        continue;
+      }
+      await rm(copia, { force: true });
       console.log(`✓  ${rel}  → work/${id}/${base}.webp  ${info.width}×${info.height}  ${(pesoAntes / 1024).toFixed(0)} KB → ${(info.size / 1024).toFixed(0)} KB`);
       continue;
     }
@@ -239,6 +252,12 @@ for (const carpeta of existsSync(dirTrabajos) ? await readdir(dirTrabajos, { wit
       '-vf', `${escala},format=yuv420p`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '22', '-profile:v', 'high',
       '-movflags', '+faststart', '-an', salida,
     ]);
+    // Si el original ya es un MP4 H.264 más ligero (p. ej. un reel de Instagram), se usa su video tal cual, sin
+    // recomprimir: solo se quita el audio y se prepara para inicio rápido
+    const codec = execFileSync('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=codec_name', '-of', 'csv=p=0', archivo]).toString().trim();
+    if (codec === 'h264' && (await stat(salida)).size >= pesoAntes) {
+      execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', archivo, '-map', '0:v:0', '-c', 'copy', '-movflags', '+faststart', salida]);
+    }
     const poster = join(dirDestino, `${base}.poster.png`);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', archivo, '-vf', escala, '-frames:v', '1', poster]);
     await sharp(poster).webp({ quality: 90, smartSubsample: true, effort: 6 }).toFile(join(dirDestino, `${base}.poster.webp`));
