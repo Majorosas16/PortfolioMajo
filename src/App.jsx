@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Footer from './components/layout/Footer/Footer.jsx';
 import Header from './components/layout/Header/Header.jsx';
+import Stickers from './components/layout/Stickers/Stickers.jsx';
 import { LanguageProvider } from './i18n/LanguageContext.jsx';
 import Intro from './sections/Intro/Intro.jsx';
 import About from './sections/About/About.jsx';
@@ -36,6 +37,8 @@ export default function App() {
         <WhatIBring />
         <Projects />
         <Footer />
+        {/* Pestaña de stickers y la capa donde quedan los que se ponen por la página (cubre todo <main>) */}
+        <Stickers />
       </main>
     </LanguageProvider>
   );
