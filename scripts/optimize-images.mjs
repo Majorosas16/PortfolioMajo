@@ -65,6 +65,8 @@ const trabajos = {
 // blanco que sigue su silueta, como una pegatina troquelada (grosor: borde × la raíz de su área, unos 3 px en
 // pantalla). Se guardan en WebP casi sin pérdida, con transparencia, junto con stickers.json: ancho, alto y fill (la
 // fracción de la imagen que no es transparente) de cada uno, para que la web los muestre todos con el mismo peso visual.
+// Los sonidos de esa carpeta (.mp3, .wav, .m4a, .ogg; p. ej. «sticker peeling.MP3») se copian tal cual, con el nombre
+// en minúsculas y sin espacios (sticker-peeling.mp3).
 // version: súbela si cambias cómo se generan, así se regeneran sin --forzar.
 const stickers = {
   origen: 'stickers',
@@ -303,6 +305,18 @@ const viejaVersion = medidas._version !== stickers.version;
 let pegatinas = 0;
 const idsStickers = new Set();
 for (const nombre of existsSync(dirStickers) ? (await readdir(dirStickers)).sort() : []) {
+  if (/\.(mp3|wav|m4a|ogg)$/i.test(nombre)) {
+    const id = basename(nombre, extname(nombre)).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    idsStickers.add(id);
+    const salida = join(dirStickersWeb, `${id}${extname(nombre).toLowerCase()}`);
+    if (forzar || !existsSync(salida) || (await stat(salida)).mtimeMs < (await stat(join(dirStickers, nombre))).mtimeMs) {
+      await mkdir(dirStickersWeb, { recursive: true });
+      await copyFile(join(dirStickers, nombre), salida);
+      pegatinas++;
+      console.log(`✓  ${stickers.origen}/${nombre}  → ${stickers.destino}/${basename(salida)}  (sonido, se copia tal cual)`);
+    }
+    continue;
+  }
   if (!/\.png$/i.test(nombre)) continue;
   const id = basename(nombre, extname(nombre)).toLowerCase().replace(/[^a-z0-9]+/g, '-');
   idsStickers.add(id);
@@ -378,5 +392,5 @@ if (pegatinas || viejaVersion) {
 if (hechas) console.log(`\n${hechas} imágenes generadas en src/assets/: ${(antes / 1048576).toFixed(1)} MB → ${(despues / 1048576).toFixed(1)} MB`);
 if (fotos) console.log(`${fotos} fotos del carrusel generadas en src/assets/${galeria.destino}/`);
 if (medios) console.log(`${medios} fotos y videos de proyectos generados en src/assets/${trabajos.destino}/`);
-if (pegatinas) console.log(`${pegatinas} stickers generados en src/assets/${stickers.destino}/ (con borde troquelado)`);
+if (pegatinas) console.log(`${pegatinas} archivos de stickers generados en src/assets/${stickers.destino}/ (imágenes con borde troquelado y sonidos)`);
 if (!hechas && !fotos && !medios && !pegatinas) console.log('Todas las imágenes ya estaban al día (usa --forzar para regenerarlas).');
