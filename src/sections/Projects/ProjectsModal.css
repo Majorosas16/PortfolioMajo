@@ -656,6 +656,48 @@
   text-decoration: underline;
 }
 
+/* Botones «Post» / «Reels» de un proyecto de redes, en el borde ancho de abajo de la Polaroid */
+.polaroid--detail.polaroid--groups {
+  padding-bottom: 0;
+}
+
+.media-groups {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 0 10px;
+}
+
+.media-groups__btn {
+  margin: 0;
+  padding: 4px 14px;
+  border: 1px solid rgba(67, 47, 46, 0.35);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--brown);
+  font-family: var(--font-head);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.media-groups__btn:hover {
+  background: rgba(67, 47, 46, 0.08);
+}
+
+.media-groups__btn.is-current {
+  border-color: var(--brown);
+  background: var(--brown);
+  color: #fff;
+}
+
+.media-groups__btn:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
 /* ---------- Medios del proyecto (MediaCarousel.jsx): la foto dentro del marco Polaroid ---------- */
 
 .media {
